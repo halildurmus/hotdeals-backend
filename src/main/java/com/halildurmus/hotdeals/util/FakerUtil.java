@@ -1,9 +1,11 @@
 package com.halildurmus.hotdeals.util;
 
 import com.github.javafaker.Faker;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FakerUtil {
-  public static String generateNickname() {
+  public String generateNickname() {
     Faker faker = new Faker();
     String prefix = faker.superhero().prefix();
     String firstName = faker.name().firstName();
