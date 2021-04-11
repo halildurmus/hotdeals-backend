@@ -1,11 +1,17 @@
 package com.halildurmus.hotdeals.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.Instant;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,6 +41,14 @@ public class User {
   @URL
   @NotBlank
   private String avatar;
+
+  @CreatedDate
+  @Setter(AccessLevel.NONE)
+  private Instant createdAt;
+
+  @LastModifiedDate
+  @Setter(AccessLevel.NONE)
+  private Instant updatedAt;
 
   public User(String uid, String email, String nickname, String avatar) {
     this.uid = uid;
