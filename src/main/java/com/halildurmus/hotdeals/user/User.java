@@ -1,10 +1,10 @@
 package com.halildurmus.hotdeals.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -39,7 +39,7 @@ public class User {
   private String nickname;
 
   @URL
-  @NotBlank
+  @NotNull
   private String avatar;
 
   @CreatedDate
@@ -49,6 +49,8 @@ public class User {
   @LastModifiedDate
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
+
+  public User() {}
 
   public User(String uid, String email, String nickname, String avatar) {
     this.uid = uid;
