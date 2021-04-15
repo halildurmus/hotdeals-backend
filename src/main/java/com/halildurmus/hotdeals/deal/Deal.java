@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -32,6 +33,11 @@ public class Deal {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 
+  @Indexed
+  @JsonSerialize(using = ObjectIdJsonSerializer.class)
+  @NotNull
+  private ObjectId store;
+
   @NotBlank
   private String title;
 
@@ -39,6 +45,7 @@ public class Deal {
   private String description;
 
   @URL
+  @NotNull
   private String coverPhoto;
 
   // @URL
@@ -58,15 +65,17 @@ public class Deal {
 
   public Deal() {}
 
-  public Deal(String title, String description, String coverPhoto) {
+  public Deal(String title, String description, ObjectId store, String coverPhoto) {
     this.title = title;
     this.description = description;
+    this.store = store;
     this.coverPhoto = coverPhoto;
   }
 
-  public Deal(String title, String description, String coverPhoto, List<String> photos) {
+  public Deal(String title, String description, ObjectId store, String coverPhoto, List<String> photos) {
     this.title = title;
     this.description = description;
+    this.store = store;
     this.coverPhoto = coverPhoto;
     this.photos = photos;
   }
