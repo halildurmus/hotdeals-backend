@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.config;
 
 import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.store.Store;
 import com.halildurmus.hotdeals.user.User;
 import org.springframework.context.annotation.Configuration;
     import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -12,7 +13,7 @@ class RepositoryConfig implements RepositoryRestConfigurer {
 
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-    config.exposeIdsFor(Deal.class, User.class);
+    config.exposeIdsFor(Deal.class, Store.class, User.class);
   }
 
 }
