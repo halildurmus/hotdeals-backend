@@ -42,6 +42,8 @@ public class DealControllerIntegrationTest {
     mongoTemplate.dropCollection("deals");
   }
 
+  // TODO: Write test cases for validating mandatory fields.
+
   @Test
   @DisplayName("POST /deals")
   public void shouldCreateDealThenReturnDeal() throws Exception {

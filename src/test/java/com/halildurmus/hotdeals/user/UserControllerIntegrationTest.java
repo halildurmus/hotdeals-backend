@@ -42,6 +42,8 @@ public class UserControllerIntegrationTest {
     mongoTemplate.dropCollection("users");
   }
 
+  // TODO: Write test cases for validating mandatory fields.
+
   @Test
   @DisplayName("POST /create")
   public void shouldCreateUserThenReturnUser() throws Exception {
