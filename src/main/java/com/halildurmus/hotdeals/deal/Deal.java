@@ -38,6 +38,10 @@ public class Deal {
   @NotNull
   private ObjectId store;
 
+  @Indexed
+  @NotBlank
+  private String category;
+
   @NotBlank
   private String title;
 
