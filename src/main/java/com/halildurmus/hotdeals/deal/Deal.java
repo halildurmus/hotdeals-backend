@@ -69,17 +69,19 @@ public class Deal {
 
   public Deal() {}
 
-  public Deal(String title, String description, ObjectId store, String coverPhoto) {
+  public Deal(String title, String description, ObjectId store, String category, String coverPhoto) {
     this.title = title;
     this.description = description;
     this.store = store;
+    this.category = category;
     this.coverPhoto = coverPhoto;
   }
 
-  public Deal(String title, String description, ObjectId store, String coverPhoto, List<String> photos) {
+  public Deal(String title, String description, ObjectId store, String category, String coverPhoto, List<String> photos) {
     this.title = title;
     this.description = description;
     this.store = store;
+    this.category = category;
     this.coverPhoto = coverPhoto;
     this.photos = photos;
   }
