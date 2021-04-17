@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.URL;
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("deal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@NoArgsConstructor
 public class Deal {
 
   @Id
@@ -33,7 +35,6 @@ public class Deal {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 
-  @Indexed
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   @NotNull
   private ObjectId store;
@@ -67,8 +68,6 @@ public class Deal {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Deal() {}
-
   public Deal(String title, String description, ObjectId store, String category, String coverPhoto) {
     this.title = title;
     this.description = description;
@@ -77,7 +76,8 @@ public class Deal {
     this.coverPhoto = coverPhoto;
   }
 
-  public Deal(String title, String description, ObjectId store, String category, String coverPhoto, List<String> photos) {
+  public Deal(String title, String description, ObjectId store, String category, String coverPhoto,
+      List<String> photos) {
     this.title = title;
     this.description = description;
     this.store = store;

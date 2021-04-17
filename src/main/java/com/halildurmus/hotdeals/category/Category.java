@@ -5,6 +5,7 @@ import java.time.Instant;
 import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("categories")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@NoArgsConstructor
 public class Category {
 
   @Id
@@ -38,8 +40,6 @@ public class Category {
   @LastModifiedDate
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
-
-  public Category() {}
 
   public Category(String name, String parent, String category) {
     this.name = name;

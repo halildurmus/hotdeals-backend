@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @TypeAlias("user")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@NoArgsConstructor
 public class User {
 
   @Id
@@ -50,7 +52,9 @@ public class User {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public User() {}
+  public User(String id) {
+    this.id = id;
+  }
 
   public User(String uid, String email, String nickname, String avatar) {
     this.uid = uid;
