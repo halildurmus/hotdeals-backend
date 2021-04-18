@@ -1,0 +1,58 @@
+management:
+  health:
+    elasticsearch:
+      enabled: false
+    redis:
+      enabled: false
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      database: hotdeals
+    rest:
+      detection-strategy: annotated
+security:
+  firebase-props:
+    database-url: ${FIREBASE_DATABASE}
+    enable-strict-server-session: false
+    enable-check-session-revoked: false
+    enable-logout-everywhere: false
+    session-expiry-in-days: 5
+  allow-credentials: true
+  allowed-origins:
+    - https://${DOMAIN}
+    - http://localhost:3000
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - OPTIONS
+  allowed-headers:
+    - Authorization
+    - Origin
+    - Content-Type
+    - Accept
+    - Accept-Encoding
+    - Accept-Language
+    - Access-Control-Allow-Origin
+    - Access-Control-Allow-Headers
+    - Access-Control-Request-Method
+    - X-Requested-With
+    - X-Auth-Token
+    - X-Xsrf-Token
+    - Cache-Control
+    - Id-Token
+  allowed-public-apis:
+    - /categories
+    - /stores
+  exposed-headers:
+    - X-Xsrf-Token
+  valid-application-roles:
+    - ROLE_ADMIN
+    - ROLE_SUPER
+    - ROLE_USER
+  super-admins:
+    - admin1@gmail.com
+    - admin2@gmail.com
