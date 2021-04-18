@@ -1,0 +1,5 @@
+embedded:
+  containers:
+    enabled: false
+  mongodb:
+    enabled: false

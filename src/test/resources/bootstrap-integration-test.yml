@@ -1,0 +1,11 @@
+embedded:
+  containers:
+    enabled: true
+  mongodb:
+    dockerImage: mongo:4.4.4
+    enabled: true
+    reuseContainer: true
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${embedded.mongodb.host}:${embedded.mongodb.port}/${embedded.mongodb.database}
