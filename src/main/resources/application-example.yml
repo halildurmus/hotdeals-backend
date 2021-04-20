@@ -13,14 +13,9 @@ spring:
       detection-strategy: annotated
 security:
   firebase-props:
-    database-url: ${FIREBASE_DATABASE}
-    enable-strict-server-session: false
-    enable-check-session-revoked: false
-    enable-logout-everywhere: false
-    session-expiry-in-days: 5
+    database-url: https://xxxxx-xxxx.firebaseapp.com
   allow-credentials: true
   allowed-origins:
-    - https://${DOMAIN}
     - http://localhost:3000
   allowed-methods:
     - GET
@@ -52,7 +47,7 @@ security:
   valid-application-roles:
     - ROLE_ADMIN
     - ROLE_SUPER
-    - ROLE_USER
+    - ROLE_MODERATOR
   super-admins:
     - admin1@gmail.com
     - admin2@gmail.com
