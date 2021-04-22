@@ -11,20 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/roles")
+@IsSuper
 public class RoleController {
 
   @Autowired
   private RoleService roleService;
 
   @PutMapping
-  @IsSuper
   @ResponseStatus(value = HttpStatus.CREATED)
   public void addRole(@RequestParam String uid, @RequestParam String role) throws Exception {
     roleService.addRole(uid, role);
   }
 
   @DeleteMapping
-  @IsSuper
   public void removeRole(@RequestParam String uid, @RequestParam String role) {
     roleService.removeRole(uid, role);
   }
