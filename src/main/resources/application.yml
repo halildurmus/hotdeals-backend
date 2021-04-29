@@ -1,4 +1,3 @@
-GOOGLE_APPLICATION_CREDENTIALS: google-credentials.json
 management:
   health:
     elasticsearch:
@@ -9,12 +8,9 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-      uri: mongodb://localhost/db
     rest:
       detection-strategy: annotated
 security:
-  firebase-props:
-    database-url: ${FIREBASE_DATABASE}
   allow-credentials: true
   allowed-origins:
     - http://localhost:3000
@@ -49,6 +45,3 @@ security:
     - ROLE_ADMIN
     - ROLE_SUPER
     - ROLE_MODERATOR
-  super-admins:
-    - admin1@gmail.com
-    - admin2@gmail.com
