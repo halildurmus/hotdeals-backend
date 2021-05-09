@@ -14,7 +14,7 @@ spring:
       detection-strategy: annotated
 security:
   firebase-props:
-    database-url: ${FIREBASE_DATABASE}
+    database-url: https://xxxxx-xxxx.firebaseapp.com
   allow-credentials: true
   allowed-origins:
     - http://localhost:3000
