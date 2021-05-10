@@ -58,6 +58,7 @@ public class CommentControllerIntegrationTest {
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        .andExpect(jsonPath("$.dealId").value(not(empty())))
         .andExpect(jsonPath("$.postedBy").value(not(empty())))
         .andExpect(jsonPath("$.message").value(DummyComments.comment1.getMessage()));
   }
@@ -92,6 +93,7 @@ public class CommentControllerIntegrationTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
+        .andExpect(jsonPath("$._embedded.comments[0].dealId").value(not(empty())))
         .andExpect(jsonPath("$._embedded.comments[0].postedBy").value(not(empty())))
         .andExpect(jsonPath("$._embedded.comments[0].message").value(DummyComments.comment1.getMessage()));
   }

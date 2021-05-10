@@ -27,6 +27,9 @@ public class Comment {
   private String id;
 
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
+  private ObjectId dealId;
+
+  @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 
   @NotBlank
@@ -40,7 +43,8 @@ public class Comment {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Comment(ObjectId postedBy, String message) {
+  public Comment(ObjectId dealId, ObjectId postedBy, String message) {
+    this.dealId = dealId;
     this.postedBy = postedBy;
     this.message = message;
   }
