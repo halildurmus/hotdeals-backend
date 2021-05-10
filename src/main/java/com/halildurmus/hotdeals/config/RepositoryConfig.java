@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.config;
 
 import com.halildurmus.hotdeals.category.Category;
+import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.store.Store;
 import com.halildurmus.hotdeals.user.User;
@@ -15,7 +16,7 @@ class RepositoryConfig implements RepositoryRestConfigurer {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config,
       CorsRegistry cors) {
-    config.exposeIdsFor(Category.class, Deal.class, Store.class, User.class);
+    config.exposeIdsFor(Category.class, Comment.class, Deal.class, Store.class, User.class);
   }
 
 }
