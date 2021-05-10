@@ -82,7 +82,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     if (user != null && decodedToken != null) {
       // Handle Super role
-      if (securityProps.getSuperAdmins().contains(user.getEmail())) {
+      if (securityProps.getSuperAdmins() != null && securityProps.getSuperAdmins().contains(user.getEmail())) {
         if (!decodedToken.getClaims().containsKey(RoleConstants.ROLE_SUPER)) {
           try {
             roleService.addRole(decodedToken.getUid(), RoleConstants.ROLE_SUPER);
