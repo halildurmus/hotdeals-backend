@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @ActiveProfiles("integration-test")
 @AutoConfigureJsonTesters
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class CategoryControllerIntegrationTest {
 
   @Autowired
