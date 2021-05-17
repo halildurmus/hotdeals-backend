@@ -13,8 +13,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   List<Deal> findAllByOrderByLikesDesc();
 
-  List<Deal> findAllByOrderByViewsDesc();
+ // List<Deal> findAllByOrderByPrice();
 
-  Optional<Deal> findByPostedBy(ObjectId postedBy);
+  List<Deal> findAllByPostedBy(ObjectId postedBy);
 
 }
