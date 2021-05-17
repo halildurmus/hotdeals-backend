@@ -1,15 +1,15 @@
 package com.halildurmus.hotdeals.deal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
-import java.util.Optional;
+import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,19 +30,19 @@ class DealRepositoryTest {
     this.dealRepository.save(DummyDeals.deal1);
     final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
 
-    Optional<Deal> deal = dealRepository.findByPostedBy(objectId);
+    List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
 
-    assertTrue(deal.isPresent());
-    assertEquals(deal.get().getPostedBy(), objectId);
+    assertFalse(deals.isEmpty());
+    assertEquals(deals.get(0).getPostedBy(), objectId);
   }
 
   @Test
   void findByPostedByShouldNotReturnDealIfNoDealFound() {
     final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
 
-    Optional<Deal> deal = dealRepository.findByPostedBy(objectId);
+    List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
 
-    assertTrue(deal.isEmpty());
+    assertTrue(deals.isEmpty());
   }
 
 }
