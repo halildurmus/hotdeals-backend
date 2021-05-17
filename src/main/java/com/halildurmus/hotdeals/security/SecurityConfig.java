@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(restSecProps.getAllowedPublicApis().toArray(String[]::new)).permitAll()
         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .antMatchers(HttpMethod.GET, "/actuator/*").permitAll()
-        .antMatchers(HttpMethod.GET, "/deals").permitAll()
+        .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .antMatchers(HttpMethod.POST, "/users").permitAll()
         .antMatchers(HttpMethod.POST, "/categories").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, "/categories").access("hasRole('ROLE_SUPER')")
