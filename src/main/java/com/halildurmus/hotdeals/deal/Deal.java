@@ -2,6 +2,7 @@ package com.halildurmus.hotdeals.deal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.halildurmus.hotdeals.util.ObjectIdArrayJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,6 +40,14 @@ public class Deal {
   @NotNull
   private ObjectId store;
 
+  private int dealScore = 0;
+
+  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
+  private List<ObjectId> upVoters = new ArrayList<>();
+
+  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
+  private List<ObjectId> downVoters = new ArrayList<>();
+
   @Indexed
   @NotBlank
   private String category;
@@ -55,8 +64,6 @@ public class Deal {
 
   // @URL
   private List<String> photos = new ArrayList<>();
-
-  private int likes = 0;
 
   private int views = 0;
 
