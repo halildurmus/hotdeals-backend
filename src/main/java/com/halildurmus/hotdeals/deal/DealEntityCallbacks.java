@@ -1,7 +1,10 @@
 package com.halildurmus.hotdeals.deal;
 
+import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.User;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertCallback;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveCallback;
@@ -11,14 +14,16 @@ import org.springframework.stereotype.Component;
 @Component
 class DealEntityCallbacks implements BeforeConvertCallback<Deal>, BeforeSaveCallback<Deal> {
 
+  @Autowired
+  private SecurityService securityService;
+
   @Override
   public Deal onBeforeSave(Deal deal, Document document, String collection) {
     if (collection.equals("deals")) {
-      // TODO: Replace this with the current authenticated user's id when user authentication
-      //  is implemented.
-      ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
-      deal.setPostedBy(objectId);
-      document.put("postedBy", objectId);
+      final User user = securityService.getUser();
+      final ObjectId userId = new ObjectId(user.getId());
+      deal.setPostedBy(userId);
+      document.put("postedBy", userId);
     }
 
     return deal;
