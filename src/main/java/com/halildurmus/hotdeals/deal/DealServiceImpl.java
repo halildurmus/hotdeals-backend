@@ -22,23 +22,23 @@ public class DealServiceImpl implements DealService {
     List<ObjectId> downVoters = deal.getDownVoters();
 
     if (voteType.equals("upVote")) {
-      downVoters.remove(new ObjectId(userId));
-      if (!upVoters.contains(new ObjectId(userId))) {
+      if (upVoters.contains(new ObjectId(userId))) {
+        throw new Exception("You've already upvoted this deal before!");
+      } else {
+        downVoters.remove(new ObjectId(userId));
         upVoters.add(new ObjectId(userId));
         deal.setUpVoters(upVoters);
-      } else {
-        throw new Exception("You've already upvoted this deal before!");
       }
     } else if (voteType.equals("downVote")) {
-      upVoters.remove(new ObjectId(userId));
-      if (!downVoters.contains(new ObjectId(userId))) {
+      if (downVoters.contains(new ObjectId(userId))) {
+        throw new Exception("You've already downvoted this deal before!");
+      } else {
+        upVoters.remove(new ObjectId(userId));
         downVoters.add(new ObjectId(userId));
         deal.setDownVoters(downVoters);
-      } else {
-        throw new Exception("You've already downvoted this deal before!");
       }
     } else {
-      throw new Exception("Invalid vote type");
+      throw new Exception("Invalid vote type! Valid vote types: {upVote, downVote}");
     }
 
     repository.save(deal);
