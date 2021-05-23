@@ -9,6 +9,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "comments", path = "comments")
 public interface CommentRepository extends MongoRepository<Comment, String> {
 
+  int countCommentsByPostedBy(ObjectId postedBy);
+
   Optional<List<Comment>> findByDealId(ObjectId dealId);
 
 }
