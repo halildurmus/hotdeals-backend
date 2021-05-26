@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,7 +57,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     String bearerToken = null;
     String authHeader = request.getHeader("Authorization");
 
-    if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+    if (ObjectUtils.isNotEmpty(authHeader) && authHeader.startsWith("Bearer ") && authHeader.length() > 50) {
       bearerToken = authHeader.substring(7);
     }
 
@@ -69,7 +70,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     logger.info("Token: " + token);
 
     try {
-      if (token != null && !token.equalsIgnoreCase("undefined")) {
+      if (ObjectUtils.isNotEmpty(token)) {
         decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
       }
     } catch (FirebaseAuthException e) {
