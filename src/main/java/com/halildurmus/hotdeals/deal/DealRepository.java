@@ -8,6 +8,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "deals", path = "deals")
 public interface DealRepository extends MongoRepository<Deal, String> {
 
+  int countDealsByStore(ObjectId storeId);
+
   int countDealsByPostedBy(ObjectId postedBy);
 
   List<Deal> findAllByOrderByCreatedAtDesc();
@@ -17,5 +19,7 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   // List<Deal> findAllByOrderByPrice();
 
   List<Deal> findAllByPostedBy(ObjectId postedBy);
+
+  List<Deal> findAllByStore(ObjectId storeId);
 
 }
