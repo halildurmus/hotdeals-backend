@@ -1,8 +1,11 @@
 package com.halildurmus.hotdeals.user;
 
+import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -15,11 +18,14 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private SecurityService securityService;
 
+  private final DealRepository dealRepository;
   private final UserRepository repository;
   private final FakerUtil fakerUtil;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, FakerUtil fakerUtil) {
+  public UserServiceImpl(DealRepository dealRepository,
+      UserRepository userRepository, FakerUtil fakerUtil) {
+    this.dealRepository = dealRepository;
     this.repository = userRepository;
     this.fakerUtil = fakerUtil;
   }
@@ -75,6 +81,48 @@ public class UserServiceImpl implements UserService {
       repository.save(user);
     } else {
       throw new Exception("You've already unblocked this user before!");
+    }
+
+    return user;
+  }
+
+  @Override
+  public List<Deal> getFavorites() {
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+
+    return (List<Deal>) dealRepository.findAllById(favorites.keySet());
+  }
+
+  @Override
+  public User favorite(String dealId) throws Exception {
+    dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+
+    if (favorites.containsKey(dealId)) {
+      throw new Exception("You've already favorited this deal before!");
+    } else {
+      favorites.put(dealId, true);
+      user.setFavorites(favorites);
+      repository.save(user);
+    }
+
+    return user;
+  }
+
+  @Override
+  public User unfavorite(String dealId) throws Exception {
+    dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+
+    if (favorites.containsKey(dealId)) {
+      favorites.remove(dealId);
+      user.setFavorites(favorites);
+      repository.save(user);
+    } else {
+      throw new Exception("You've already unfavorited this deal before!");
     }
 
     return user;

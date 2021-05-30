@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ class UserServiceImplTest {
   private FakerUtil fakerUtil;
 
   @MockBean
+  private DealRepository dealRepository;
+
+  @MockBean
   private UserRepository userRepository;
 
   private UserService userService;
@@ -29,7 +33,7 @@ class UserServiceImplTest {
   public void createShouldSaveUser() {
     when(fakerUtil.generateNickname()).thenReturn("MrNobody123");
     when(userRepository.insert(any(User.class))).thenReturn(DummyUsers.user4WithoutNickname);
-    userService = new UserServiceImpl(userRepository, fakerUtil);
+    userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
 
     User user = userService.create(DummyUsers.user4WithoutNickname);
 
@@ -41,7 +45,7 @@ class UserServiceImplTest {
   public void createShouldCallInsertTwiceIfNicknameIsNotUnique() {
     when(fakerUtil.generateNickname()).thenReturn("MrNobody123").thenReturn("MrNobody124");
     when(userRepository.insert(any(User.class))).thenThrow(new DuplicateKeyException("E11000 duplicate key error index: nickname")).thenReturn(DummyUsers.user4WithoutNickname);
-    userService = new UserServiceImpl(userRepository, fakerUtil);
+    userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
 
     User user = userService.create(DummyUsers.user4WithoutNickname);
 

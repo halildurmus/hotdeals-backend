@@ -3,7 +3,9 @@ package com.halildurmus.hotdeals.user;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -47,6 +49,8 @@ public class User {
   private String avatar;
 
   private List<String> blockedUsers = new ArrayList<>();
+
+  private Map<String, Boolean> favorites = new HashMap<>();
 
   @CreatedDate
   @Setter(AccessLevel.NONE)

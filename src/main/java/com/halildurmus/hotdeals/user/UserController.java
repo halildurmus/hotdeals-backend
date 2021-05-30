@@ -1,6 +1,9 @@
 package com.halildurmus.hotdeals.user;
 
+import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
+import java.util.List;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
@@ -57,6 +60,43 @@ public class UserController {
     }
 
     return ResponseEntity.status(200).body(response);
+  }
+
+  @GetMapping("/users/favorites")
+  public ResponseEntity<List<Deal>> getFavorites() {
+    List<Deal> deals = service.getFavorites();
+
+    return ResponseEntity.status(200).body(deals);
+  }
+
+  @PostMapping("/users/favorite/{dealId}")
+  public ResponseEntity<Object> favorite(@PathVariable String dealId)
+      throws Exception {
+    if (!ObjectId.isValid(dealId)) {
+      throw new IllegalArgumentException("Invalid dealId!");
+    }
+
+    User user = service.favorite(dealId);
+    if (user == null) {
+      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.status(200).body(user);
+  }
+
+  @PostMapping("/users/unfavorite/{dealId}")
+  public ResponseEntity<Object> unfavorite(@PathVariable String dealId)
+      throws Exception {
+    if (!ObjectId.isValid(dealId)) {
+      throw new IllegalArgumentException("Invalid dealId!");
+    }
+
+    User user = service.unfavorite(dealId);
+    if (user == null) {
+      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.status(200).body(user);
   }
 
 }
