@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,10 +43,11 @@ public class User {
 
   @Indexed(unique = true)
   @NotBlank
+  @Size(min = 5, max = 20)
   private String nickname;
 
   @URL
-  @NotNull
+  @NotBlank
   private String avatar;
 
   private List<String> blockedUsers = new ArrayList<>();
