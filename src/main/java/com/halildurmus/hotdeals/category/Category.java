@@ -2,7 +2,9 @@ package com.halildurmus.hotdeals.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +35,9 @@ public class Category {
   @NotBlank
   private String category;
 
+  @NotNull
+  private Map<String, Object> icon;
+
   @CreatedDate
   @Setter(AccessLevel.NONE)
   private Instant createdAt;
@@ -41,10 +46,11 @@ public class Category {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Category(String name, String parent, String category) {
+  public Category(String name, String parent, String category, Map<String, Object> icon) {
     this.name = name;
     this.parent = parent;
     this.category = category;
+    this.icon = icon;
   }
 
 }
