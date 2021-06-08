@@ -74,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(restSecProps.getAllowedPublicApis().toArray(String[]::new)).permitAll()
         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .antMatchers(HttpMethod.GET, "/actuator/*").permitAll()
+        .antMatchers(HttpMethod.GET, "/categories/**").permitAll()
         .antMatchers(HttpMethod.GET, "/comments/**").permitAll()
         .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .antMatchers(HttpMethod.GET, "/stores/**").permitAll()
