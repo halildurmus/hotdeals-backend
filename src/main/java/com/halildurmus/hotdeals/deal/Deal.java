@@ -58,6 +58,12 @@ public class Deal {
   @NotBlank
   private String description;
 
+  @NotNull
+  private double price;
+
+  @NotNull
+  private double discountPrice;
+
   @URL
   @NotNull
   private String coverPhoto;
@@ -66,7 +72,6 @@ public class Deal {
   @NotNull
   private String dealUrl;
 
-  // @URL
   private List<String> photos = new ArrayList<>();
 
   private int views = 0;
@@ -79,20 +84,24 @@ public class Deal {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Deal(String title, String description, ObjectId store, String category, String coverPhoto,
-      String dealUrl) {
+  public Deal(String title, String description, double price, double discountPrice, ObjectId store,
+      String category, String coverPhoto, String dealUrl) {
     this.title = title;
     this.description = description;
+    this.price = price;
+    this.discountPrice = discountPrice;
     this.store = store;
     this.category = category;
     this.coverPhoto = coverPhoto;
     this.dealUrl = dealUrl;
   }
 
-  public Deal(String title, String description, ObjectId store, String category, String coverPhoto,
-      String dealUrl, List<String> photos) {
+  public Deal(String title, String description, double price, double discountPrice, ObjectId store,
+      String category, String coverPhoto, String dealUrl, List<String> photos) {
     this.title = title;
     this.description = description;
+    this.price = price;
+    this.discountPrice = discountPrice;
     this.store = store;
     this.category = category;
     this.coverPhoto = coverPhoto;
