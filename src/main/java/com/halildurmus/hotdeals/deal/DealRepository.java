@@ -16,7 +16,7 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   List<Deal> findAllByOrderByDealScoreDesc();
 
-  // List<Deal> findAllByOrderByPrice();
+  List<Deal> findAllByOrderByDiscountPrice();
 
   List<Deal> findAllByCategoryStartsWith(String category);
 

@@ -12,6 +12,11 @@ spring:
       uri: mongodb://localhost/db
     rest:
       detection-strategy: annotated
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+      username: admin
+      password: password
 security:
   firebase-props:
     database-url: https://xxxxx-xxxx.firebaseapp.com

@@ -3,6 +3,8 @@ package com.halildurmus.hotdeals.deal;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import com.halildurmus.hotdeals.deal.es.EsDeal;
+import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -12,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -21,7 +24,26 @@ public class DealServiceImpl implements DealService {
   private DealRepository repository;
 
   @Autowired
+  private EsDealRepository esDealRepository;
+
+  @Autowired
   private MongoTemplate mongoTemplate;
+
+  @Transactional
+  @Override
+  public Deal saveOrUpdateDeal(Deal deal) {
+    Deal returnValue = repository.save(deal);
+    esDealRepository.save(new EsDeal(deal));
+
+    return returnValue;
+  }
+
+  @Transactional
+  @Override
+  public void removeDeal(String id) {
+    repository.deleteById(id);
+    esDealRepository.deleteEsDealById(id);
+  }
 
   @Override
   public Deal incrementViewsCounter(String dealId) throws Exception {
@@ -39,7 +61,8 @@ public class DealServiceImpl implements DealService {
   @Override
   public Deal vote(String dealId, ObjectId userId, String voteType)
       throws Exception {
-    final Deal deal = repository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
+    final Deal deal = repository.findById(dealId)
+        .orElseThrow(() -> new Exception("Deal could not be found!"));
     final List<ObjectId> upVoters = deal.getUpVoters();
     final List<ObjectId> downVoters = deal.getDownVoters();
 
