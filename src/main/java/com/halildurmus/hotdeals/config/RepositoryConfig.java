@@ -17,7 +17,8 @@ class RepositoryConfig implements RepositoryRestConfigurer {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config,
       CorsRegistry cors) {
-    config.exposeIdsFor(Category.class, Comment.class, Deal.class, Report.class, Store.class, User.class);
+    config.exposeIdsFor(Category.class, Comment.class, Deal.class, Report.class, Store.class,
+        User.class);
   }
 
 }

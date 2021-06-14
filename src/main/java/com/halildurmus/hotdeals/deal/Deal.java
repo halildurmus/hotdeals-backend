@@ -59,10 +59,10 @@ public class Deal {
   private String description;
 
   @NotNull
-  private double price;
+  private Double price;
 
   @NotNull
-  private double discountPrice;
+  private Double discountPrice;
 
   @URL
   @NotNull
