@@ -52,9 +52,11 @@ public class Deal {
   @NotBlank
   private String category;
 
+  @Indexed
   @NotBlank
   private String title;
 
+  @Indexed
   @NotBlank
   private String description;
 

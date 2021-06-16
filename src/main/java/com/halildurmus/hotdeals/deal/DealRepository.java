@@ -2,7 +2,9 @@ package com.halildurmus.hotdeals.deal;
 
 import java.util.List;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "deals", path = "deals")
@@ -19,6 +21,9 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   List<Deal> findAllByOrderByDiscountPrice();
 
   List<Deal> findAllByCategoryStartsWith(String category);
+
+  @Query("{ $or: [{\"title\" : { $regex: /.*?0.*/, $options: 'i'}}, {\"description\" : { $regex: /.*?0.*/, $options: 'i'}}] }")
+  List<Deal> queryDeals(String keyword, Pageable pageable);
 
   List<Deal> findAllByPostedBy(ObjectId postedBy);
 
