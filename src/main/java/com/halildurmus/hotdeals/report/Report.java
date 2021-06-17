@@ -3,6 +3,7 @@ package com.halildurmus.hotdeals.report;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
@@ -22,7 +23,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class Report {
+public class Report implements Serializable {
+
+  private static final long serialVersionUID = 1234567L;
 
   @Id
   private String id;
