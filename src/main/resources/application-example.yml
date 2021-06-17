@@ -1,10 +1,4 @@
 GOOGLE_APPLICATION_CREDENTIALS: google-credentials.json
-management:
-  health:
-    elasticsearch:
-      enabled: false
-    redis:
-      enabled: false
 spring:
   data:
     mongodb:
