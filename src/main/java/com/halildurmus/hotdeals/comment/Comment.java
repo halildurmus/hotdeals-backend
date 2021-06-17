@@ -3,6 +3,7 @@ package com.halildurmus.hotdeals.comment;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
+import java.io.Serializable;
 import java.time.Instant;
 import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -21,7 +22,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class Comment {
+public class Comment implements Serializable {
+
+  private static final long serialVersionUID = 1234567L;
 
   @Id
   private String id;
