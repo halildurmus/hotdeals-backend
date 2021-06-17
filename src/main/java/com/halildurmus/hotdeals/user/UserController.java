@@ -2,10 +2,12 @@ package com.halildurmus.hotdeals.user;
 
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
+import java.time.Duration;
 import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +39,8 @@ public class UserController {
   public ResponseEntity<Object> getAuthenticatedUser() {
     User response = securityService.getUser();
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.status(200).cacheControl(CacheControl.maxAge(Duration.ZERO))
+        .cacheControl(CacheControl.noCache()).cacheControl(CacheControl.noStore()).body(response);
   }
 
   @PostMapping("/users/block/{userId}")

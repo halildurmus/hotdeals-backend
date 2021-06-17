@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
+
+  private static final long serialVersionUID = 1234567L;
 
   @Id
   private String id;

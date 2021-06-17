@@ -1,6 +1,10 @@
 package com.halildurmus.hotdeals.user;
 
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -8,10 +12,22 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @RepositoryRestResource(collectionResourceRel = "users", path = "users")
 public interface UserRepository extends MongoRepository<User, String> {
 
+  @Override
+  @Caching(put = {@CachePut(value = "users", key = "#entity.id")},
+      evict = {
+      @CacheEvict(value = "users:findByEmail", key = "#entity.email"),
+      @CacheEvict(value = "users:findByNickname", key = "#entity.nickname"),
+      @CacheEvict(value = "users:findByUid", key = "#entity.uid")
+  })
+  <S extends User> S save(S entity);
+
+  @Cacheable(value = "users:findByEmail", key = "#email", condition = "#email.blank != true")
   Optional<User> findByEmail(String email);
 
+  @Cacheable(value = "users:findByNickname", key = "#nickname", condition = "#nickname.blank != true")
   Optional<User> findByNickname(String nickname);
 
+  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true")
   Optional<User> findByUid(String uid);
 
 }
