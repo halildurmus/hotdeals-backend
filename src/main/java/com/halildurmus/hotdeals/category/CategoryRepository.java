@@ -15,13 +15,13 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
 
   @Override
   @CachePut(value = "categories", key = "#entity.id")
-  @CacheEvict("categories:findAll")
+  @CacheEvict(value = "categories:findAll", allEntries = true)
   <S extends Category> S save(S entity);
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "categories", key = "#id"),
-      @CacheEvict("categories:findAll")
+      @CacheEvict(value = "categories:findAll", allEntries = true)
   })
   void deleteById(String id);
 

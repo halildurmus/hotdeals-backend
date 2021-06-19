@@ -50,6 +50,7 @@ public class DealServiceImpl implements DealService {
     Query query = query(where("_id").is(dealId));
     Update update = new Update().inc("views", 1);
     FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
+
     Deal deal = mongoTemplate.findAndModify(query, update, options, Deal.class);
     if (deal == null) {
       throw new Exception("Deal could not be found!");

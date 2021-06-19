@@ -19,9 +19,9 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       evict = {
           @CacheEvict(value = "deals:countDealsByStore", key = "#entity.store"),
           @CacheEvict(value = "deals:countDealsByPostedBy", key = "#entity.postedBy"),
-          @CacheEvict("deals:findAllByOrderByCreatedAtDesc"),
-          @CacheEvict("deals:findAllByOrderByDealScoreDesc"),
-          @CacheEvict("deals:findAllByOrderByDiscountPrice"),
+          @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true),
           @CacheEvict(value = "deals:findAllByCategoryStartsWith", key = "#entity.category"),
           @CacheEvict(value = "deals:findAllByPostedBy", key = "#entity.postedBy"),
           @CacheEvict(value = "deals:findAllByStore", key = "#entity.store")

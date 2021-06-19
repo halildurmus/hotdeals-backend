@@ -13,6 +13,10 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface UserRepository extends MongoRepository<User, String> {
 
   @Override
+  @CachePut(value = "users", key = "#entity.id")
+  <S extends User> S insert(S entity);
+
+  @Override
   @Caching(put = {@CachePut(value = "users", key = "#entity.id")},
       evict = {
       @CacheEvict(value = "users:findByEmail", key = "#entity.email"),

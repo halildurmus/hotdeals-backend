@@ -15,13 +15,13 @@ public interface ReportRepository extends MongoRepository<Report, String> {
 
   @Override
   @CachePut(value = "reports", key = "#entity.id")
-  @CacheEvict("reports:findAll")
+  @CacheEvict(value = "reports:findAll", allEntries = true)
   <S extends Report> S save(S entity);
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "reports", key = "#id"),
-      @CacheEvict("reports:findAll")
+      @CacheEvict(value = "reports:findAll", allEntries = true)
   })
   void deleteById(String id);
 

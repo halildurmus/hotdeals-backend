@@ -14,13 +14,13 @@ public interface StoreRepository extends MongoRepository<Store, String> {
 
   @Override
   @CachePut(value = "stores", key = "#entity.id")
-  @CacheEvict("stores:findAll")
+  @CacheEvict(value = "stores:findAll", allEntries = true)
   <S extends Store> S save(S entity);
 
   @Override
   @Caching(evict = {
       @CacheEvict(value = "stores", key = "#id"),
-      @CacheEvict("stores:findAll")
+      @CacheEvict(value = "stores:findAll", allEntries = true)
   })
   void deleteById(String id);
 
