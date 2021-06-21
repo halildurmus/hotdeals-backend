@@ -55,6 +55,8 @@ public class User implements Serializable {
 
   private List<String> blockedUsers = new ArrayList<>();
 
+  private List<String> fcmTokens = new ArrayList<>();
+
   private Map<String, Boolean> favorites = new HashMap<>();
 
   @CreatedDate
