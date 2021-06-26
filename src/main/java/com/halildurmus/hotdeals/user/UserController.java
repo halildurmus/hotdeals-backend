@@ -4,6 +4,7 @@ import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -41,6 +42,14 @@ public class UserController {
 
     return ResponseEntity.status(200).cacheControl(CacheControl.maxAge(Duration.ZERO))
         .cacheControl(CacheControl.noCache()).cacheControl(CacheControl.noStore()).body(response);
+  }
+
+  @PostMapping("/users/logout")
+  public ResponseEntity<Object> logout(@RequestBody Map<String, String> json) {
+    final String fcmToken = json.get("fcmToken");
+    service.logout(fcmToken);
+
+    return ResponseEntity.status(200).body(HttpStatus.OK);
   }
 
   @PostMapping("/users/block/{userId}")
