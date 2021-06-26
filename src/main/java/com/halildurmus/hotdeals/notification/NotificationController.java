@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.notification;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +15,9 @@ public class NotificationController {
   private NotificationService notificationService;
 
   @PostMapping("/notifications")
-  public String sendNotification(@RequestBody Note note, @RequestParam String token)
-      throws FirebaseMessagingException {
-    return notificationService.sendNotification(note, token);
+  public int sendNotification(@RequestBody Note note, @RequestParam List<String> tokens)
+      throws Exception {
+    return notificationService.sendNotification(note, tokens);
   }
 
 }
