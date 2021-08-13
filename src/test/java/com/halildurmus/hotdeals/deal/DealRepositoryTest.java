@@ -4,18 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
+import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.User;
 import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("integration-test")
-class DealRepositoryTest {
+class DealRepositoryTest extends BaseIntegrationTest {
 
   @Autowired
   private DealRepository dealRepository;
@@ -25,11 +30,17 @@ class DealRepositoryTest {
     this.dealRepository.deleteAll();
   }
 
+  @MockBean
+  SecurityService securityService;
+
+  static User fakeUser = new User("607345b0eeeee1452898128b");
+
   @Test
   void findByPostedByShouldReturnDeal() {
-    this.dealRepository.save(DummyDeals.deal1);
-    final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
+    Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
+    this.dealRepository.save(DummyDeals.deal1);
+    final ObjectId objectId = new ObjectId(fakeUser.getId());
     List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
 
     assertFalse(deals.isEmpty());

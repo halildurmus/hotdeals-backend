@@ -5,15 +5,20 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
+import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,7 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ActiveProfiles("integration-test")
 @AutoConfigureJsonTesters
 @AutoConfigureMockMvc(addFilters = false)
-public class DealControllerIntegrationTest {
+public class DealControllerIntegrationTest extends BaseIntegrationTest {
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -42,18 +47,25 @@ public class DealControllerIntegrationTest {
     mongoTemplate.dropCollection("deals");
   }
 
+  @MockBean
+  SecurityService securityService;
+
+  static User fakeUser = new User("607345b0eeeee1452898128b");
+
   // TODO: Write test cases for validating mandatory fields.
 
   @Test
   @DisplayName("POST /deals")
   public void shouldCreateDealThenReturnDeal() throws Exception {
+    Mockito.when(securityService.getUser()).thenReturn(fakeUser);
+
     RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/deals")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyDeals.deal1).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
+    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$.postedBy").value(not(empty())));
   }
@@ -76,6 +88,8 @@ public class DealControllerIntegrationTest {
   @Test
   @DisplayName("GET /deals (returns 1 deal)")
   public void shouldReturnOneDealInArray() throws Exception {
+    Mockito.when(securityService.getUser()).thenReturn(fakeUser);
+
     mongoTemplate.insert(DummyDeals.deal1);
 
     RequestBuilder requestBuilder = MockMvcRequestBuilders
