@@ -1,4 +1,3 @@
-GOOGLE_APPLICATION_CREDENTIALS: google-credentials.json
 spring:
   data:
     mongodb:
