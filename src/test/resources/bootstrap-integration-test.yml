@@ -1,11 +1,18 @@
 embedded:
   containers:
     enabled: true
+  elasticsearch:
+    dockerImage: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    enabled: true
+    reuseContainer: true
   mongodb:
-    dockerImage: mongo:4.4.4
+    dockerImage: mongo:latest
     enabled: true
     reuseContainer: true
 spring:
   data:
     mongodb:
       uri: mongodb://${embedded.mongodb.host}:${embedded.mongodb.port}/${embedded.mongodb.database}
+  elasticsearch:
+    rest:
+      uris: http://${embedded.elasticsearch.host}:${embedded.elasticsearch.httpPort}

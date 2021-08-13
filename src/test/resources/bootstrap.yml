@@ -1,5 +1,7 @@
 embedded:
   containers:
     enabled: false
+  elasticsearch:
+    enabled: false
   mongodb:
     enabled: false
