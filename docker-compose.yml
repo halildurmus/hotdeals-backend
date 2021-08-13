@@ -1,7 +1,7 @@
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-    container_name: elasticsearch
+    container_name: hotdeals_elasticsearch
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx512m
@@ -10,11 +10,11 @@ services:
       - 9200:9200
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: hotdeals_mongodb
     ports:
       - 27017:27017
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: hotdeals_redis
     ports:
       - 6379:6379
