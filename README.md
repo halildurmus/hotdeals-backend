@@ -14,8 +14,8 @@
 * [Features](#features)
 * [Documentation](#documentation)
 * [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
+    * [Prerequisites](#prerequisites)
+    * [Installation](#installation)
 * [Roadmap](#roadmap)
 * [Code Contributors](#code-contributors)
 * [Contributing](#-contributing)
@@ -43,29 +43,23 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 - Java 11+
-- Docker (for tests)
-- You need to have **[MongoDB](https://www.mongodb.com)**, **[Redis](https://redis.io)** and **[Elasticsearch](https://www.elastic.co)** installed on your pc.  
-- Also you need to have a **[Firebase](https://firebase.google.com)** account and setup **[Firebase Authentication](https://firebase.google.com/products/auth)** and **[Firebase Cloud Messaging](https://firebase.google.com/products/dynamic-links)** services.
-
-#### 1. MongoDB Installation
-1. [Install MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
-2. Start the MongoDB instance.
-
-#### 2. Redis Installation
-1. [Install Redis](https://redis.io/topics/quickstart)
-2. Run `redis-server` to start the Redis server.
-
-#### 3. Elasticsearch Installation
-1. [Install Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
-2. Start the Elasticsearch instance.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
+- You need to create a **[Firebase](https://firebase.google.com)** account and setup **[Firebase Authentication](https://firebase.google.com/products/auth)** and **[Firebase Cloud Messaging](https://firebase.google.com/products/dynamic-links)** services.
 
 ### Installation
 
 1. Clone the repo using: `git clone https://github.com/halildurmus/hotdeals-backend.git`
-2. Go to `src/main/resources` folder. In here you will find an `application-example.yaml` file. Copy it and rename it to `application.yaml`.
+2. In the `src/main/resources` directory, copy the `application-example.yaml` file and rename it to `application.yaml`.
 3. Open the `application.yaml` file and change the env variables to fit your environment.
-4. Run the app using `mvnw spring-boot:run`
-5. Open your browser and navigate to `localhost:8080/actuator/health`. You should now see the status is `UP` on that JSON response.
+4. Start the **Docker Desktop**.
+5. In the project root directory, run `docker-compose up -d` to start the containers for **MongoDB, Redis and Elasticsearch**.
+   This may take a few minutes the first time as the container images need to be downloaded.
+6. Download the configuration file from the [Firebase Console](https://console.firebase.google.com) (google-services.json) and copy it into the `src/main/resources` directory.
+7. Set the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the file path of the `google-services.json` file.
+    * On Windows, run: `set GOOGLE_APPLICATION_CREDENTIALS=C:\Users\username\Desktop\hotdeals-backend\src\main\resources\google-services.json`.
+    * On Linux or macOS, run: `export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/google-services.json"`.
+8. Run the app using `mvnw spring-boot:run`.
+9. Open your browser and navigate to `localhost:8080/actuator/health`. You should now see the status is `UP` on that JSON response.
 
 ## Roadmap
 
