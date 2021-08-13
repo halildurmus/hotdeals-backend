@@ -3,6 +3,7 @@ package com.halildurmus.hotdeals.store;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.store.dummy.DummyStores;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ActiveProfiles("integration-test")
 @AutoConfigureJsonTesters
 @AutoConfigureMockMvc
-public class StoreControllerIntegrationTest {
+public class StoreControllerIntegrationTest extends BaseIntegrationTest {
 
   @Autowired
   private MongoTemplate mongoTemplate;

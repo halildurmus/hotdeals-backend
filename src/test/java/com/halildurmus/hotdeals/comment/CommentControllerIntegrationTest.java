@@ -5,14 +5,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
-import com.halildurmus.hotdeals.config.FirebaseConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ActiveProfiles("integration-test")
 @AutoConfigureJsonTesters
 @AutoConfigureMockMvc(addFilters = false)
-public class CommentControllerIntegrationTest {
+public class CommentControllerIntegrationTest extends BaseIntegrationTest {
 
   @Autowired
   private MongoTemplate mongoTemplate;
