@@ -44,7 +44,7 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 - Java 11+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- You need to create a **[Firebase](https://firebase.google.com)** account and setup **[Firebase Authentication](https://firebase.google.com/products/auth)** and **[Firebase Cloud Messaging](https://firebase.google.com/products/dynamic-links)** services.
+- You need to create a [Firebase](https://firebase.google.com) account and setup [Firebase Authentication](https://firebase.google.com/products/auth) and [Firebase Cloud Messaging](https://firebase.google.com/products/dynamic-links) services.
 
 ### Installation
 
