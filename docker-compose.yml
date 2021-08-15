@@ -11,6 +11,10 @@ services:
   mongodb:
     image: mongo:latest
     container_name: hotdeals_mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=db
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - 27017:27017
   redis:

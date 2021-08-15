@@ -2,7 +2,8 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-      uri: mongodb://localhost/db
+      database: db
+      uri: mongodb://localhost:27017
     rest:
       detection-strategy: annotated
   elasticsearch:
