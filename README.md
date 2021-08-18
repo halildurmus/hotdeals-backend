@@ -49,17 +49,16 @@ To get a local copy up and running follow these simple steps.
 ### Installation
 
 1. Clone the repo using: `git clone https://github.com/halildurmus/hotdeals-backend.git`
-2. In the `src/main/resources` directory, copy the `application-example.yaml` file and rename it to `application.yaml`.
-3. Open the `application.yaml` file and change the env variables to fit your environment.
-4. Start the **Docker Desktop**.
-5. In the project root directory, run `docker-compose up -d` to start the containers for **MongoDB, Redis and Elasticsearch**.
+2. In the `src/main/resources` directory, open the `application.yaml` file and change the env variables to fit your environment.
+3. Start the **Docker Desktop**.
+4. In the project root directory, run `docker-compose up -d` to start the containers for **MongoDB, Redis and Elasticsearch**.
    This may take a few minutes the first time as the container images need to be downloaded.
-6. Download the configuration file from the [Firebase Console](https://console.firebase.google.com) (google-services.json) and copy it into the `src/main/resources` directory.
-7. Set the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the file path of the `google-services.json` file.
+5. Download the configuration file from the [Firebase Console](https://console.firebase.google.com) (google-services.json) and copy it into the `src/main/resources` directory.
+6. Set the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the file path of the `google-services.json` file.
     * On Windows, run: `set GOOGLE_APPLICATION_CREDENTIALS=C:\Users\username\Desktop\hotdeals-backend\src\main\resources\google-services.json`.
     * On Linux or macOS, run: `export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/google-services.json"`.
-8. Run the app using `mvnw spring-boot:run`.
-9. Open your browser and navigate to `localhost:8080/actuator/health`. You should now see the status is `UP` on that JSON response.
+7. Run the app using `mvnw spring-boot:run`.
+8. Open your browser and navigate to `localhost:8080/actuator/health`. You should now see the status is `UP` on that JSON response.
 
 ## Roadmap
 
