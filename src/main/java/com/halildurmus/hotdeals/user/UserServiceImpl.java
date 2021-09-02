@@ -55,8 +55,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void addFcmToken(String fcmToken) {
+    final User user = securityService.getUser();
+    final List<String> fcmTokens = user.getFcmTokens();
+
+    if (!fcmTokens.contains(fcmToken)) {
+      fcmTokens.add(fcmToken);
+      user.setFcmTokens(fcmTokens);
+      repository.save(user);
+    }
+  }
+
+  @Override
   public void logout(String fcmToken) {
-    System.out.println("fcmtoken " + fcmToken);
     final User user = securityService.getUser();
     final List<String> fcmTokens = user.getFcmTokens();
 

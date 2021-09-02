@@ -7,6 +7,8 @@ public interface UserService {
 
   User create(User user);
 
+  void addFcmToken(String fcmToken);
+
   void logout(String fcmToken);
 
   User block(String userId) throws Exception;

@@ -44,6 +44,14 @@ public class UserController {
         .cacheControl(CacheControl.noCache()).cacheControl(CacheControl.noStore()).body(response);
   }
 
+  @PostMapping("/users/add-fcm-token")
+  public ResponseEntity<Object> addFcmToken(@RequestBody Map<String, String> json) {
+    final String fcmToken = json.get("fcmToken");
+    service.addFcmToken(fcmToken);
+
+    return ResponseEntity.status(200).body(HttpStatus.OK);
+  }
+
   @PostMapping("/users/logout")
   public ResponseEntity<Object> logout(@RequestBody Map<String, String> json) {
     final String fcmToken = json.get("fcmToken");
