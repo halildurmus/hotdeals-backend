@@ -4,6 +4,9 @@ management:
       exposure:
         include: "*"
 spring:
+  cache:
+    redis:
+      time-to-live: PT10M
   data:
     mongodb:
       auto-index-creation: true
