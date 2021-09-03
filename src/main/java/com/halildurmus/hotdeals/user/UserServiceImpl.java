@@ -6,6 +6,7 @@ import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -61,6 +62,21 @@ public class UserServiceImpl implements UserService {
 
     if (!fcmTokens.contains(fcmToken)) {
       fcmTokens.add(fcmToken);
+      user.setFcmTokens(fcmTokens);
+      repository.save(user);
+    }
+  }
+
+  @Override
+  public void removeFcmToken(String userUid, String fcmToken){
+    final User user = repository.findByUid(userUid).orElse(null);
+    if (user == null) {
+      return;
+    }
+
+    final List<String> fcmTokens = user.getFcmTokens();
+    if (fcmTokens.contains(fcmToken)) {
+      fcmTokens.remove(fcmToken);
       user.setFcmTokens(fcmTokens);
       repository.save(user);
     }

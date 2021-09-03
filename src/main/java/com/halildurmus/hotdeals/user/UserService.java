@@ -9,6 +9,8 @@ public interface UserService {
 
   void addFcmToken(String fcmToken);
 
+  void removeFcmToken(String userUid, String fcmToken);
+
   void logout(String fcmToken);
 
   User block(String userId) throws Exception;

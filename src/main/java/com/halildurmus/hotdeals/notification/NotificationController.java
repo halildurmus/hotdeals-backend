@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.notification;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
