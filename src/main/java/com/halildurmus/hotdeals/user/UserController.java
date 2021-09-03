@@ -40,6 +40,10 @@ public class UserController {
   public ResponseEntity<Object> getAuthenticatedUser() {
     User response = securityService.getUser();
 
+    if (response == null) {
+      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
+    }
+
     return ResponseEntity.status(200).cacheControl(CacheControl.maxAge(Duration.ZERO))
         .cacheControl(CacheControl.noCache()).cacheControl(CacheControl.noStore()).body(response);
   }
