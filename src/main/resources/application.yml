@@ -10,9 +10,21 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
+      database: db
+      uri: mongodb://localhost:27017
     rest:
       detection-strategy: annotated
+  #elasticsearch:
+    #rest:
+      #uris: localhost:9200
+      #username: admin
+      #password: password
+  #redis:
+    #host: localhost
+    #port: 6379
 security:
+  firebase-props:
+    #database-url: https://xxxxx-xxxx.firebaseapp.com
   allow-credentials: true
   allowed-origins:
     - http://localhost:3000
@@ -47,3 +59,6 @@ security:
     - ROLE_ADMIN
     - ROLE_SUPER
     - ROLE_MODERATOR
+  #super-admins:
+    #- admin1@gmail.com
+    #- admin2@gmail.com
