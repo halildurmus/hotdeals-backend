@@ -30,3 +30,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Firebase Admin ###
+/src/main/resources/firebase-admin.json
+
+### Spring Boot configuration ###
+/src/main/resources/application-*.yml
