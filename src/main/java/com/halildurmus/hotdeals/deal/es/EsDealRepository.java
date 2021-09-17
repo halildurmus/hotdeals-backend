@@ -22,6 +22,4 @@ public interface EsDealRepository extends ElasticsearchRepository<EsDeal, String
   ))
   List<SearchHit<EsDeal>> queryDeals(String keyword, Pageable pageable);
 
-  void deleteEsDealById(String id);
-
 }

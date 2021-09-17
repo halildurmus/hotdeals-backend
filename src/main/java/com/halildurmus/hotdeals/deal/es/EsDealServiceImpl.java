@@ -16,11 +16,6 @@ public class EsDealServiceImpl implements EsDealService {
   private EsDealRepository repository;
 
   @Override
-  public void deleteByDealId(String id) {
-    repository.deleteEsDealById(id);
-  }
-
-  @Override
   public EsDeal saveOrUpdate(EsDeal esDeal) {
     return repository.save(esDeal);
   }

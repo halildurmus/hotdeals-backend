@@ -9,8 +9,6 @@ public interface EsDealService {
 
   EsDeal saveOrUpdate(EsDeal esDeal);
 
-  void deleteByDealId(String id);
-
   Page<EsDeal> findAll(Pageable pageable);
 
   List<SearchHit<EsDeal>> queryDeals(String keyword, Pageable pageable);

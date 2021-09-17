@@ -42,7 +42,7 @@ public class DealServiceImpl implements DealService {
   @Override
   public void removeDeal(String id) {
     repository.deleteById(id);
-    esDealRepository.deleteEsDealById(id);
+    esDealRepository.deleteById(id);
   }
 
   @Override
