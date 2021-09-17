@@ -6,7 +6,6 @@ import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -16,12 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired
-  private SecurityService securityService;
-
   private final DealRepository dealRepository;
   private final UserRepository repository;
   private final FakerUtil fakerUtil;
+  @Autowired
+  private SecurityService securityService;
 
   @Autowired
   public UserServiceImpl(DealRepository dealRepository,
@@ -68,7 +66,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void removeFcmToken(String userUid, String fcmToken){
+  public void removeFcmToken(String userUid, String fcmToken) {
     final User user = repository.findByUid(userUid).orElse(null);
     if (user == null) {
       return;
