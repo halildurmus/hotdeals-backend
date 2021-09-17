@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public User create(User user) {
     boolean isErrorOccurred;
-
     do {
       try {
         final String nickname = fakerUtil.generateNickname();
@@ -57,11 +56,12 @@ public class UserServiceImpl implements UserService {
   public void addFcmToken(String fcmToken) {
     final User user = securityService.getUser();
     final List<String> fcmTokens = user.getFcmTokens();
-
     if (!fcmTokens.contains(fcmToken)) {
       fcmTokens.add(fcmToken);
       user.setFcmTokens(fcmTokens);
       repository.save(user);
+    } else {
+      log.warn("addFcmToken() -> " + user + " already has this fcmToken: " + fcmToken);
     }
   }
 
@@ -77,6 +77,8 @@ public class UserServiceImpl implements UserService {
       fcmTokens.remove(fcmToken);
       user.setFcmTokens(fcmTokens);
       repository.save(user);
+    } else {
+      log.warn("removeFcmToken() -> " + user + " does not have this fcmToken: " + fcmToken);
     }
   }
 
@@ -84,11 +86,12 @@ public class UserServiceImpl implements UserService {
   public void logout(String fcmToken) {
     final User user = securityService.getUser();
     final List<String> fcmTokens = user.getFcmTokens();
-
     if (fcmTokens.contains(fcmToken)) {
       fcmTokens.remove(fcmToken);
       user.setFcmTokens(fcmTokens);
       repository.save(user);
+    } else {
+      log.warn("logout() -> " + user + " does not have this fcmToken: " + fcmToken);
     }
   }
 
@@ -96,14 +99,13 @@ public class UserServiceImpl implements UserService {
   public User block(String userId) throws Exception {
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
-
     if (blockedUsers.contains(userId)) {
       throw new Exception("You've already blocked this user before!");
-    } else {
-      blockedUsers.add(userId);
-      user.setBlockedUsers(blockedUsers);
-      repository.save(user);
     }
+
+    blockedUsers.add(userId);
+    user.setBlockedUsers(blockedUsers);
+    repository.save(user);
 
     return user;
   }
@@ -112,14 +114,13 @@ public class UserServiceImpl implements UserService {
   public User unblock(String userId) throws Exception {
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
-
-    if (blockedUsers.contains(userId)) {
-      blockedUsers.remove(userId);
-      user.setBlockedUsers(blockedUsers);
-      repository.save(user);
-    } else {
+    if (!blockedUsers.contains(userId)) {
       throw new Exception("You've already unblocked this user before!");
     }
+
+    blockedUsers.remove(userId);
+    user.setBlockedUsers(blockedUsers);
+    repository.save(user);
 
     return user;
   }
@@ -137,14 +138,13 @@ public class UserServiceImpl implements UserService {
     dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
-
     if (favorites.containsKey(dealId)) {
       throw new Exception("You've already favorited this deal before!");
-    } else {
-      favorites.put(dealId, true);
-      user.setFavorites(favorites);
-      repository.save(user);
     }
+
+    favorites.put(dealId, true);
+    user.setFavorites(favorites);
+    repository.save(user);
 
     return user;
   }
@@ -154,14 +154,13 @@ public class UserServiceImpl implements UserService {
     dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
-
-    if (favorites.containsKey(dealId)) {
-      favorites.remove(dealId);
-      user.setFavorites(favorites);
-      repository.save(user);
-    } else {
+    if (!favorites.containsKey(dealId)) {
       throw new Exception("You've already unfavorited this deal before!");
     }
+
+    favorites.remove(dealId);
+    user.setFavorites(favorites);
+    repository.save(user);
 
     return user;
   }
