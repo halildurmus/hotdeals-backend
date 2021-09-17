@@ -44,8 +44,7 @@ public class UserController {
       return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
     }
 
-    return ResponseEntity.status(200).cacheControl(CacheControl.maxAge(Duration.ZERO))
-        .cacheControl(CacheControl.noCache()).cacheControl(CacheControl.noStore()).body(response);
+    return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/users/add-fcm-token")
