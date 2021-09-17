@@ -4,9 +4,6 @@ management:
       exposure:
         include: "*"
 spring:
-  cache:
-    redis:
-      time-to-live: PT10M
   data:
     mongodb:
       auto-index-creation: true
@@ -22,6 +19,8 @@ spring:
   #redis:
     #host: localhost
     #port: 6379
+  profiles:
+    active: dev
 security:
   firebase-props:
     #database-url: https://xxxxx-xxxx.firebaseapp.com
