@@ -27,7 +27,7 @@ public interface UserRepository extends MongoRepository<User, String> {
   @Cacheable(value = "users:findByNickname", key = "#nickname", condition = "#nickname.blank != true")
   Optional<User> findByNickname(String nickname);
 
-  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true")
+  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true and #result != null")
   Optional<User> findByUid(String uid);
 
   Page<User> findAllByUidIn(List<String> userUids, Pageable pageable);
