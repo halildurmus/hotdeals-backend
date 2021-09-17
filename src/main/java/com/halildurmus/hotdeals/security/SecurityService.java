@@ -15,15 +15,14 @@ public class SecurityService {
   SecurityProperties securityProps;
 
   public User getUser() {
-    User userPrincipal = null;
     SecurityContext securityContext = SecurityContextHolder.getContext();
     Object principal = securityContext.getAuthentication().getPrincipal();
 
     if (principal instanceof User) {
-      userPrincipal = ((User) principal);
+      return ((User) principal);
     }
 
-    return userPrincipal;
+    return null;
   }
 
   public Credentials getCredentials() {
