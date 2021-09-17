@@ -31,24 +31,24 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User create(User user) {
-    boolean error;
+    boolean isErrorOccurred;
 
     do {
       try {
         final String nickname = fakerUtil.generateNickname();
         user.setNickname(nickname);
         repository.insert(user);
-        error = false;
+        isErrorOccurred = false;
       } catch (Exception e) {
         log.error(e.getMessage());
 
         if (e instanceof DuplicateKeyException && e.getMessage().contains("nickname")) {
-          error = true;
+          isErrorOccurred = true;
         } else {
           throw e;
         }
       }
-    } while (error);
+    } while (isErrorOccurred);
 
     return user;
   }
