@@ -2,13 +2,11 @@ package com.halildurmus.hotdeals.user;
 
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +25,7 @@ public class UserController {
 
   @PostMapping("/users")
   public ResponseEntity<Object> createUser(@RequestBody User user) {
-    User response = service.create(user);
-
-    if (response == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final User response = service.create(user);
 
     return ResponseEntity.status(201).body(response);
   }
@@ -65,31 +59,23 @@ public class UserController {
 
   @PostMapping("/users/block/{userId}")
   public ResponseEntity<Object> blockUser(@PathVariable String userId) throws Exception {
-    User response = service.block(userId);
-
-    if (response == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final User response = service.block(userId);
 
     return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/users/unblock/{userId}")
   public ResponseEntity<Object> unblockUser(@PathVariable String userId) throws Exception {
-    User response = service.unblock(userId);
-
-    if (response == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final User response = service.unblock(userId);
 
     return ResponseEntity.status(200).body(response);
   }
 
   @GetMapping("/users/favorites")
   public ResponseEntity<List<Deal>> getFavorites() {
-    List<Deal> deals = service.getFavorites();
+    final List<Deal> response = service.getFavorites();
 
-    return ResponseEntity.status(200).body(deals);
+    return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/users/favorite/{dealId}")
@@ -99,12 +85,9 @@ public class UserController {
       throw new IllegalArgumentException("Invalid dealId!");
     }
 
-    User user = service.favorite(dealId);
-    if (user == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final User response = service.favorite(dealId);
 
-    return ResponseEntity.status(200).body(user);
+    return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/users/unfavorite/{dealId}")
@@ -114,12 +97,9 @@ public class UserController {
       throw new IllegalArgumentException("Invalid dealId!");
     }
 
-    User user = service.unfavorite(dealId);
-    if (user == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final User response = service.unfavorite(dealId);
 
-    return ResponseEntity.status(200).body(user);
+    return ResponseEntity.status(200).body(response);
   }
 
 }
