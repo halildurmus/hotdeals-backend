@@ -83,14 +83,11 @@ public class DealServiceImpl implements DealService {
         downVoters.add(userId);
         deal.setDownVoters(downVoters);
       }
-    } else {
-      throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upVote, downVote}");
     }
 
     final int upVoteCount = upVoters.size();
     final int downVoteCount = downVoters.size();
     deal.setDealScore(upVoteCount - downVoteCount);
-
     repository.save(deal);
 
     return deal;
