@@ -39,22 +39,18 @@ public class DealController {
       Pageable pageable) {
     if (ObjectUtils.isEmpty(keyword)) {
       return ResponseEntity.status(200).body(Collections.emptyList());
-    } else {
-      final List<SearchHit<EsDeal>> searchHits = esDealService.queryDeals(keyword, pageable);
-
-      return ResponseEntity.status(200).body(searchHits);
     }
+
+    final List<SearchHit<EsDeal>> response = esDealService.queryDeals(keyword, pageable);
+
+    return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/deals")
   public ResponseEntity<Object> saveOrUpdateDeal(@RequestBody Deal deal) {
-    Deal response = service.saveOrUpdateDeal(deal);
+    final Deal response = service.saveOrUpdateDeal(deal);
 
-    if (response == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
-
-    return ResponseEntity.status(200).body(deal);
+    return ResponseEntity.status(200).body(response);
   }
 
   @DeleteMapping("/deals/{dealId}")
@@ -71,12 +67,9 @@ public class DealController {
       throw new IllegalArgumentException("Invalid dealId!");
     }
 
-    final Deal deal = service.incrementViewsCounter(dealId);
-    if (deal == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final Deal response = service.incrementViewsCounter(dealId);
 
-    return ResponseEntity.status(200).body(deal);
+    return ResponseEntity.status(200).body(response);
   }
 
   @PostMapping("/deals/vote")
@@ -84,18 +77,18 @@ public class DealController {
       throws Exception {
     final String dealId = json.get("dealId");
     final String voteType = json.get("voteType");
-    final ObjectId userId = new ObjectId(securityService.getUser().getId());
+    if (!voteType.equals("upVote") && !voteType.equals("downVote")) {
+      throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upVote, downVote}");
+    }
 
+    final ObjectId userId = new ObjectId(securityService.getUser().getId());
     if (ObjectUtils.isEmpty(dealId) || ObjectUtils.isEmpty(voteType)) {
       throw new IllegalArgumentException("dealId and voteType fields cannot be blank!");
     }
 
-    Deal deal = service.vote(dealId, userId, voteType);
-    if (deal == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
-    }
+    final Deal response = service.vote(dealId, userId, voteType);
 
-    return ResponseEntity.status(200).body(deal);
+    return ResponseEntity.status(200).body(response);
   }
 
 }
