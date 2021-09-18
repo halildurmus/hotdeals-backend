@@ -2,9 +2,9 @@ db.createCollection('categories', { capped: false })
 db.createCollection('stores', { capped: false })
 
 db.categories.insertMany([
-  { name: 'Computers', parent: '/', category: '/computers', icon: { ligature: 'computer', fontFamily: 'MaterialIcons'}, _class: 'categories'},
-  { name: 'Electronics', parent: '/', category: '/electronics', icon: { ligature: 'devices', fontFamily: 'MaterialIcons'}, _class: 'categories'},
-  { name: 'Video Cards', parent: '/computers', category: '/computers/video-cards', icon: { ligature: 'memory', fontFamily: 'MaterialIcons'}, _class: 'categories'},
+  { name: 'Computers', parent: '/', category: '/computers', iconLigature: 'computer', iconFontFamily: 'MaterialIcons', _class: 'categories'},
+  { name: 'Electronics', parent: '/', category: '/electronics', iconLigature: 'devices', iconFontFamily: 'MaterialIcons', _class: 'categories'},
+  { name: 'Video Cards', parent: '/computers', category: '/computers/video-cards', iconLigature: 'memory', iconFontFamily: 'MaterialIcons', _class: 'categories'},
 ])
 
 db.stores.insertMany([
