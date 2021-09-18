@@ -6,7 +6,7 @@ import java.util.Map;
 public class DummyCategories {
 
   public static Category category1 = new Category("Computers", "/", "/computers", Map.of(
-      "codePoint", "57803",
+      "ligature", "computer",
       "fontFamily", "MaterialIcons"
   ));
 

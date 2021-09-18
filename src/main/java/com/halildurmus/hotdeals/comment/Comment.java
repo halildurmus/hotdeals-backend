@@ -48,9 +48,8 @@ public class Comment implements Serializable {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Comment(ObjectId dealId, ObjectId postedBy, String message) {
+  public Comment(ObjectId dealId, String message) {
     this.dealId = dealId;
-    this.postedBy = postedBy;
     this.message = message;
   }
 

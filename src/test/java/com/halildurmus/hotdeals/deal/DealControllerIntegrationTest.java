@@ -1,8 +1,6 @@
 package com.halildurmus.hotdeals.deal;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
@@ -33,12 +31,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc(addFilters = false)
 public class DealControllerIntegrationTest extends BaseIntegrationTest {
 
+  static User fakeUser = new User("607345b0eeeee1452898128b");
+  @MockBean
+  SecurityService securityService;
   @Autowired
   private MongoTemplate mongoTemplate;
-
   @Autowired
   private MockMvc mvc;
-
   @Autowired
   private JacksonTester<Deal> json;
 
@@ -46,11 +45,6 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
   void cleanUp() {
     mongoTemplate.dropCollection("deals");
   }
-
-  @MockBean
-  SecurityService securityService;
-
-  static User fakeUser = new User("607345b0eeeee1452898128b");
 
   // TODO: Write test cases for validating mandatory fields.
 
@@ -67,7 +61,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$.postedBy").value(not(empty())));
+        .andExpect(jsonPath("$.postedBy").value(fakeUser.getId()));
   }
 
   @Test
@@ -79,7 +73,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.deals", hasSize(0)));
@@ -98,11 +92,11 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.deals", hasSize(1)))
         .andExpect(jsonPath("$._embedded.deals[0].title").value(DummyDeals.deal1.getTitle()))
-        .andExpect(jsonPath("$._embedded.deals[0].postedBy").value(not(empty())));
+        .andExpect(jsonPath("$._embedded.deals[0].postedBy").value(fakeUser.getId()));
   }
 }

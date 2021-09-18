@@ -56,7 +56,8 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$.name").value(DummyCategories.category1.getName()))
         .andExpect(jsonPath("$.parent").value(DummyCategories.category1.getParent()))
-        .andExpect(jsonPath("$.category").value(DummyCategories.category1.getCategory()));
+        .andExpect(jsonPath("$.category").value(DummyCategories.category1.getCategory()))
+        .andExpect(jsonPath("$.icon").isNotEmpty());
   }
 
   @Test
@@ -91,6 +92,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$._embedded.categories", hasSize(1)))
         .andExpect(jsonPath("$._embedded.categories[0].name").value(DummyCategories.category1.getName()))
         .andExpect(jsonPath("$._embedded.categories[0].parent").value(DummyCategories.category1.getParent()))
-        .andExpect(jsonPath("$._embedded.categories[0].category").value(DummyCategories.category1.getCategory()));;
+        .andExpect(jsonPath("$._embedded.categories[0].category").value(DummyCategories.category1.getCategory()))
+        .andExpect(jsonPath("$._embedded.categories[0].icon").isNotEmpty());
   }
 }

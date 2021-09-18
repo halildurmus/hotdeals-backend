@@ -9,6 +9,9 @@ embedded:
     dockerImage: mongo:latest
     enabled: true
     reuseContainer: true
+security:
+  firebase-props:
+    #database-url: https://xxxxx-xxxx.firebaseapp.com
 spring:
   data:
     mongodb:
