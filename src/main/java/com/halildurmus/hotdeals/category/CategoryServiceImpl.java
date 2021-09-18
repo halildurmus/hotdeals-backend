@@ -11,4 +11,14 @@ public class CategoryServiceImpl implements CategoryService {
   @Autowired
   private CategoryRepository repository;
 
+  @Override
+  public Category saveOrUpdateCategory(Category category) throws Exception {
+    if (!category.getParent().equals("/")) {
+      repository.findByCategory(category.getParent())
+          .orElseThrow(() -> new Exception("The category's parent category does not exists!"));
+    }
+
+    return repository.save(category);
+  }
+
 }

@@ -29,6 +29,8 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
   @Cacheable(value = "categories", key = "#id", condition = "#id.blank != true")
   Optional<Category> findById(String id);
 
+  Optional<Category> findByCategory(String category);
+
   @Override
   @Cacheable("categories:findAll")
   Page<Category> findAll(Pageable pageable);
