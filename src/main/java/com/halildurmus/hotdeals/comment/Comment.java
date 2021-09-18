@@ -15,6 +15,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "comments")
@@ -29,6 +30,7 @@ public class Comment implements Serializable {
   @Id
   private String id;
 
+  @Indexed
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId dealId;
 
