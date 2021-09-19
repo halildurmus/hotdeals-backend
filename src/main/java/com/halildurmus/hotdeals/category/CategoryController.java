@@ -17,7 +17,7 @@ public class CategoryController {
       throws Exception {
     final Category response = service.saveOrUpdateCategory(category);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.status(201).body(response);
   }
 
 }
