@@ -46,10 +46,10 @@ public class Deal implements Serializable {
   private int dealScore = 0;
 
   @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private List<ObjectId> upVoters = new ArrayList<>();
+  private List<ObjectId> upvoters = new ArrayList<>();
 
   @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private List<ObjectId> downVoters = new ArrayList<>();
+  private List<ObjectId> downvoters = new ArrayList<>();
 
   @Indexed
   @NotBlank

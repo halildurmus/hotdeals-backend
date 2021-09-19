@@ -73,19 +73,18 @@ public class DealController {
   }
 
   @PostMapping("/deals/vote")
-  public ResponseEntity<Object> vote(@RequestBody Map<String, String> json)
-      throws Exception {
+  public ResponseEntity<Object> vote(@RequestBody Map<String, String> json) throws Exception {
     final String dealId = json.get("dealId");
     final String voteType = json.get("voteType");
-    if (!voteType.equals("upVote") && !voteType.equals("downVote")) {
-      throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upVote, downVote}");
-    }
-
-    final ObjectId userId = new ObjectId(securityService.getUser().getId());
     if (ObjectUtils.isEmpty(dealId) || ObjectUtils.isEmpty(voteType)) {
       throw new IllegalArgumentException("dealId and voteType fields cannot be blank!");
     }
 
+    if (!voteType.equals("upvote") && !voteType.equals("downvote")) {
+      throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upvote, downvote}");
+    }
+
+    final ObjectId userId = new ObjectId(securityService.getUser().getId());
     final Deal response = service.vote(dealId, userId, voteType);
 
     return ResponseEntity.status(200).body(response);

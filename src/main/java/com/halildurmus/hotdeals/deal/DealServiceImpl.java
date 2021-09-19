@@ -60,33 +60,30 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal vote(String dealId, ObjectId userId, String voteType)
-      throws Exception {
+  public Deal vote(String dealId, ObjectId userId, String voteType) throws Exception {
     final Deal deal = repository.findById(dealId)
         .orElseThrow(() -> new Exception("Deal could not be found!"));
-    final List<ObjectId> upVoters = deal.getUpVoters();
-    final List<ObjectId> downVoters = deal.getDownVoters();
+    final List<ObjectId> upvoters = deal.getUpvoters();
+    final List<ObjectId> downvoters = deal.getDownvoters();
 
-    if (voteType.equals("upVote")) {
-      if (upVoters.contains(userId)) {
+    if (voteType.equals("upvote")) {
+      if (upvoters.contains(userId)) {
         throw new Exception("You've already upvoted this deal before!");
-      } else {
-        downVoters.remove(userId);
-        upVoters.add(userId);
-        deal.setUpVoters(upVoters);
       }
-    } else if (voteType.equals("downVote")) {
-      if (downVoters.contains(userId)) {
+
+      downvoters.remove(userId);
+      upvoters.add(userId);
+    } else {
+      if (downvoters.contains(userId)) {
         throw new Exception("You've already downvoted this deal before!");
-      } else {
-        upVoters.remove(userId);
-        downVoters.add(userId);
-        deal.setDownVoters(downVoters);
       }
+
+      upvoters.remove(userId);
+      downvoters.add(userId);
     }
 
-    final int upVoteCount = upVoters.size();
-    final int downVoteCount = downVoters.size();
+    final int upVoteCount = upvoters.size();
+    final int downVoteCount = downvoters.size();
     deal.setDealScore(upVoteCount - downVoteCount);
     repository.save(deal);
 
