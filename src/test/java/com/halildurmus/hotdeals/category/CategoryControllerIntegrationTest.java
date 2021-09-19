@@ -54,7 +54,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$.name").value(DummyCategories.category1.getName()))
+        //.andExpect(jsonPath("$.names").value(DummyCategories.category1.getNames()))
         .andExpect(jsonPath("$.parent").value(DummyCategories.category1.getParent()))
         .andExpect(jsonPath("$.category").value(DummyCategories.category1.getCategory()))
         .andExpect(jsonPath("$.iconLigature").value(DummyCategories.category1.getIconLigature()))
@@ -91,7 +91,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.categories", hasSize(1)))
-        .andExpect(jsonPath("$._embedded.categories[0].name").value(DummyCategories.category1.getName()))
+        //.andExpect(jsonPath("$._embedded.categories[0].names").value(DummyCategories.category1.getNames()))
         .andExpect(jsonPath("$._embedded.categories[0].parent").value(DummyCategories.category1.getParent()))
         .andExpect(jsonPath("$._embedded.categories[0].category").value(DummyCategories.category1.getCategory()))
         .andExpect(jsonPath("$._embedded.categories[0].iconLigature").value(DummyCategories.category1.getIconLigature()))

@@ -3,7 +3,10 @@ package com.halildurmus.hotdeals.category;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,8 +30,8 @@ public class Category implements Serializable {
   @Id
   private String id;
 
-  @NotBlank
-  private String name;
+  @NotNull
+  private Map<String, String> names = new HashMap<>();
 
   @NotBlank
   private String parent;
@@ -51,9 +54,9 @@ public class Category implements Serializable {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Category(String name, String parent, String category, String iconLigature,
+  public Category(Map<String, String> names, String parent, String category, String iconLigature,
       String iconFontFamily) {
-    this.name = name;
+    this.names = names;
     this.parent = parent;
     this.category = category;
     this.iconLigature = iconLigature;
