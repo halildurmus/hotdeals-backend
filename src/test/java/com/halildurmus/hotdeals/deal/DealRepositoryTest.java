@@ -50,7 +50,6 @@ class DealRepositoryTest extends BaseIntegrationTest {
   @Test
   void findByPostedByShouldNotReturnDealIfNoDealFound() {
     final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
-
     List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
 
     assertTrue(deals.isEmpty());

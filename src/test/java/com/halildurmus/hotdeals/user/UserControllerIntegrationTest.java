@@ -67,7 +67,7 @@ public class UserControllerIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.users", hasSize(0)));
@@ -84,7 +84,7 @@ public class UserControllerIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.users", hasSize(1)))
