@@ -43,10 +43,6 @@ public class Store implements Serializable {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Store(String id) {
-    this.id = id;
-  }
-
   public Store(String name, String logo) {
     this.name = name;
     this.logo = logo;
