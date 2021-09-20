@@ -11,7 +11,8 @@ embedded:
     reuseContainer: true
 security:
   firebase-props:
-    #database-url: https://xxxxx-xxxx.firebaseapp.com
+    # SET YOUR FIREBASE AUTHENTICATION DATABASE URL
+    database-url: https://xxxxx-xxxx.firebaseapp.com
 spring:
   data:
     mongodb:
