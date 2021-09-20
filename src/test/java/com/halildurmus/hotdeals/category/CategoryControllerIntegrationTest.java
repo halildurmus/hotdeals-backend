@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.category;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -54,11 +55,13 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        //.andExpect(jsonPath("$.names").value(DummyCategories.category1.getNames()))
+        .andExpect(
+            jsonPath("$.names").value(equalTo(asParsedJson(DummyCategories.category1.getNames()))))
         .andExpect(jsonPath("$.parent").value(DummyCategories.category1.getParent()))
         .andExpect(jsonPath("$.category").value(DummyCategories.category1.getCategory()))
         .andExpect(jsonPath("$.iconLigature").value(DummyCategories.category1.getIconLigature()))
-        .andExpect(jsonPath("$.iconFontFamily").value(DummyCategories.category1.getIconFontFamily()));
+        .andExpect(
+            jsonPath("$.iconFontFamily").value(DummyCategories.category1.getIconFontFamily()));
   }
 
   @Test
@@ -70,7 +73,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.categories", hasSize(0)));
@@ -87,14 +90,19 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(
-        requestBuilder)
+            requestBuilder)
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.categories", hasSize(1)))
-        //.andExpect(jsonPath("$._embedded.categories[0].names").value(DummyCategories.category1.getNames()))
-        .andExpect(jsonPath("$._embedded.categories[0].parent").value(DummyCategories.category1.getParent()))
-        .andExpect(jsonPath("$._embedded.categories[0].category").value(DummyCategories.category1.getCategory()))
-        .andExpect(jsonPath("$._embedded.categories[0].iconLigature").value(DummyCategories.category1.getIconLigature()))
-        .andExpect(jsonPath("$._embedded.categories[0].iconFontFamily").value(DummyCategories.category1.getIconFontFamily()));
+        .andExpect(jsonPath("$._embedded.categories[0].names").value(
+            equalTo(asParsedJson(DummyCategories.category1.getNames()))))
+        .andExpect(jsonPath("$._embedded.categories[0].parent").value(
+            DummyCategories.category1.getParent()))
+        .andExpect(jsonPath("$._embedded.categories[0].category").value(
+            DummyCategories.category1.getCategory()))
+        .andExpect(jsonPath("$._embedded.categories[0].iconLigature").value(
+            DummyCategories.category1.getIconLigature()))
+        .andExpect(jsonPath("$._embedded.categories[0].iconFontFamily").value(
+            DummyCategories.category1.getIconFontFamily()));
   }
 }

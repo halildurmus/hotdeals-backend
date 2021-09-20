@@ -1,8 +1,6 @@
 package com.halildurmus.hotdeals.comment;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
@@ -63,7 +61,7 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$.dealId").value(not(empty())))
+        .andExpect(jsonPath("$.dealId").value(DummyComments.comment1.getDealId().toString()))
         .andExpect(jsonPath("$.postedBy").value(fakeUser.getId()))
         .andExpect(jsonPath("$.message").value(DummyComments.comment1.getMessage()));
   }
@@ -98,7 +96,8 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
-        .andExpect(jsonPath("$._embedded.comments[0].dealId").value(not(empty())))
+        .andExpect(
+            jsonPath("$._embedded.comments[0].dealId").value(DummyComments.comment1.getDealId().toString()))
         .andExpect(jsonPath("$._embedded.comments[0].postedBy").value(fakeUser.getId()))
         .andExpect(
             jsonPath("$._embedded.comments[0].message").value(DummyComments.comment1.getMessage()));
