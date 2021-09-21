@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.security;
 
-import com.halildurmus.hotdeals.security.models.Credentials;
 import com.halildurmus.hotdeals.security.models.SecurityProperties;
 import com.halildurmus.hotdeals.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
