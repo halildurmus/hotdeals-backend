@@ -31,4 +31,5 @@ public interface UserRepository extends MongoRepository<User, String> {
   Optional<User> findByUid(String uid);
 
   Page<User> findAllByUidIn(List<String> userUids, Pageable pageable);
+
 }

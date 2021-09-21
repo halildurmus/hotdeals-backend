@@ -78,8 +78,7 @@ public class UserController {
   }
 
   @PostMapping("/users/favorite/{dealId}")
-  public ResponseEntity<User> favorite(@PathVariable String dealId)
-      throws Exception {
+  public ResponseEntity<User> favorite(@PathVariable String dealId) throws Exception {
     if (!ObjectId.isValid(dealId)) {
       throw new IllegalArgumentException("Invalid dealId!");
     }
@@ -90,8 +89,7 @@ public class UserController {
   }
 
   @PostMapping("/users/unfavorite/{dealId}")
-  public ResponseEntity<User> unfavorite(@PathVariable String dealId)
-      throws Exception {
+  public ResponseEntity<User> unfavorite(@PathVariable String dealId) throws Exception {
     if (!ObjectId.isValid(dealId)) {
       throw new IllegalArgumentException("Invalid dealId!");
     }
