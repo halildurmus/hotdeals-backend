@@ -25,10 +25,4 @@ public class SecurityService {
     return null;
   }
 
-  public Credentials getCredentials() {
-    SecurityContext securityContext = SecurityContextHolder.getContext();
-
-    return (Credentials) securityContext.getAuthentication().getCredentials();
-  }
-
 }
