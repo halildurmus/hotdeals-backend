@@ -34,7 +34,7 @@ public class DealController {
   private SecurityService securityService;
 
   @GetMapping("/deals/elastic-search")
-  public ResponseEntity<Object> searchDeals(
+  public ResponseEntity<List<SearchHit<EsDeal>>> searchDeals(
       @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
       Pageable pageable) {
     if (ObjectUtils.isEmpty(keyword)) {
@@ -43,25 +43,25 @@ public class DealController {
 
     final List<SearchHit<EsDeal>> response = esDealService.queryDeals(keyword, pageable);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/deals")
-  public ResponseEntity<Object> saveOrUpdateDeal(@RequestBody Deal deal) {
+  public ResponseEntity<Deal> saveOrUpdateDeal(@RequestBody Deal deal) {
     final Deal response = service.saveOrUpdateDeal(deal);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.status(201).body(response);
   }
 
   @DeleteMapping("/deals/{dealId}")
   public ResponseEntity<Object> removeDeal(@PathVariable String dealId) {
     service.removeDeal(dealId);
 
-    return ResponseEntity.status(200).body(HttpStatus.OK);
+    return ResponseEntity.ok(HttpStatus.OK);
   }
 
-  @PostMapping("/deals/{dealId}/incrementViewsCounter")
-  public ResponseEntity<Object> vote(@PathVariable String dealId)
+  @PostMapping("/deals/{dealId}/increment-views-counter")
+  public ResponseEntity<Deal> vote(@PathVariable String dealId)
       throws Exception {
     if (!ObjectId.isValid(dealId)) {
       throw new IllegalArgumentException("Invalid dealId!");
@@ -69,11 +69,11 @@ public class DealController {
 
     final Deal response = service.incrementViewsCounter(dealId);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/deals/vote")
-  public ResponseEntity<Object> vote(@RequestBody Map<String, String> json) throws Exception {
+  public ResponseEntity<Deal> vote(@RequestBody Map<String, String> json) throws Exception {
     final String dealId = json.get("dealId");
     final String voteType = json.get("voteType");
     if (ObjectUtils.isEmpty(dealId) || ObjectUtils.isEmpty(voteType)) {
@@ -87,7 +87,7 @@ public class DealController {
     final ObjectId userId = new ObjectId(securityService.getUser().getId());
     final Deal response = service.vote(dealId, userId, voteType);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
 }

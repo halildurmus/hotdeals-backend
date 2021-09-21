@@ -24,7 +24,7 @@ public class UserController {
   private SecurityService securityService;
 
   @PostMapping("/users")
-  public ResponseEntity<Object> createUser(@RequestBody User user) {
+  public ResponseEntity<User> createUser(@RequestBody User user) {
     final User response = service.create(user);
 
     return ResponseEntity.status(201).body(response);
@@ -33,12 +33,11 @@ public class UserController {
   @GetMapping("/users/me")
   public ResponseEntity<Object> getAuthenticatedUser() {
     User response = securityService.getUser();
-
     if (response == null) {
       return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
     }
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/users/add-fcm-token")
@@ -46,7 +45,7 @@ public class UserController {
     final String fcmToken = json.get("fcmToken");
     service.addFcmToken(fcmToken);
 
-    return ResponseEntity.status(200).body(HttpStatus.OK);
+    return ResponseEntity.ok(HttpStatus.OK);
   }
 
   @PostMapping("/users/logout")
@@ -54,32 +53,32 @@ public class UserController {
     final String fcmToken = json.get("fcmToken");
     service.logout(fcmToken);
 
-    return ResponseEntity.status(200).body(HttpStatus.OK);
+    return ResponseEntity.ok(HttpStatus.OK);
   }
 
   @PostMapping("/users/block/{userId}")
-  public ResponseEntity<Object> blockUser(@PathVariable String userId) throws Exception {
+  public ResponseEntity<User> blockUser(@PathVariable String userId) throws Exception {
     final User response = service.block(userId);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/users/unblock/{userId}")
-  public ResponseEntity<Object> unblockUser(@PathVariable String userId) throws Exception {
+  public ResponseEntity<User> unblockUser(@PathVariable String userId) throws Exception {
     final User response = service.unblock(userId);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/users/favorites")
   public ResponseEntity<List<Deal>> getFavorites() {
     final List<Deal> response = service.getFavorites();
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/users/favorite/{dealId}")
-  public ResponseEntity<Object> favorite(@PathVariable String dealId)
+  public ResponseEntity<User> favorite(@PathVariable String dealId)
       throws Exception {
     if (!ObjectId.isValid(dealId)) {
       throw new IllegalArgumentException("Invalid dealId!");
@@ -87,11 +86,11 @@ public class UserController {
 
     final User response = service.favorite(dealId);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/users/unfavorite/{dealId}")
-  public ResponseEntity<Object> unfavorite(@PathVariable String dealId)
+  public ResponseEntity<User> unfavorite(@PathVariable String dealId)
       throws Exception {
     if (!ObjectId.isValid(dealId)) {
       throw new IllegalArgumentException("Invalid dealId!");
@@ -99,7 +98,7 @@ public class UserController {
 
     final User response = service.unfavorite(dealId);
 
-    return ResponseEntity.status(200).body(response);
+    return ResponseEntity.ok(response);
   }
 
 }
