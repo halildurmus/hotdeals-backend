@@ -23,7 +23,7 @@ class ReportEntityCallbacks implements BeforeSaveCallback<Report> {
       final User user = securityService.getUser();
       final ObjectId userId = new ObjectId(user.getId());
       report.setReportedBy(userId);
-      document.put("postedBy", userId);
+      document.put("reportedBy", userId);
     }
 
     return report;
