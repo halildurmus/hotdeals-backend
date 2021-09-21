@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 @TypeAlias("user")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class User implements Serializable {

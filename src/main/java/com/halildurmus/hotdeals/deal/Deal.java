@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.deal;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdArrayJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
@@ -25,7 +24,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "deals")
 @TypeAlias("deal")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class Deal implements Serializable {

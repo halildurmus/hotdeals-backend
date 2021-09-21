@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.category;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "categories")
 @TypeAlias("categories")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class Category implements Serializable {

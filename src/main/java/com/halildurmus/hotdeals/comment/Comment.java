@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.comment;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
@@ -20,7 +19,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "comments")
 @TypeAlias("comments")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class Comment implements Serializable {

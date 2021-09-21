@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.store;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.validation.constraints.NotBlank;
@@ -18,7 +17,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "stores")
 @TypeAlias("store")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 public class Store implements Serializable {
