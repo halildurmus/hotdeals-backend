@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "comments")
-@TypeAlias("comments")
+@TypeAlias("comment")
 @Data
 @NoArgsConstructor
 public class Comment implements Serializable {

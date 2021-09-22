@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "categories")
-@TypeAlias("categories")
+@TypeAlias("category")
 @Data
 @NoArgsConstructor
 public class Category implements Serializable {
