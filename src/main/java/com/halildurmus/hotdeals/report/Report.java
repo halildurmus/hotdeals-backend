@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
-import javax.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,9 +28,6 @@ public abstract class Report implements Serializable {
 
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId reportedBy;
-
-  @NotEmpty
-  private List<String> reasons;
 
   private String message;
 

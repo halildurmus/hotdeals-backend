@@ -3,6 +3,8 @@ package com.halildurmus.hotdeals.report.deal;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.report.Report;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,5 +25,8 @@ public class DealReport extends Report {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   @NotNull
   private ObjectId reportedDeal;
+
+  @NotEmpty
+  private List<DealReportReason> reasons;
 
 }
