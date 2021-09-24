@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.cors().configurationSource(corsConfigurationSource()).and()
+    httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
         .formLogin().disable()
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
@@ -76,12 +76,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .antMatchers(HttpMethod.GET, "/stores/**").permitAll()
         .antMatchers(HttpMethod.GET, "/users/*").permitAll()
-        .antMatchers(HttpMethod.POST, "/categories").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.POST, "/stores").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.POST, "/users").permitAll()
+        .antMatchers(HttpMethod.POST, "/categories").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, "/categories").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/stores").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/categories").access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.POST, "/stores").access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PUT, "/stores").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/stores").access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
