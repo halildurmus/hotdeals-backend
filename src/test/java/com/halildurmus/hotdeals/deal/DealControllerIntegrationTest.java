@@ -59,7 +59,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
         .content(json.write(DummyDeals.deal1).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isOk())
+    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$.postedBy").value(fakeUser.getId()));
   }
