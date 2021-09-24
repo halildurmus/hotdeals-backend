@@ -9,8 +9,8 @@ public class FakerUtil {
     Faker faker = new Faker();
     String prefix = faker.superhero().prefix();
     String firstName = faker.name().firstName();
-    String buildingNumber = faker.address().buildingNumber();
+    String digits = faker.number().digits(2);
 
-    return prefix + firstName + buildingNumber;
+    return prefix + firstName + digits;
   }
 }
