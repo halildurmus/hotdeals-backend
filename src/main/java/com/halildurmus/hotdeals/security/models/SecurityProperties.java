@@ -10,14 +10,9 @@ import org.springframework.stereotype.Component;
 @Data
 public class SecurityProperties {
 
-  FirebaseProperties firebaseProps;
-  boolean allowCredentials;
+  FirebaseProperties firebaseProperties;
   List<String> allowedOrigins;
-  List<String> allowedHeaders;
-  List<String> exposedHeaders;
   List<String> allowedMethods;
-  List<String> allowedPublicApis;
   List<String> superAdmins;
-  List<String> validApplicationRoles;
 
 }

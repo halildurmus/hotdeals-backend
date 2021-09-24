@@ -20,14 +20,14 @@ import org.springframework.context.annotation.Primary;
 public class FirebaseConfig {
 
   @Autowired
-  private SecurityProperties secProps;
+  private SecurityProperties securityProperties;
 
   @Primary
   @Bean
   public FirebaseApp getFirebaseApp() throws IOException {
     FirebaseOptions options = FirebaseOptions.builder()
         .setCredentials(GoogleCredentials.getApplicationDefault())
-        .setDatabaseUrl(secProps.getFirebaseProps().getDatabaseUrl()).build();
+        .setDatabaseUrl(securityProperties.getFirebaseProperties().getDatabaseUrl()).build();
 
     if (FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(options);

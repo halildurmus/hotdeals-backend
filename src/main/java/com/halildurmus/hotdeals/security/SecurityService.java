@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class SecurityService {
 
   @Autowired
-  SecurityProperties securityProps;
+  SecurityProperties securityProperties;
 
   public User getUser() {
     SecurityContext securityContext = SecurityContextHolder.getContext();

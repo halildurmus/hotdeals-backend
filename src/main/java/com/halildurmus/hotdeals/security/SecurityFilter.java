@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.halildurmus.hotdeals.security.models.Credentials;
 import com.halildurmus.hotdeals.security.models.SecurityProperties;
-import com.halildurmus.hotdeals.security.role.RoleConstants;
+import com.halildurmus.hotdeals.security.role.Role;
 import com.halildurmus.hotdeals.security.role.RoleService;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.UserRepository;
@@ -35,7 +35,7 @@ public class SecurityFilter extends OncePerRequestFilter {
   SecurityService securityService;
 
   @Autowired
-  SecurityProperties securityProps;
+  SecurityProperties securityProperties;
 
   @Autowired
   RoleService roleService;
@@ -83,16 +83,16 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     List<GrantedAuthority> authorities = new ArrayList<>();
     // Handle ROLE_SUPER
-    if (securityProps.getSuperAdmins() != null && securityProps.getSuperAdmins()
+    if (securityProperties.getSuperAdmins() != null && securityProperties.getSuperAdmins()
         .contains(user.getEmail())) {
-      if (!decodedToken.getClaims().containsKey(RoleConstants.ROLE_SUPER)) {
+      if (!decodedToken.getClaims().containsKey(Role.ROLE_SUPER.name())) {
         try {
-          roleService.addRole(decodedToken.getUid(), RoleConstants.ROLE_SUPER);
+          roleService.addRole(decodedToken.getUid(), Role.ROLE_SUPER.name());
         } catch (Exception e) {
           log.error("Failed to add ROLE_SUPER to the user", e);
         }
       }
-      authorities.add(new SimpleGrantedAuthority(RoleConstants.ROLE_SUPER));
+      authorities.add(new SimpleGrantedAuthority(Role.ROLE_SUPER.name()));
     }
     // Handle other roles
     decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));

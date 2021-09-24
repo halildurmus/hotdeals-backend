@@ -26,43 +26,18 @@ spring:
   profiles:
     active: dev
 security:
-  firebase-props:
+  firebase-properties:
     # SET YOUR FIREBASE AUTHENTICATION DATABASE URL
     database-url: https://xxxxx-xxxx.firebaseapp.com
-  allow-credentials: true
   allowed-origins:
     - http://localhost:3000
   allowed-methods:
+    - OPTIONS
     - GET
+    - PATCH
     - POST
     - PUT
-    - PATCH
     - DELETE
-    - OPTIONS
-  allowed-headers:
-    - Authorization
-    - Origin
-    - Content-Type
-    - Accept
-    - Accept-Encoding
-    - Accept-Language
-    - Access-Control-Allow-Origin
-    - Access-Control-Allow-Headers
-    - Access-Control-Request-Method
-    - X-Requested-With
-    - X-Auth-Token
-    - X-Xsrf-Token
-    - Cache-Control
-    - Id-Token
-  allowed-public-apis:
-    - /categories
-    - /stores
-  exposed-headers:
-    - X-Xsrf-Token
-  valid-application-roles:
-    - ROLE_ADMIN
-    - ROLE_SUPER
-    - ROLE_MODERATOR
   # SET THE ADMIN EMAIL ADDRESSES HERE
   super-admins:
     - admin1@gmail.com

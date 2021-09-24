@@ -1,6 +1,6 @@
 package com.halildurmus.hotdeals.security.role;
 
-import com.halildurmus.hotdeals.security.models.SecurityProperties;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,14 +16,14 @@ public class RoleController {
   @Autowired
   private RoleService roleService;
 
-  @Autowired
-  private SecurityProperties securityProps;
+  private boolean isInvalidRole(String value) {
+    return Arrays.stream(Role.class.getEnumConstants()).noneMatch(e -> e.name().equals(value));
+  }
 
   @PutMapping
   public void addRole(@RequestParam String uid, @RequestParam String role) throws Exception {
-    if (!securityProps.getValidApplicationRoles().contains(role)) {
-      throw new Exception("Not a valid Application role, Allowed roles => "
-          + securityProps.getValidApplicationRoles().toString());
+    if (isInvalidRole(role)) {
+      throw new Exception("Invalid user role! Allowed roles => " + Arrays.toString(Role.values()));
     }
 
     roleService.addRole(uid, role);
@@ -31,9 +31,8 @@ public class RoleController {
 
   @DeleteMapping
   public void removeRole(@RequestParam String uid, @RequestParam String role) throws Exception {
-    if (!securityProps.getValidApplicationRoles().contains(role)) {
-      throw new Exception("Not a valid Application role, Allowed roles => "
-          + securityProps.getValidApplicationRoles().toString());
+    if (isInvalidRole(role)) {
+      throw new Exception("Invalid user role! Allowed roles => " + Arrays.toString(Role.values()));
     }
 
     roleService.removeRole(uid, role);

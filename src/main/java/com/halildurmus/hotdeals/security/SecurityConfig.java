@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   ObjectMapper objectMapper;
 
   @Autowired
-  SecurityProperties restSecProps;
+  SecurityProperties securityProperties;
 
   @Autowired
   SecurityFilter tokenAuthFilter;
@@ -53,11 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(restSecProps.getAllowedOrigins());
-    configuration.setAllowedMethods(restSecProps.getAllowedMethods());
-    configuration.setAllowedHeaders(restSecProps.getAllowedHeaders());
-    configuration.setAllowCredentials(restSecProps.isAllowCredentials());
-    configuration.setExposedHeaders(restSecProps.getExposedHeaders());
+    configuration.setAllowedOrigins(securityProperties.getAllowedOrigins());
+    configuration.setAllowedMethods(securityProperties.getAllowedMethods());
+
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
 
@@ -66,13 +64,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
-        .headers().cacheControl().disable().and()
+    httpSecurity.cors().configurationSource(corsConfigurationSource()).and()
         .formLogin().disable()
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers(restSecProps.getAllowedPublicApis().toArray(String[]::new)).permitAll()
         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .antMatchers(HttpMethod.GET, "/actuator/*").permitAll()
         .antMatchers(HttpMethod.GET, "/categories/**").permitAll()
@@ -80,12 +76,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .antMatchers(HttpMethod.GET, "/stores/**").permitAll()
         .antMatchers(HttpMethod.GET, "/users/*").permitAll()
-        .antMatchers(HttpMethod.POST, "/users").permitAll()
         .antMatchers(HttpMethod.POST, "/categories").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/categories").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/categories").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.POST, "/stores").access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.POST, "/users").permitAll()
+        .antMatchers(HttpMethod.PUT, "/categories").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, "/stores").access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.DELETE, "/categories").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/stores").access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
