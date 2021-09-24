@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "deal-reports", path = "deal-reports")
@@ -29,7 +30,8 @@ public interface DealReportRepository extends MongoRepository<DealReport, String
   @Cacheable(value = "dealReports", key = "#id", condition = "#id.blank != true")
   Optional<DealReport> findById(String id);
 
+  @Override
   @Cacheable("dealReports:findAll")
-  Page<DealReport> findAllByReportedDealNotNull(Pageable pageable);
-
+  @Query("{\"reportedDeal\" : { $exists: true } }")
+  Page<DealReport> findAll(Pageable pageable);
 }
