@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "user-reports", path = "user-reports")
@@ -29,7 +30,9 @@ public interface UserReportRepository extends MongoRepository<UserReport, String
   @Cacheable(value = "userReports", key = "#id", condition = "#id.blank != true")
   Optional<UserReport> findById(String id);
 
+  @Override
   @Cacheable("userReports:findAll")
-  Page<UserReport> findAllByReportedUserNotNull(Pageable pageable);
+  @Query("{\"reportedUser\" : { $exists: true } }")
+  Page<UserReport> findAll(Pageable pageable);
 
 }

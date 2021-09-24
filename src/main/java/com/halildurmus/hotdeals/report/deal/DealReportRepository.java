@@ -34,4 +34,5 @@ public interface DealReportRepository extends MongoRepository<DealReport, String
   @Cacheable("dealReports:findAll")
   @Query("{\"reportedDeal\" : { $exists: true } }")
   Page<DealReport> findAll(Pageable pageable);
+
 }
