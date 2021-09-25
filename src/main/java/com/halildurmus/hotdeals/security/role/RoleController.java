@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleController {
 
   @Autowired
-  private RoleService roleService;
+  private RoleService service;
 
   private boolean isInvalidRole(String value) {
     return Arrays.stream(Role.class.getEnumConstants()).noneMatch(e -> e.name().equals(value));
@@ -23,19 +23,19 @@ public class RoleController {
   @PutMapping
   public void addRole(@RequestParam String uid, @RequestParam String role) throws Exception {
     if (isInvalidRole(role)) {
-      throw new Exception("Invalid user role! Allowed roles => " + Arrays.toString(Role.values()));
+      throw new Exception("Invalid role! Allowed roles => " + Arrays.toString(Role.values()));
     }
 
-    roleService.addRole(uid, role);
+    service.addRole(uid, role);
   }
 
   @DeleteMapping
   public void removeRole(@RequestParam String uid, @RequestParam String role) throws Exception {
     if (isInvalidRole(role)) {
-      throw new Exception("Invalid user role! Allowed roles => " + Arrays.toString(Role.values()));
+      throw new Exception("Invalid role! Allowed roles => " + Arrays.toString(Role.values()));
     }
 
-    roleService.removeRole(uid, role);
+    service.removeRole(uid, role);
   }
 
 }
