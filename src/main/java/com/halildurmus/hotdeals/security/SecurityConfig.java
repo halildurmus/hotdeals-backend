@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   SecurityProperties securityProperties;
 
   @Autowired
-  SecurityFilter tokenAuthFilter;
+  FirebaseFilter tokenAuthFilter;
 
   @Bean
   public AuthenticationEntryPoint restAuthenticationEntryPoint() {
