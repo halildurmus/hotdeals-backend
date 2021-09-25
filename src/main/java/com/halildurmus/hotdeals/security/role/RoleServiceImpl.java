@@ -24,7 +24,7 @@ public class RoleServiceImpl implements RoleService {
       claims.putIfAbsent(role, true);
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
-      log.error("Firebase Auth Error ", e);
+      log.error("Firebase Auth Exception", e);
     }
   }
 
@@ -36,7 +36,7 @@ public class RoleServiceImpl implements RoleService {
       claims.remove(role);
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
-      log.error("Firebase Auth Error ", e);
+      log.error("Firebase Auth Exception", e);
     }
   }
 
