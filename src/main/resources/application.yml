@@ -23,8 +23,6 @@ spring:
   #redis:
     #host: localhost
     #port: 6379
-  profiles:
-    active: dev
 security:
   firebase-properties:
     # SET YOUR FIREBASE AUTHENTICATION DATABASE URL
