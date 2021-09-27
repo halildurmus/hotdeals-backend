@@ -92,7 +92,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/user-reports/*").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/user-reports/*").access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
-        //.anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
