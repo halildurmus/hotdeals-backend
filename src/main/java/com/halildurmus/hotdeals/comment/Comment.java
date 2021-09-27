@@ -1,5 +1,7 @@
 package com.halildurmus.hotdeals.comment;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
@@ -32,6 +34,7 @@ public class Comment implements Serializable {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId dealId;
 
+  @JsonProperty(access = Access.READ_ONLY)
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 

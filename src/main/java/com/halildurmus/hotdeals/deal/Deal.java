@@ -1,5 +1,7 @@
 package com.halildurmus.hotdeals.deal;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdArrayJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
@@ -34,6 +36,7 @@ public class Deal implements Serializable {
   private String id;
 
   @Indexed
+  @JsonProperty(access = Access.READ_ONLY)
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 

@@ -1,5 +1,7 @@
 package com.halildurmus.hotdeals.report;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
@@ -26,6 +28,7 @@ public abstract class Report implements Serializable {
   @Id
   private String id;
 
+  @JsonProperty(access = Access.READ_ONLY)
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId reportedBy;
 
