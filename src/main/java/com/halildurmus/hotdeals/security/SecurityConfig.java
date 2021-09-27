@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   SecurityProperties securityProperties;
 
   @Autowired
-  FirebaseFilter tokenAuthFilter;
+  FirebaseFilter firebaseFilter;
 
   @Bean
   public AuthenticationEntryPoint restAuthenticationEntryPoint() {
@@ -84,7 +84,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/stores").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/stores").access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
-        .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        //.anyRequest().authenticated().and()
+        .addFilterBefore(firebaseFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
