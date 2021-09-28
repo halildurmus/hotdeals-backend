@@ -10,7 +10,7 @@ embedded:
     enabled: true
     reuseContainer: true
 security:
-  firebase-props:
+  firebase-properties:
     # SET YOUR FIREBASE AUTHENTICATION DATABASE URL
     database-url: https://xxxxx-xxxx.firebaseapp.com
 spring:
