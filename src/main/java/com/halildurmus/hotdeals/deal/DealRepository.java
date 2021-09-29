@@ -43,16 +43,16 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   @Cacheable("deals:findAllByOrderByDiscountPrice")
   Page<Deal> findAllByOrderByDiscountPrice(Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByCategoryStartsWith", key = "#category", condition = "#category.blank != true")
+  @Cacheable(value = "deals:findAllByCategoryStartsWith", key = "T(java.lang.String).format('%s-%s', #category, #pageable)", condition = "#category.blank != true")
   Page<Deal> findAllByCategoryStartsWith(String category, Pageable pageable);
 
   @Query("{ $or: [{\"title\" : { $regex: /.*?0.*/, $options: 'i'}}, {\"description\" : { $regex: /.*?0.*/, $options: 'i'}}] }")
   Page<Deal> queryDeals(String keyword, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByPostedBy", key = "#postedBy", condition = "#postedBy != null")
+  @Cacheable(value = "deals:findAllByPostedBy", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null")
   Page<Deal> findAllByPostedBy(ObjectId postedBy, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByStore", key = "#storeId", condition = "#storeId != null")
+  @Cacheable(value = "deals:findAllByStore", key = "T(java.lang.String).format('%s-%s', #storeId, #pageable)", condition = "#storeId != null")
   Page<Deal> findAllByStore(ObjectId storeId, Pageable pageable);
 
 }
