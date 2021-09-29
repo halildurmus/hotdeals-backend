@@ -13,13 +13,13 @@ public class FakerUtilTest {
     String nickname1 = fakerUtil.generateNickname();
 
     assertFalse(nickname1.isBlank());
-    assertThat(nickname1).hasSizeGreaterThan(8);
+    assertThat(nickname1).hasSizeGreaterThanOrEqualTo(8);
 
     String nickname2 = fakerUtil.generateNickname();
 
     assertFalse(nickname2.isBlank());
     assertThat(nickname2).isNotEqualTo(nickname1);
-    assertThat(nickname2).hasSizeGreaterThan(8);
+    assertThat(nickname2).hasSizeGreaterThanOrEqualTo(8);
   }
 
 }
