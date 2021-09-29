@@ -22,6 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration-test")
 class DealRepositoryTest extends BaseIntegrationTest {
 
+  static User fakeUser = new User("607345b0eeeee1452898128b");
+  @MockBean
+  SecurityService securityService;
   @Autowired
   private DealRepository dealRepository;
 
@@ -30,18 +33,13 @@ class DealRepositoryTest extends BaseIntegrationTest {
     this.dealRepository.deleteAll();
   }
 
-  @MockBean
-  SecurityService securityService;
-
-  static User fakeUser = new User("607345b0eeeee1452898128b");
-
   @Test
   void findByPostedByShouldReturnDeal() {
     Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
     this.dealRepository.save(DummyDeals.deal1);
     final ObjectId objectId = new ObjectId(fakeUser.getId());
-    List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
+    List<Deal> deals = dealRepository.findAllByPostedBy(objectId, null).getContent();
 
     assertFalse(deals.isEmpty());
     assertEquals(deals.get(0).getPostedBy(), objectId);
@@ -50,7 +48,7 @@ class DealRepositoryTest extends BaseIntegrationTest {
   @Test
   void findByPostedByShouldNotReturnDealIfNoDealFound() {
     final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
-    List<Deal> deals = dealRepository.findAllByPostedBy(objectId);
+    List<Deal> deals = dealRepository.findAllByPostedBy(objectId, null).getContent();
 
     assertTrue(deals.isEmpty());
   }

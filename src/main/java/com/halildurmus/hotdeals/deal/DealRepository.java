@@ -1,11 +1,11 @@
 package com.halildurmus.hotdeals.deal;
 
-import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -35,24 +35,24 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   int countDealsByPostedBy(ObjectId postedBy);
 
   @Cacheable("deals:findAllByOrderByCreatedAtDesc")
-  List<Deal> findAllByOrderByCreatedAtDesc();
+  Page<Deal> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
   @Cacheable("deals:findAllByOrderByDealScoreDesc")
-  List<Deal> findAllByOrderByDealScoreDesc();
+  Page<Deal> findAllByOrderByDealScoreDesc(Pageable pageable);
 
   @Cacheable("deals:findAllByOrderByDiscountPrice")
-  List<Deal> findAllByOrderByDiscountPrice();
+  Page<Deal> findAllByOrderByDiscountPrice(Pageable pageable);
 
   @Cacheable(value = "deals:findAllByCategoryStartsWith", key = "#category", condition = "#category.blank != true")
-  List<Deal> findAllByCategoryStartsWith(String category);
+  Page<Deal> findAllByCategoryStartsWith(String category, Pageable pageable);
 
   @Query("{ $or: [{\"title\" : { $regex: /.*?0.*/, $options: 'i'}}, {\"description\" : { $regex: /.*?0.*/, $options: 'i'}}] }")
-  List<Deal> queryDeals(String keyword, Pageable pageable);
+  Page<Deal> queryDeals(String keyword, Pageable pageable);
 
   @Cacheable(value = "deals:findAllByPostedBy", key = "#postedBy", condition = "#postedBy != null")
-  List<Deal> findAllByPostedBy(ObjectId postedBy);
+  Page<Deal> findAllByPostedBy(ObjectId postedBy, Pageable pageable);
 
   @Cacheable(value = "deals:findAllByStore", key = "#storeId", condition = "#storeId != null")
-  List<Deal> findAllByStore(ObjectId storeId);
+  Page<Deal> findAllByStore(ObjectId storeId, Pageable pageable);
 
 }
