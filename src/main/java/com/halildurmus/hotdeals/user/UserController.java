@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,13 @@ public class UserController {
   @PostMapping("/users/unblock/{userId}")
   public ResponseEntity<User> unblockUser(@PathVariable String userId) throws Exception {
     final User response = service.unblock(userId);
+
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/users/deals")
+  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
+    final List<Deal> response = service.getDeals(pageable);
 
     return ResponseEntity.ok(response);
   }

@@ -7,8 +7,10 @@ import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -123,6 +125,13 @@ public class UserServiceImpl implements UserService {
     repository.save(user);
 
     return user;
+  }
+
+  @Override
+  public List<Deal> getDeals(Pageable pageable) {
+    final User user = securityService.getUser();
+
+    return dealRepository.findAllByPostedBy(new ObjectId(user.getId()), pageable).getContent();
   }
 
   @Override

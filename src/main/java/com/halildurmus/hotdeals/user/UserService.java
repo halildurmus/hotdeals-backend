@@ -2,6 +2,7 @@ package com.halildurmus.hotdeals.user;
 
 import com.halildurmus.hotdeals.deal.Deal;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -16,6 +17,8 @@ public interface UserService {
   User block(String userId) throws Exception;
 
   User unblock(String userId) throws Exception;
+
+  List<Deal> getDeals(Pageable pageable);
 
   List<Deal> getFavorites();
 
