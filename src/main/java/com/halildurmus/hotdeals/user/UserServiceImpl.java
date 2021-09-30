@@ -135,11 +135,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<Deal> getFavorites() {
+  public List<Deal> getFavorites(Pageable pageable) {
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
 
-    return (List<Deal>) dealRepository.findAllById(favorites.keySet());
+    return dealRepository.findAllById(favorites.keySet(), pageable).getContent();
   }
 
   @Override

@@ -20,7 +20,7 @@ public interface UserService {
 
   List<Deal> getDeals(Pageable pageable);
 
-  List<Deal> getFavorites();
+  List<Deal> getFavorites(Pageable pageable);
 
   User favorite(String dealId) throws Exception;
 
