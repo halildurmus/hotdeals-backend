@@ -34,7 +34,7 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
   int countDealsByPostedBy(ObjectId postedBy);
 
-  Page<Deal> findAllById(Iterable<String> ids, Pageable pageable);
+  Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
 
   @Cacheable("deals:findAllByOrderByCreatedAtDesc")
   Page<Deal> findAllByOrderByCreatedAtDesc(Pageable pageable);

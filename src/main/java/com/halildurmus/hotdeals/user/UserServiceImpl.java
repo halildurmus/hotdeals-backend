@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
 
-    return dealRepository.findAllById(favorites.keySet(), pageable).getContent();
+    return dealRepository.findAllByIdIn(favorites.keySet(), pageable).getContent();
   }
 
   @Override
