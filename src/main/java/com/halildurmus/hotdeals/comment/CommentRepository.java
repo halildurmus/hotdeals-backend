@@ -17,7 +17,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Caching(put = {@CachePut(value = "comments", key = "#entity.id")},
       evict = {
           @CacheEvict(value = "comments:countComments", key = "#entity.postedBy"),
-          @CacheEvict(value = "comments:findByDealId", key = "#entity.dealId"),
+          @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "#entity.dealId"),
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true)
@@ -28,7 +28,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Caching(evict = {
       @CacheEvict(value = "comments", key = "#id"),
       @CacheEvict(value = "comments:countComments", allEntries = true),
-      @CacheEvict(value = "comments:findByDealId", allEntries = true)
+      @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", allEntries = true)
   })
   void deleteById(String id);
 
