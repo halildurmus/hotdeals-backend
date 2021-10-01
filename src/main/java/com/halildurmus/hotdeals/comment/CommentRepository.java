@@ -35,7 +35,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Cacheable(value = "comments:countComments", key = "#postedBy", condition = "#postedBy != null")
   int countCommentsByPostedBy(ObjectId postedBy);
 
-  @Cacheable(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "#dealId", condition = "#dealId != null")
+  @Cacheable(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #dealId, #pageable)", condition = "#dealId != null")
   Page<Comment> findByDealIdOrderByCreatedAtDesc(ObjectId dealId, Pageable pageable);
 
 }
