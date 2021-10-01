@@ -131,7 +131,8 @@ public class UserServiceImpl implements UserService {
   public List<Deal> getDeals(Pageable pageable) {
     final User user = securityService.getUser();
 
-    return dealRepository.findAllByPostedBy(new ObjectId(user.getId()), pageable).getContent();
+    return dealRepository.findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()),
+        pageable).getContent();
   }
 
   @Override

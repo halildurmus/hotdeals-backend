@@ -23,7 +23,7 @@ public interface DealRepository extends MongoRepository<Deal, String> {
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true),
           @CacheEvict(value = "deals:findAllByCategoryStartsWith", key = "#entity.category"),
-          @CacheEvict(value = "deals:findAllByPostedBy", key = "#entity.postedBy"),
+          @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "#entity.postedBy"),
           @CacheEvict(value = "deals:findAllByStore", key = "#entity.store")
       })
   <S extends Deal> S save(S entity);
@@ -51,8 +51,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   @Query("{ $or: [{\"title\" : { $regex: /.*?0.*/, $options: 'i'}}, {\"description\" : { $regex: /.*?0.*/, $options: 'i'}}] }")
   Page<Deal> queryDeals(String keyword, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByPostedBy", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null")
-  Page<Deal> findAllByPostedBy(ObjectId postedBy, Pageable pageable);
+  @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null")
+  Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);
 
   @Cacheable(value = "deals:findAllByStore", key = "T(java.lang.String).format('%s-%s', #storeId, #pageable)", condition = "#storeId != null")
   Page<Deal> findAllByStore(ObjectId storeId, Pageable pageable);
