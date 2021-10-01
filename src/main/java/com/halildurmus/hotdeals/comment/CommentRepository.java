@@ -1,12 +1,12 @@
 package com.halildurmus.hotdeals.comment;
 
-import java.util.List;
-import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -36,6 +36,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   int countCommentsByPostedBy(ObjectId postedBy);
 
   @Cacheable(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "#dealId", condition = "#dealId != null")
-  Optional<List<Comment>> findByDealIdOrderByCreatedAtDesc(ObjectId dealId);
+  Page<Comment> findByDealIdOrderByCreatedAtDesc(ObjectId dealId, Pageable pageable);
 
 }
