@@ -17,7 +17,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Caching(put = {@CachePut(value = "comments", key = "#entity.id")},
       evict = {
           @CacheEvict(value = "comments:countComments", key = "#entity.postedBy"),
-          @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "#entity.dealId"),
+          @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true)

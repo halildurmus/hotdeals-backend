@@ -22,9 +22,9 @@ public interface DealRepository extends MongoRepository<Deal, String> {
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true),
-          @CacheEvict(value = "deals:findAllByCategoryStartsWith", key = "#entity.category"),
-          @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "#entity.postedBy"),
-          @CacheEvict(value = "deals:findAllByStore", key = "#entity.store")
+          @CacheEvict(value = "deals:findAllByCategoryStartsWith", allEntries = true),
+          @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByStore", allEntries = true)
       })
   <S extends Deal> S save(S entity);
 
