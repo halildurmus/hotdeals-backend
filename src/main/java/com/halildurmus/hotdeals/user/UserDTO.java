@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.user;
 
 import java.io.Serializable;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,5 +18,7 @@ public class UserDTO implements Serializable {
   private String avatar;
 
   private String nickname;
+
+  private Instant createdAt;
 
 }

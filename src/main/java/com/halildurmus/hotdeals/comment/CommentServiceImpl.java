@@ -31,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     final List<UserDTO> userDTOs = users.stream().map(
         (u) -> UserDTO.builder().id(u.getId()).uid(u.getUid()).avatar(u.getAvatar())
             .nickname(u.getNickname())
+            .createdAt(u.getCreatedAt())
             .build()).collect(
         Collectors.toList());
 
