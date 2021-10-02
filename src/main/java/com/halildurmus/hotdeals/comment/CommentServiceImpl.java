@@ -29,7 +29,8 @@ public class CommentServiceImpl implements CommentService {
         .collect(Collectors.toList());
     final List<User> users = userRepository.findAllByIdIn(userIds, null).getContent();
     final List<UserDTO> userDTOs = users.stream().map(
-        (u) -> UserDTO.builder().id(u.getId()).avatar(u.getAvatar()).nickname(u.getNickname())
+        (u) -> UserDTO.builder().id(u.getId()).uid(u.getUid()).avatar(u.getAvatar())
+            .nickname(u.getNickname())
             .build()).collect(
         Collectors.toList());
 
