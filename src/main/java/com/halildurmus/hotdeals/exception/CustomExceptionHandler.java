@@ -209,7 +209,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
-
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -222,11 +221,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler
   ResponseEntity<ExceptionResponse> handleException(Exception e) {
-    final ExceptionResponse error = ExceptionResponse.builder()
+    final ExceptionResponse response = ExceptionResponse.builder()
         .status(HttpStatus.BAD_REQUEST.value()).error(e.getLocalizedMessage())
         .message(e.getMessage()).build();
 
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
 }
