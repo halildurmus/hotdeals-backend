@@ -17,7 +17,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Caching(put = {@CachePut(value = "comments", key = "#entity.id")},
       evict = {
           @CacheEvict(value = "comments:countComments", key = "#entity.postedBy"),
-          @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true)
@@ -28,14 +28,14 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Caching(evict = {
       @CacheEvict(value = "comments", key = "#id"),
       @CacheEvict(value = "comments:countComments", allEntries = true),
-      @CacheEvict(value = "comments:findByDealIdOrderByCreatedAtDesc", allEntries = true)
+      @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true)
   })
   void deleteById(String id);
 
   @Cacheable(value = "comments:countComments", key = "#postedBy", condition = "#postedBy != null")
   int countCommentsByPostedBy(ObjectId postedBy);
 
-  @Cacheable(value = "comments:findByDealIdOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #dealId, #pageable)", condition = "#dealId != null")
-  Page<Comment> findByDealIdOrderByCreatedAtDesc(ObjectId dealId, Pageable pageable);
+  @Cacheable(value = "comments:findByDealIdOrderByCreatedAt", key = "T(java.lang.String).format('%s-%s', #dealId, #pageable)", condition = "#dealId != null")
+  Page<Comment> findByDealIdOrderByCreatedAt(ObjectId dealId, Pageable pageable);
 
 }

@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public List<CommentDTO> getCommentsByDealId(ObjectId dealId, Pageable pageable) {
-    final List<Comment> comments = repository.findByDealIdOrderByCreatedAtDesc(dealId, pageable)
+    final List<Comment> comments = repository.findByDealIdOrderByCreatedAt(dealId, pageable)
         .getContent();
     final List<String> userIds = comments.stream().distinct().map((c) -> c.getPostedBy().toString())
         .collect(Collectors.toList());
