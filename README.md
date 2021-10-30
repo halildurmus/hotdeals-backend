@@ -1,10 +1,7 @@
 # hotdeals-backend
 
 ![GitHub top language](https://img.shields.io/github/languages/top/halildurmus/hotdeals-backend?style=for-the-badge)
-[![GitHub contributors](https://img.shields.io/github/contributors-anon/halildurmus/hotdeals-backend?style=for-the-badge)](https://github.com/halildurmus/hotdeals-backend/graphs/contributors)
-[![GitHub issues](https://img.shields.io/github/issues/halildurmus/hotdeals-backend?style=for-the-badge)](https://github.com/halildurmus/hotdeals-backend/issues)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://github.com/halildurmus/hotdeals-backend/blob/master/LICENSE)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&labelColor=blue&style=for-the-badge)](https://linkedin.com/in/halildurmus)
 ![Visits](https://badges.pufler.dev/visits/halildurmus/hotdeals-backend?style=for-the-badge)
 
 > This is the **Backend** for my **[hotdeals app](https://github.com/halildurmus/hotdeals-app)**.
