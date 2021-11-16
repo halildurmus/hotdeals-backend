@@ -11,11 +11,12 @@ import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DuplicateKeyException;
 
-@DataMongoTest
+@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 class UserServiceImplTest {
 
   @MockBean
@@ -44,7 +45,9 @@ class UserServiceImplTest {
   @Test
   public void createShouldCallInsertTwiceIfNicknameIsNotUnique() {
     when(fakerUtil.generateNickname()).thenReturn("MrNobody123").thenReturn("MrNobody124");
-    when(userRepository.insert(any(User.class))).thenThrow(new DuplicateKeyException("E11000 duplicate key error index: nickname")).thenReturn(DummyUsers.user4WithoutNickname);
+    when(userRepository.insert(any(User.class))).thenThrow(
+            new DuplicateKeyException("E11000 duplicate key error index: nickname"))
+        .thenReturn(DummyUsers.user4WithoutNickname);
     userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
 
     User user = userService.create(DummyUsers.user4WithoutNickname);
