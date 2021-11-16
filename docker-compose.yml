@@ -9,7 +9,7 @@ services:
     ports:
       - 9200:9200
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: hotdeals_mongodb
     environment:
       - MONGO_INITDB_DATABASE=db
