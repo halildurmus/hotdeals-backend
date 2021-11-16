@@ -6,7 +6,7 @@ embedded:
     enabled: true
     reuseContainer: true
   mongodb:
-    dockerImage: mongo:latest
+    dockerImage: mongo:4.4
     enabled: true
     reuseContainer: true
 security:
