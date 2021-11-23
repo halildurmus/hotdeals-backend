@@ -88,6 +88,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/deal-reports/**").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, "/deal-reports/*").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/deal-reports/*").access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PATCH, "/users/me").authenticated()
+        .antMatchers(HttpMethod.PATCH, "/users/*").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, "/users/*").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, "/users/*").access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, "/user-reports/**").access("hasRole('ROLE_SUPER')")
