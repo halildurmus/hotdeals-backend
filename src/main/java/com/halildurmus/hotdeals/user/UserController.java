@@ -1,16 +1,21 @@
 package com.halildurmus.hotdeals.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
 import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +44,21 @@ public class UserController {
     }
 
     return ResponseEntity.ok(response);
+  }
+
+  @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
+  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) {
+    try {
+      final User patchedUser = service.update(patch);
+
+      return ResponseEntity.ok(patchedUser);
+    } catch (DuplicateKeyException | JsonPatchException | JsonProcessingException e) {
+      if (e instanceof DuplicateKeyException) {
+        return ResponseEntity.status(400).body(e.getLocalizedMessage());
+      }
+
+      return ResponseEntity.status(500).body(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @PostMapping("/users/add-fcm-token")

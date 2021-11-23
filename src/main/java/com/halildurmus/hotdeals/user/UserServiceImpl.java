@@ -1,5 +1,11 @@
 package com.halildurmus.hotdeals.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.security.SecurityService;
@@ -20,6 +26,9 @@ public class UserServiceImpl implements UserService {
   private final DealRepository dealRepository;
   private final UserRepository repository;
   private final FakerUtil fakerUtil;
+  private final ObjectMapper objectMapper = JsonMapper.builder()
+      .findAndAddModules()
+      .build();
   @Autowired
   private SecurityService securityService;
 
@@ -52,6 +61,23 @@ public class UserServiceImpl implements UserService {
     } while (isErrorOccurred);
 
     return user;
+  }
+
+  private User applyPatchToUser(JsonPatch patch, User targetUser)
+      throws JsonPatchException, JsonProcessingException {
+    final JsonNode patched = patch.apply(objectMapper.convertValue(targetUser, JsonNode.class));
+
+    return objectMapper.treeToValue(patched, User.class);
+  }
+
+  @Override
+  public User update(JsonPatch patch)
+      throws DuplicateKeyException, JsonPatchException, JsonProcessingException {
+    final User user = securityService.getUser();
+    final User patchedUser = applyPatchToUser(patch, user);
+    repository.save(patchedUser);
+
+    return patchedUser;
   }
 
   @Override
