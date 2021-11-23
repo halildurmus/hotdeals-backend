@@ -21,6 +21,16 @@
   </build>
   <dependencies>
     <dependency>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <version>2.13.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>json-patch</artifactId>
+      <groupId>com.github.java-json-tools</groupId>
+      <version>1.13</version>
+    </dependency>
+    <dependency>
       <artifactId>javafaker</artifactId>
       <exclusions>
         <exclusion>
