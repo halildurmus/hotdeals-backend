@@ -7,6 +7,7 @@ import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,7 @@ public class Comment implements Serializable {
   private ObjectId postedBy;
 
   @NotBlank
+  @Size(min = 1, max = 500)
   private String message;
 
   @CreatedDate
