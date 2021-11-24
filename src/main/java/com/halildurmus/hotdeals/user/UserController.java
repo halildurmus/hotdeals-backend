@@ -1,15 +1,14 @@
 package com.halildurmus.hotdeals.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.exception.ExceptionResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
@@ -52,12 +51,14 @@ public class UserController {
       final User patchedUser = service.update(patch);
 
       return ResponseEntity.ok(patchedUser);
-    } catch (DuplicateKeyException | JsonPatchException | JsonProcessingException e) {
-      if (e instanceof DuplicateKeyException) {
-        return ResponseEntity.status(400).body(e.getLocalizedMessage());
-      }
+    } catch (Exception e) {
+      final ExceptionResponse response = ExceptionResponse.builder()
+          .dateTime(LocalDateTime.now())
+          .status(HttpStatus.BAD_REQUEST.value())
+          .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+          .message(e.getMessage()).build();
 
-      return ResponseEntity.status(500).body(HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
   }
 
