@@ -2,7 +2,6 @@ package com.halildurmus.hotdeals.deal;
 
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
-import com.halildurmus.hotdeals.security.SecurityService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,6 @@ public class DealController {
   @Autowired
   private EsDealService esDealService;
 
-  @Autowired
-  private SecurityService securityService;
-
   @GetMapping("/deals/elastic-search")
   public ResponseEntity<List<SearchHit<EsDeal>>> searchDeals(
       @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
@@ -55,9 +51,14 @@ public class DealController {
 
   @DeleteMapping("/deals/{dealId}")
   public ResponseEntity<Object> removeDeal(@PathVariable String dealId) {
-    service.removeDeal(dealId);
+    try {
+      service.removeDeal(dealId);
 
-    return ResponseEntity.ok(HttpStatus.OK);
+      return ResponseEntity.ok(HttpStatus.OK);
+    } catch (Exception e) {
+      return ResponseEntity.status(403).body(HttpStatus.FORBIDDEN);
+    }
+
   }
 
   @PostMapping("/deals/{dealId}/increment-views-counter")
@@ -84,8 +85,7 @@ public class DealController {
       throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upvote, downvote}");
     }
 
-    final ObjectId userId = new ObjectId(securityService.getUser().getId());
-    final Deal response = service.vote(dealId, userId, voteType);
+    final Deal response = service.vote(dealId, voteType);
 
     return ResponseEntity.ok(response);
   }
