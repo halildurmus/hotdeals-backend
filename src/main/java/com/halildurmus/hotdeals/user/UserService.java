@@ -5,15 +5,13 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import java.util.List;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
   User create(User user);
 
-  User update(JsonPatch patch)
-      throws DuplicateKeyException, JsonPatchException, JsonProcessingException;
+  User update(JsonPatch patch) throws JsonPatchException, JsonProcessingException;
 
   void addFcmToken(String fcmToken);
 

@@ -63,21 +63,30 @@ public class UserServiceImpl implements UserService {
     return user;
   }
 
-  private User applyPatchToUser(JsonPatch patch, User targetUser)
+  private UserPatchDTO patchUser(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
-    final JsonNode patched = patch.apply(objectMapper.convertValue(targetUser, JsonNode.class));
+    final UserPatchDTO userPatchDTO = new UserPatchDTO();
+    // Converts the user to a JsonNode
+    final JsonNode target = objectMapper.convertValue(userPatchDTO, JsonNode.class);
+    // Applies the patch to the user
+    final JsonNode patched = patch.apply(target);
 
-    return objectMapper.treeToValue(patched, User.class);
+    // Converts the JsonNode to a UserPatchDTO instance
+    return objectMapper.treeToValue(patched, UserPatchDTO.class);
   }
 
   @Override
-  public User update(JsonPatch patch)
-      throws DuplicateKeyException, JsonPatchException, JsonProcessingException {
+  public User update(JsonPatch patch) throws JsonPatchException, JsonProcessingException {
     final User user = securityService.getUser();
-    final User patchedUser = applyPatchToUser(patch, user);
-    repository.save(patchedUser);
+    final UserPatchDTO patchedUser = patchUser(patch);
+    if (patchedUser.getAvatar().isPresent()) {
+      user.setAvatar(patchedUser.getAvatar().get());
+    } else if (patchedUser.getNickname().isPresent()) {
+      user.setNickname(patchedUser.getNickname().get());
+    }
+    repository.save(user);
 
-    return patchedUser;
+    return user;
   }
 
   @Override
