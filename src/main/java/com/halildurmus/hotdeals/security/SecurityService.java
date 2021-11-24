@@ -13,6 +13,11 @@ public class SecurityService {
   @Autowired
   SecurityProperties securityProperties;
 
+  /**
+   * Returns the authenticated {@code User}.
+   *
+   * @return {@code User}
+   */
   public User getUser() {
     SecurityContext securityContext = SecurityContextHolder.getContext();
     Object principal = securityContext.getAuthentication().getPrincipal();
