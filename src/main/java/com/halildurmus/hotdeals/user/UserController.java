@@ -82,14 +82,14 @@ public class UserController {
   public ResponseEntity<User> blockUser(@PathVariable String userId) throws Exception {
     final User response = service.block(userId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(201).body(response);
   }
 
   @PostMapping("/users/{userId}/unblock")
   public ResponseEntity<User> unblockUser(@PathVariable String userId) throws Exception {
     final User response = service.unblock(userId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(201).body(response);
   }
 
   @GetMapping("/users/deals")
@@ -114,7 +114,7 @@ public class UserController {
 
     final User response = service.favorite(dealId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(201).body(response);
   }
 
   @PostMapping("/users/unfavorite/{dealId}")
@@ -125,7 +125,7 @@ public class UserController {
 
     final User response = service.unfavorite(dealId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.status(201).body(response);
   }
 
 }
