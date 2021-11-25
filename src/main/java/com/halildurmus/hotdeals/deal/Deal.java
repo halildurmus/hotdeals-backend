@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -58,10 +59,12 @@ public class Deal implements Serializable {
 
   @Indexed
   @NotBlank
+  @Size(min = 10, max = 100)
   private String title;
 
   @Indexed
   @NotBlank
+  @Size(min = 10, max = 1500)
   private String description;
 
   @NotNull
