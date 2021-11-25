@@ -78,14 +78,14 @@ public class UserController {
     return ResponseEntity.ok(HttpStatus.OK);
   }
 
-  @PostMapping("/users/block/{userId}")
+  @PostMapping("/users/{userId}/block")
   public ResponseEntity<User> blockUser(@PathVariable String userId) throws Exception {
     final User response = service.block(userId);
 
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping("/users/unblock/{userId}")
+  @PostMapping("/users/{userId}/unblock")
   public ResponseEntity<User> unblockUser(@PathVariable String userId) throws Exception {
     final User response = service.unblock(userId);
 
