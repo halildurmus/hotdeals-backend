@@ -92,7 +92,7 @@ public class UserController {
     return ResponseEntity.status(201).body(response);
   }
 
-  @GetMapping("/users/deals")
+  @GetMapping("/users/me/deals")
   public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
     final List<Deal> response = service.getDeals(pageable);
 
