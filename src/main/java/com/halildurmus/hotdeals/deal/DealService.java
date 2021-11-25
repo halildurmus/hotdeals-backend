@@ -14,6 +14,8 @@ public interface DealService {
 
   void unfavorite(String id) throws Exception;
 
-  Deal vote(String id, String voteType) throws Exception;
+  Deal upvote(String id) throws Exception;
+
+  Deal downvote(String id) throws Exception;
 
 }

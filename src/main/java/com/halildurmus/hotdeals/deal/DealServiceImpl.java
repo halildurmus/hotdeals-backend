@@ -112,32 +112,43 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal vote(String id, String voteType) throws Exception {
+  public Deal upvote(String id) throws Exception {
+    final User user = securityService.getUser();
+    final ObjectId userId = new ObjectId(user.getId());
+    final Deal deal = repository.findById(id)
+        .orElseThrow(() -> new Exception("Deal could not be found!"));
+    final List<ObjectId> upvoters = deal.getUpvoters();
+    if (upvoters.contains(userId)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already upvoted this deal before!");
+    }
+    final List<ObjectId> downvoters = deal.getDownvoters();
+
+    downvoters.remove(userId);
+    upvoters.add(userId);
+    final int upVoteCount = upvoters.size();
+    final int downVoteCount = downvoters.size();
+    deal.setDealScore(upVoteCount - downVoteCount);
+    repository.save(deal);
+
+    return deal;
+  }
+
+  @Override
+  public Deal downvote(String id) throws Exception {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
         .orElseThrow(() -> new Exception("Deal could not be found!"));
     final List<ObjectId> upvoters = deal.getUpvoters();
     final List<ObjectId> downvoters = deal.getDownvoters();
-
-    if (voteType.equals("upvote")) {
-      if (upvoters.contains(userId)) {
-        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-        throw new Exception("You've already upvoted this deal before!");
-      }
-
-      downvoters.remove(userId);
-      upvoters.add(userId);
-    } else {
-      if (downvoters.contains(userId)) {
-        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-        throw new Exception("You've already downvoted this deal before!");
-      }
-
-      upvoters.remove(userId);
-      downvoters.add(userId);
+    if (downvoters.contains(userId)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already downvoted this deal before!");
     }
 
+    upvoters.remove(userId);
+    downvoters.add(userId);
     final int upVoteCount = upvoters.size();
     final int downVoteCount = downvoters.size();
     deal.setDealScore(upVoteCount - downVoteCount);

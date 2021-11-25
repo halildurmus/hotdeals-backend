@@ -4,7 +4,6 @@ import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,21 +99,26 @@ public class DealController {
     return ResponseEntity.status(201).build();
   }
 
-  @PostMapping("/deals/vote")
-  public ResponseEntity<Deal> vote(@RequestBody Map<String, String> json) throws Exception {
-    final String id = json.get("dealId");
-    final String voteType = json.get("voteType");
-    if (ObjectUtils.isEmpty(id) || ObjectUtils.isEmpty(voteType)) {
-      throw new IllegalArgumentException("dealId and voteType fields cannot be blank!");
+  @PostMapping("/deals/{id}/upvote")
+  public ResponseEntity<Deal> upvote(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid deal id!");
     }
 
-    if (!voteType.equals("upvote") && !voteType.equals("downvote")) {
-      throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upvote, downvote}");
+    final Deal response = service.upvote(id);
+
+    return ResponseEntity.ok().body(response);
+  }
+
+  @PostMapping("/deals/{id}/downvote")
+  public ResponseEntity<Deal> downvote(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid deal id!");
     }
 
-    final Deal response = service.vote(id, voteType);
+    final Deal response = service.downvote(id);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok().body(response);
   }
 
 }
