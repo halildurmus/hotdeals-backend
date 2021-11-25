@@ -7,7 +7,9 @@ import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
+import com.halildurmus.hotdeals.user.UserRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -28,6 +30,9 @@ public class DealServiceImpl implements DealService {
 
   @Autowired
   private EsDealRepository esDealRepository;
+
+  @Autowired
+  private UserRepository userRepository;
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -68,8 +73,8 @@ public class DealServiceImpl implements DealService {
     esDealRepository.deleteById(id);
   }
 
-  private Deal incrementViewsCounter(String dealId) {
-    final Query query = query(where("_id").is(dealId));
+  private Deal incrementViewsCounter(String id) {
+    final Query query = query(where("_id").is(id));
     final Update update = new Update().inc("views", 1);
     final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
 
@@ -77,16 +82,53 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal vote(String dealId, String voteType) throws Exception {
+  public Deal favorite(String id) throws Exception {
+    final Deal deal = repository.findById(id)
+        .orElseThrow(() -> new Exception("Deal could not be found!"));
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+    if (favorites.containsKey(id)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already favorited this deal before!");
+    }
+
+    favorites.put(id, true);
+    user.setFavorites(favorites);
+    userRepository.save(user);
+
+    return deal;
+  }
+
+  @Override
+  public Deal unfavorite(String id) throws Exception {
+    final Deal deal = repository.findById(id)
+        .orElseThrow(() -> new Exception("Deal could not be found!"));
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+    if (!favorites.containsKey(id)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already unfavorited this deal before!");
+    }
+
+    favorites.remove(id);
+    user.setFavorites(favorites);
+    userRepository.save(user);
+
+    return deal;
+  }
+
+  @Override
+  public Deal vote(String id, String voteType) throws Exception {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
-    final Deal deal = repository.findById(dealId)
+    final Deal deal = repository.findById(id)
         .orElseThrow(() -> new Exception("Deal could not be found!"));
     final List<ObjectId> upvoters = deal.getUpvoters();
     final List<ObjectId> downvoters = deal.getDownvoters();
 
     if (voteType.equals("upvote")) {
       if (upvoters.contains(userId)) {
+        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
         throw new Exception("You've already upvoted this deal before!");
       }
 
@@ -94,6 +136,7 @@ public class DealServiceImpl implements DealService {
       upvoters.add(userId);
     } else {
       if (downvoters.contains(userId)) {
+        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
         throw new Exception("You've already downvoted this deal before!");
       }
 

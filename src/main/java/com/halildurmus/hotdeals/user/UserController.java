@@ -7,7 +7,6 @@ import com.halildurmus.hotdeals.security.SecurityService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -104,28 +103,6 @@ public class UserController {
     final List<Deal> response = service.getFavorites(pageable);
 
     return ResponseEntity.ok(response);
-  }
-
-  @PostMapping("/users/favorite/{dealId}")
-  public ResponseEntity<User> favorite(@PathVariable String dealId) throws Exception {
-    if (!ObjectId.isValid(dealId)) {
-      throw new IllegalArgumentException("Invalid dealId!");
-    }
-
-    final User response = service.favorite(dealId);
-
-    return ResponseEntity.status(201).body(response);
-  }
-
-  @PostMapping("/users/unfavorite/{dealId}")
-  public ResponseEntity<User> unfavorite(@PathVariable String dealId) throws Exception {
-    if (!ObjectId.isValid(dealId)) {
-      throw new IllegalArgumentException("Invalid dealId!");
-    }
-
-    final User response = service.unfavorite(dealId);
-
-    return ResponseEntity.status(201).body(response);
   }
 
 }

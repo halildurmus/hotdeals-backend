@@ -27,8 +27,4 @@ public interface UserService {
 
   List<Deal> getFavorites(Pageable pageable);
 
-  User favorite(String dealId) throws Exception;
-
-  User unfavorite(String dealId) throws Exception;
-
 }

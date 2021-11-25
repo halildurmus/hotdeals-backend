@@ -183,36 +183,4 @@ public class UserServiceImpl implements UserService {
     return dealRepository.findAllByIdIn(favorites.keySet(), pageable).getContent();
   }
 
-  @Override
-  public User favorite(String dealId) throws Exception {
-    dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
-    final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (favorites.containsKey(dealId)) {
-      throw new Exception("You've already favorited this deal before!");
-    }
-
-    favorites.put(dealId, true);
-    user.setFavorites(favorites);
-    repository.save(user);
-
-    return user;
-  }
-
-  @Override
-  public User unfavorite(String dealId) throws Exception {
-    dealRepository.findById(dealId).orElseThrow(() -> new Exception("Deal could not be found!"));
-    final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (!favorites.containsKey(dealId)) {
-      throw new Exception("You've already unfavorited this deal before!");
-    }
-
-    favorites.remove(dealId);
-    user.setFavorites(favorites);
-    repository.save(user);
-
-    return user;
-  }
-
 }

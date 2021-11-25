@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -29,9 +30,9 @@ public class DealController {
   @Autowired
   private EsDealService esDealService;
 
-  @GetMapping("/deals/{dealId}")
-  public ResponseEntity<Object> getDeal(@PathVariable String dealId) {
-    final Optional<Deal> response = service.findById(dealId);
+  @GetMapping("/deals/{id}")
+  public ResponseEntity<Object> getDeal(@PathVariable String id) {
+    final Optional<Deal> response = service.findById(id);
     if (response.isEmpty()) {
       return ResponseEntity.status(404).body(HttpStatus.NOT_FOUND);
     }
@@ -59,15 +60,37 @@ public class DealController {
     return ResponseEntity.status(201).body(response);
   }
 
-  @DeleteMapping("/deals/{dealId}")
-  public ResponseEntity<Object> removeDeal(@PathVariable String dealId) {
+  @DeleteMapping("/deals/{id}")
+  public ResponseEntity<Object> removeDeal(@PathVariable String id) {
     try {
-      service.removeDeal(dealId);
+      service.removeDeal(id);
 
       return ResponseEntity.ok(HttpStatus.OK);
     } catch (Exception e) {
       return ResponseEntity.status(403).body(HttpStatus.FORBIDDEN);
     }
+  }
+
+  @PostMapping("/users/{id}/favorite")
+  public ResponseEntity<Deal> favorite(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid dealId!");
+    }
+
+    final Deal response = service.favorite(id);
+
+    return ResponseEntity.status(201).body(response);
+  }
+
+  @PostMapping("/deals/{id}/unfavorite")
+  public ResponseEntity<Deal> unfavorite(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid dealId!");
+    }
+
+    final Deal response = service.unfavorite(id);
+
+    return ResponseEntity.status(201).body(response);
   }
 
   @PostMapping("/deals/vote")
