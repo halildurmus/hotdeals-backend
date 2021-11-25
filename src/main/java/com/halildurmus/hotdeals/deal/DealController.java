@@ -58,19 +58,6 @@ public class DealController {
     } catch (Exception e) {
       return ResponseEntity.status(403).body(HttpStatus.FORBIDDEN);
     }
-
-  }
-
-  @PostMapping("/deals/{dealId}/increment-views-counter")
-  public ResponseEntity<Deal> vote(@PathVariable String dealId)
-      throws Exception {
-    if (!ObjectId.isValid(dealId)) {
-      throw new IllegalArgumentException("Invalid dealId!");
-    }
-
-    final Deal response = service.incrementViewsCounter(dealId);
-
-    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/deals/vote")
