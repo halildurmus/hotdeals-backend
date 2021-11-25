@@ -71,7 +71,7 @@ public class DealController {
     }
   }
 
-  @PostMapping("/users/{id}/favorite")
+  @PostMapping("/deals/{id}/favorite")
   public ResponseEntity<Deal> favorite(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
       throw new IllegalArgumentException("Invalid dealId!");
