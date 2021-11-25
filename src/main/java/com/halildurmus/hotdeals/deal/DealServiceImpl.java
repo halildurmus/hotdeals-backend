@@ -82,9 +82,8 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal favorite(String id) throws Exception {
-    final Deal deal = repository.findById(id)
-        .orElseThrow(() -> new Exception("Deal could not be found!"));
+  public void favorite(String id) throws Exception {
+    repository.findById(id).orElseThrow(() -> new Exception("Deal could not be found!"));
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (favorites.containsKey(id)) {
@@ -95,14 +94,11 @@ public class DealServiceImpl implements DealService {
     favorites.put(id, true);
     user.setFavorites(favorites);
     userRepository.save(user);
-
-    return deal;
   }
 
   @Override
-  public Deal unfavorite(String id) throws Exception {
-    final Deal deal = repository.findById(id)
-        .orElseThrow(() -> new Exception("Deal could not be found!"));
+  public void unfavorite(String id) throws Exception {
+    repository.findById(id).orElseThrow(() -> new Exception("Deal could not be found!"));
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (!favorites.containsKey(id)) {
@@ -113,8 +109,6 @@ public class DealServiceImpl implements DealService {
     favorites.remove(id);
     user.setFavorites(favorites);
     userRepository.save(user);
-
-    return deal;
   }
 
   @Override

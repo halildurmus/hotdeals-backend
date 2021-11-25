@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User block(String userId) throws Exception {
+  public void block(String userId) throws Exception {
     repository.findById(userId).orElseThrow(UserNotFoundException::new);
 
     final User user = securityService.getUser();
@@ -146,12 +146,10 @@ public class UserServiceImpl implements UserService {
     blockedUsers.add(userId);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
-
-    return user;
   }
 
   @Override
-  public User unblock(String userId) throws Exception {
+  public void unblock(String userId) throws Exception {
     repository.findById(userId).orElseThrow(UserNotFoundException::new);
 
     final User user = securityService.getUser();
@@ -163,8 +161,6 @@ public class UserServiceImpl implements UserService {
     blockedUsers.remove(userId);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
-
-    return user;
   }
 
   @Override

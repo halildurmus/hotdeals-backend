@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +37,7 @@ public class DealController {
 
     final Optional<Deal> response = service.findById(id);
     if (response.isEmpty()) {
-      return ResponseEntity.status(404).body(HttpStatus.NOT_FOUND);
+      return ResponseEntity.status(404).build();
     }
 
     return ResponseEntity.ok(response);
@@ -73,32 +72,32 @@ public class DealController {
     try {
       service.removeDeal(id);
 
-      return ResponseEntity.ok(HttpStatus.OK);
+      return ResponseEntity.ok().build();
     } catch (Exception e) {
-      return ResponseEntity.status(403).body(HttpStatus.FORBIDDEN);
+      return ResponseEntity.status(403).build();
     }
   }
 
   @PostMapping("/deals/{id}/favorite")
-  public ResponseEntity<Deal> favorite(@PathVariable String id) throws Exception {
+  public ResponseEntity<?> favorite(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
       throw new IllegalArgumentException("Invalid deal id!");
     }
 
-    final Deal response = service.favorite(id);
+    service.favorite(id);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).build();
   }
 
   @PostMapping("/deals/{id}/unfavorite")
-  public ResponseEntity<Deal> unfavorite(@PathVariable String id) throws Exception {
+  public ResponseEntity<?> unfavorite(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
       throw new IllegalArgumentException("Invalid deal id!");
     }
 
-    final Deal response = service.unfavorite(id);
+    service.unfavorite(id);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).build();
   }
 
   @PostMapping("/deals/vote")

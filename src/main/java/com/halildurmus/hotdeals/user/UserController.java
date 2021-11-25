@@ -39,7 +39,7 @@ public class UserController {
   public ResponseEntity<Object> getAuthenticatedUser() {
     User response = securityService.getUser();
     if (response == null) {
-      return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
+      return ResponseEntity.status(400).build();
     }
 
     return ResponseEntity.ok(response);
@@ -63,41 +63,41 @@ public class UserController {
   }
 
   @PostMapping("/users/add-fcm-token")
-  public ResponseEntity<Object> addFcmToken(@RequestBody Map<String, String> json) {
+  public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) {
     final String fcmToken = json.get("fcmToken");
     service.addFcmToken(fcmToken);
 
-    return ResponseEntity.ok(HttpStatus.OK);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/users/logout")
-  public ResponseEntity<Object> logout(@RequestBody Map<String, String> json) {
+  public ResponseEntity<?> logout(@RequestBody Map<String, String> json) {
     final String fcmToken = json.get("fcmToken");
     service.logout(fcmToken);
 
-    return ResponseEntity.ok(HttpStatus.OK);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/users/{id}/block")
-  public ResponseEntity<User> blockUser(@PathVariable String id) throws Exception {
+  public ResponseEntity<?> blockUser(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
       throw new IllegalArgumentException("Invalid user id!");
     }
 
-    final User response = service.block(id);
+    service.block(id);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).build();
   }
 
   @PostMapping("/users/{id}/unblock")
-  public ResponseEntity<User> unblockUser(@PathVariable String id) throws Exception {
+  public ResponseEntity<?> unblockUser(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
       throw new IllegalArgumentException("Invalid user id!");
     }
 
-    final User response = service.unblock(id);
+    service.unblock(id);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).build();
   }
 
   @GetMapping("/users/me/deals")

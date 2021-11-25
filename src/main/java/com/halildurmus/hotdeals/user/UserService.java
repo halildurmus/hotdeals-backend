@@ -19,9 +19,9 @@ public interface UserService {
 
   void logout(String fcmToken);
 
-  User block(String userId) throws Exception;
+  void block(String userId) throws Exception;
 
-  User unblock(String userId) throws Exception;
+  void unblock(String userId) throws Exception;
 
   List<Deal> getDeals(Pageable pageable);
 

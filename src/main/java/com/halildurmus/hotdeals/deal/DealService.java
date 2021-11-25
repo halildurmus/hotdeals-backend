@@ -10,9 +10,9 @@ public interface DealService {
 
   void removeDeal(String id) throws Exception;
 
-  Deal favorite(String id) throws Exception;
+  void favorite(String id) throws Exception;
 
-  Deal unfavorite(String id) throws Exception;
+  void unfavorite(String id) throws Exception;
 
   Deal vote(String id, String voteType) throws Exception;
 
