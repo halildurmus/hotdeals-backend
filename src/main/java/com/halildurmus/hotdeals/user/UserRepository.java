@@ -30,8 +30,6 @@ public interface UserRepository extends MongoRepository<User, String> {
   @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true")
   Optional<User> findByUid(String uid);
 
-  Page<User> findAllByIdIn(List<String> userUids, Pageable pageable);
-
-  Page<User> findAllByUidIn(List<String> userUids, Pageable pageable);
+  Page<User> findAllByIdIn(List<String> userIds, Pageable pageable);
 
 }
