@@ -99,7 +99,7 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/users/favorites")
+  @GetMapping("/users/me/favorites")
   public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
     final List<Deal> response = service.getFavorites(pageable);
 
