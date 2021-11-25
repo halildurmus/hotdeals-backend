@@ -5,7 +5,7 @@ import com.halildurmus.hotdeals.deal.es.EsDealService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.bson.types.ObjectId;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -28,6 +28,16 @@ public class DealController {
 
   @Autowired
   private EsDealService esDealService;
+
+  @GetMapping("/deals/{dealId}")
+  public ResponseEntity<Object> getDeal(@PathVariable String dealId) {
+    final Optional<Deal> response = service.findById(dealId);
+    if (response.isEmpty()) {
+      return ResponseEntity.status(404).body(HttpStatus.NOT_FOUND);
+    }
+
+    return ResponseEntity.ok(response);
+  }
 
   @GetMapping("/deals/elastic-search")
   public ResponseEntity<List<SearchHit<EsDeal>>> searchDeals(

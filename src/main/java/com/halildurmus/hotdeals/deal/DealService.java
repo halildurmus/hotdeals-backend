@@ -1,6 +1,10 @@
 package com.halildurmus.hotdeals.deal;
 
+import java.util.Optional;
+
 public interface DealService {
+
+  Optional<Deal> findById(String id);
 
   Deal saveOrUpdateDeal(Deal deal);
 

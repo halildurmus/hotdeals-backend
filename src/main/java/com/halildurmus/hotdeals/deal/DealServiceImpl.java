@@ -8,6 +8,7 @@ import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,16 @@ public class DealServiceImpl implements DealService {
 
   @Autowired
   private SecurityService securityService;
+
+  @Override
+  public Optional<Deal> findById(String id) {
+    final Optional<Deal> deal = repository.findById(id);
+    if (deal.isPresent()) {
+      return Optional.of(incrementViewsCounter(id));
+    }
+
+    return deal;
+  }
 
   @Transactional
   @Override
