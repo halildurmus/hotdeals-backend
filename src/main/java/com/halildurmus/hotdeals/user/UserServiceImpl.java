@@ -8,6 +8,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.DealRepository;
+import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
@@ -134,6 +135,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User block(String userId) throws Exception {
+    repository.findById(userId).orElseThrow(UserNotFoundException::new);
+
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
     if (blockedUsers.contains(userId)) {
@@ -149,6 +152,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User unblock(String userId) throws Exception {
+    repository.findById(userId).orElseThrow(UserNotFoundException::new);
+
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
     if (!blockedUsers.contains(userId)) {
