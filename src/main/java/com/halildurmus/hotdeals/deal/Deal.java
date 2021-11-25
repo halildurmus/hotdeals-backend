@@ -64,7 +64,7 @@ public class Deal implements Serializable {
 
   @Indexed
   @NotBlank
-  @Size(min = 10, max = 1500)
+  @Size(min = 10, max = 3000)
   private String description;
 
   @NotNull
