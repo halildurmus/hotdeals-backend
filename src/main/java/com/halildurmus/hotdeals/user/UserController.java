@@ -7,6 +7,7 @@ import com.halildurmus.hotdeals.security.SecurityService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -77,16 +78,24 @@ public class UserController {
     return ResponseEntity.ok(HttpStatus.OK);
   }
 
-  @PostMapping("/users/{userId}/block")
-  public ResponseEntity<User> blockUser(@PathVariable String userId) throws Exception {
-    final User response = service.block(userId);
+  @PostMapping("/users/{id}/block")
+  public ResponseEntity<User> blockUser(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid user id!");
+    }
+
+    final User response = service.block(id);
 
     return ResponseEntity.status(201).body(response);
   }
 
-  @PostMapping("/users/{userId}/unblock")
-  public ResponseEntity<User> unblockUser(@PathVariable String userId) throws Exception {
-    final User response = service.unblock(userId);
+  @PostMapping("/users/{id}/unblock")
+  public ResponseEntity<User> unblockUser(@PathVariable String id) throws Exception {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid user id!");
+    }
+
+    final User response = service.unblock(id);
 
     return ResponseEntity.status(201).body(response);
   }

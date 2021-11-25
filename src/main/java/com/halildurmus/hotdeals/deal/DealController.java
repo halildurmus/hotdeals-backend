@@ -32,6 +32,10 @@ public class DealController {
 
   @GetMapping("/deals/{id}")
   public ResponseEntity<Object> getDeal(@PathVariable String id) {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid deal id!");
+    }
+
     final Optional<Deal> response = service.findById(id);
     if (response.isEmpty()) {
       return ResponseEntity.status(404).body(HttpStatus.NOT_FOUND);
@@ -62,6 +66,10 @@ public class DealController {
 
   @DeleteMapping("/deals/{id}")
   public ResponseEntity<Object> removeDeal(@PathVariable String id) {
+    if (!ObjectId.isValid(id)) {
+      throw new IllegalArgumentException("Invalid deal id!");
+    }
+
     try {
       service.removeDeal(id);
 
@@ -74,7 +82,7 @@ public class DealController {
   @PostMapping("/deals/{id}/favorite")
   public ResponseEntity<Deal> favorite(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
-      throw new IllegalArgumentException("Invalid dealId!");
+      throw new IllegalArgumentException("Invalid deal id!");
     }
 
     final Deal response = service.favorite(id);
@@ -85,7 +93,7 @@ public class DealController {
   @PostMapping("/deals/{id}/unfavorite")
   public ResponseEntity<Deal> unfavorite(@PathVariable String id) throws Exception {
     if (!ObjectId.isValid(id)) {
-      throw new IllegalArgumentException("Invalid dealId!");
+      throw new IllegalArgumentException("Invalid deal id!");
     }
 
     final Deal response = service.unfavorite(id);
@@ -95,9 +103,9 @@ public class DealController {
 
   @PostMapping("/deals/vote")
   public ResponseEntity<Deal> vote(@RequestBody Map<String, String> json) throws Exception {
-    final String dealId = json.get("dealId");
+    final String id = json.get("dealId");
     final String voteType = json.get("voteType");
-    if (ObjectUtils.isEmpty(dealId) || ObjectUtils.isEmpty(voteType)) {
+    if (ObjectUtils.isEmpty(id) || ObjectUtils.isEmpty(voteType)) {
       throw new IllegalArgumentException("dealId and voteType fields cannot be blank!");
     }
 
@@ -105,7 +113,7 @@ public class DealController {
       throw new IllegalArgumentException("Invalid vote type! Valid vote types: {upvote, downvote}");
     }
 
-    final Deal response = service.vote(dealId, voteType);
+    final Deal response = service.vote(id, voteType);
 
     return ResponseEntity.ok(response);
   }
