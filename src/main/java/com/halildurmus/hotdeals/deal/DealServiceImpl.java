@@ -57,18 +57,12 @@ public class DealServiceImpl implements DealService {
     esDealRepository.deleteById(id);
   }
 
-  @Override
-  public Deal incrementViewsCounter(String dealId) throws Exception {
+  private Deal incrementViewsCounter(String dealId) {
     final Query query = query(where("_id").is(dealId));
     final Update update = new Update().inc("views", 1);
     final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
 
-    final Deal deal = mongoTemplate.findAndModify(query, update, options, Deal.class);
-    if (deal == null) {
-      throw new Exception("Deal could not be found!");
-    }
-
-    return deal;
+    return mongoTemplate.findAndModify(query, update, options, Deal.class);
   }
 
   @Override
