@@ -4,15 +4,17 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.exception.ExceptionResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import org.bson.types.ObjectId;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RepositoryRestController
+@Validated
 public class UserController {
 
   @Autowired
@@ -29,7 +32,7 @@ public class UserController {
   private SecurityService securityService;
 
   @PostMapping("/users")
-  public ResponseEntity<User> createUser(@RequestBody User user) {
+  public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
     final User response = service.create(user);
 
     return ResponseEntity.status(201).body(response);
@@ -63,7 +66,11 @@ public class UserController {
   }
 
   @PostMapping("/users/add-fcm-token")
-  public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) {
+  public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) throws Exception {
+    if (!json.containsKey("fcmToken")) {
+      throw new Exception("You need to include 'fcmToken' inside the request body!");
+    }
+
     final String fcmToken = json.get("fcmToken");
     service.addFcmToken(fcmToken);
 
@@ -71,7 +78,11 @@ public class UserController {
   }
 
   @PostMapping("/users/logout")
-  public ResponseEntity<?> logout(@RequestBody Map<String, String> json) {
+  public ResponseEntity<?> logout(@RequestBody Map<String, String> json) throws Exception {
+    if (!json.containsKey("fcmToken")) {
+      throw new Exception("You need to include 'fcmToken' inside the request body!");
+    }
+
     final String fcmToken = json.get("fcmToken");
     service.logout(fcmToken);
 
@@ -79,22 +90,15 @@ public class UserController {
   }
 
   @PostMapping("/users/{id}/block")
-  public ResponseEntity<?> blockUser(@PathVariable String id) throws Exception {
-    if (!ObjectId.isValid(id)) {
-      throw new IllegalArgumentException("Invalid user id!");
-    }
-
+  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
     service.block(id);
 
     return ResponseEntity.status(201).build();
   }
 
   @PostMapping("/users/{id}/unblock")
-  public ResponseEntity<?> unblockUser(@PathVariable String id) throws Exception {
-    if (!ObjectId.isValid(id)) {
-      throw new IllegalArgumentException("Invalid user id!");
-    }
-
+  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id)
+      throws Exception {
     service.unblock(id);
 
     return ResponseEntity.status(201).build();
