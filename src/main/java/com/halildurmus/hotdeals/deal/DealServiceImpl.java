@@ -5,6 +5,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
+import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.UserRepository;
@@ -53,17 +54,17 @@ public class DealServiceImpl implements DealService {
   @Transactional
   @Override
   public Deal saveOrUpdateDeal(Deal deal) {
-    Deal returnValue = repository.save(deal);
+    final Deal savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
 
-    return returnValue;
+    return savedDeal;
   }
 
   @Transactional
   @Override
   public void removeDeal(String id) throws Exception {
     final Deal deal = repository.findById(id)
-        .orElseThrow(() -> new Exception("Deal could not be found!"));
+        .orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new Exception("You can only remove your own deal!");
@@ -83,7 +84,7 @@ public class DealServiceImpl implements DealService {
 
   @Override
   public void favorite(String id) throws Exception {
-    repository.findById(id).orElseThrow(() -> new Exception("Deal could not be found!"));
+    repository.findById(id).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (favorites.containsKey(id)) {
@@ -98,7 +99,7 @@ public class DealServiceImpl implements DealService {
 
   @Override
   public void unfavorite(String id) throws Exception {
-    repository.findById(id).orElseThrow(() -> new Exception("Deal could not be found!"));
+    repository.findById(id).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (!favorites.containsKey(id)) {
@@ -116,7 +117,7 @@ public class DealServiceImpl implements DealService {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
-        .orElseThrow(() -> new Exception("Deal could not be found!"));
+        .orElseThrow(DealNotFoundException::new);
     final List<ObjectId> upvoters = deal.getUpvoters();
     if (upvoters.contains(userId)) {
       // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
@@ -139,7 +140,7 @@ public class DealServiceImpl implements DealService {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
-        .orElseThrow(() -> new Exception("Deal could not be found!"));
+        .orElseThrow(DealNotFoundException::new);
     final List<ObjectId> upvoters = deal.getUpvoters();
     final List<ObjectId> downvoters = deal.getDownvoters();
     if (downvoters.contains(userId)) {

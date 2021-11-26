@@ -51,6 +51,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
+  ResponseEntity<ExceptionResponse> handleDealNotFound(DealNotFoundException e) {
+    final ExceptionResponse response = ExceptionResponse.builder()
+        .dateTime(LocalDateTime.now())
+        .status(HttpStatus.NOT_FOUND.value())
+        .error(HttpStatus.NOT_FOUND.getReasonPhrase()).message(e.getMessage()).build();
+
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler
   ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e,
       WebRequest request) {
     final String errorMessage =
