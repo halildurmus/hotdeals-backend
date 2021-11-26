@@ -9,7 +9,6 @@ import com.google.firebase.messaging.SendResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.UserService;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Autowired
   private UserService userService;
 
-  public int sendNotification(Note note, List<String> tokens) throws FirebaseMessagingException {
+  public int sendNotification(Note note) throws FirebaseMessagingException {
     final User user = securityService.getUser();
     final Map<String, String> data = note.getData();
     data.put("actor", user.getId());
@@ -43,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
     final MulticastMessage message = MulticastMessage.builder()
         .setNotification(notification)
         .putAllData(note.getData())
-        .addAllTokens(tokens)
+        .addAllTokens(note.getTokens())
         .build();
 
     final BatchResponse batchResponse = firebaseMessaging.sendMulticast(message);
@@ -55,7 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
       if (sendResponse.getException() != null) {
         final String errorCode = sendResponse.getException().getMessagingErrorCode().name();
         if (errorCode.equals("INVALID_ARGUMENT") || errorCode.equals("UNREGISTERED")) {
-          final String fcmToken = tokens.get(i);
+          final String fcmToken = note.getTokens().get(i);
           final String userUid = note.getData().get("uid");
           userService.removeFcmToken(userUid, fcmToken);
         }
