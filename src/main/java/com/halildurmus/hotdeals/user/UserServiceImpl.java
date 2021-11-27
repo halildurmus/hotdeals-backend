@@ -122,19 +122,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void logout(String fcmToken) {
-    final User user = securityService.getUser();
-    final List<String> fcmTokens = user.getFcmTokens();
-    if (fcmTokens.contains(fcmToken)) {
-      fcmTokens.remove(fcmToken);
-      user.setFcmTokens(fcmTokens);
-      repository.save(user);
-    } else {
-      log.warn("logout() -> " + user + " does not have this fcmToken: " + fcmToken);
-    }
-  }
-
-  @Override
   public List<Deal> getFavorites(Pageable pageable) {
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();

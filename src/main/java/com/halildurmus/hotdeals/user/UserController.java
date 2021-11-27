@@ -67,6 +67,13 @@ public class UserController {
     }
   }
 
+  @GetMapping("/users/me/deals")
+  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
+    final List<Deal> deals = service.getDeals(pageable);
+
+    return ResponseEntity.ok(deals);
+  }
+
   @GetMapping("/users/me/favorites")
   public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
     final List<Deal> favorites = service.getFavorites(pageable);
@@ -90,7 +97,22 @@ public class UserController {
     return ResponseEntity.status(204).build();
   }
 
-  @PostMapping("/users/add-fcm-token")
+  @PutMapping("/users/me/blocks/{id}")
+  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
+    service.block(id);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/users/me/blocks/{id}")
+  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id)
+      throws Exception {
+    service.unblock(id);
+
+    return ResponseEntity.status(204).build();
+  }
+
+  @PutMapping("/users/me/fcm-tokens")
   public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) throws Exception {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
@@ -102,38 +124,16 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @PostMapping("/users/logout")
+  @DeleteMapping("/users/me/fcm-tokens")
   public ResponseEntity<?> logout(@RequestBody Map<String, String> json) throws Exception {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
     }
-
+    final User user = securityService.getUser();
     final String fcmToken = json.get("fcmToken");
-    service.logout(fcmToken);
-
-    return ResponseEntity.ok().build();
-  }
-
-  @PutMapping("/users/{id}/block")
-  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
-    service.block(id);
-
-    return ResponseEntity.ok().build();
-  }
-
-  @DeleteMapping("/users/{id}/unblock")
-  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id)
-      throws Exception {
-    service.unblock(id);
+    service.removeFcmToken(user.getUid(), fcmToken);
 
     return ResponseEntity.status(204).build();
-  }
-
-  @GetMapping("/users/me/deals")
-  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
-    final List<Deal> deals = service.getDeals(pageable);
-
-    return ResponseEntity.ok(deals);
   }
 
 }
