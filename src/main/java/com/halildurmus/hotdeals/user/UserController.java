@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -120,7 +121,8 @@ public class UserController {
   }
 
   @PutMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) throws Exception {
+  public ResponseEntity<?> addFcmToken(@Valid @NotNull @RequestBody Map<String, String> json)
+      throws Exception {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
     }
@@ -132,7 +134,8 @@ public class UserController {
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> removeFcmToken(@RequestBody Map<String, String> json) throws Exception {
+  public ResponseEntity<?> removeFcmToken(@Valid @NotNull @RequestBody Map<String, String> json)
+      throws Exception {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
     }
