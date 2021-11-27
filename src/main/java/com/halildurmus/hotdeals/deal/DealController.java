@@ -75,17 +75,18 @@ public class DealController {
     }
   }
 
-  @PostMapping("/deals/{id}/upvote")
-  public ResponseEntity<Deal> upvote(@ObjectIdConstraint @PathVariable String id) throws Exception {
-    final Deal deal = service.upvote(id);
+  @PutMapping("/deals/{id}/votes")
+  public ResponseEntity<Deal> upvote(
+      @ObjectIdConstraint @PathVariable String id, @RequestBody VoteType voteType)
+      throws Exception {
+    final Deal deal = service.voteDeal(id, voteType);
 
     return ResponseEntity.ok().body(deal);
   }
 
-  @PostMapping("/deals/{id}/downvote")
-  public ResponseEntity<Deal> downvote(@ObjectIdConstraint @PathVariable String id)
-      throws Exception {
-    final Deal deal = service.downvote(id);
+  @DeleteMapping("/deals/{id}/votes")
+  public ResponseEntity<Deal> upvote(@ObjectIdConstraint @PathVariable String id) throws Exception {
+    final Deal deal = service.voteDeal(id, VoteType.UNVOTE);
 
     return ResponseEntity.ok().body(deal);
   }

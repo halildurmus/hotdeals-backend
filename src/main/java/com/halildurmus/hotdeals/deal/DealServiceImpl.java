@@ -79,43 +79,33 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal upvote(String id) throws Exception {
-    final User user = securityService.getUser();
-    final ObjectId userId = new ObjectId(user.getId());
-    final Deal deal = repository.findById(id)
-        .orElseThrow(DealNotFoundException::new);
-    final List<ObjectId> upvoters = deal.getUpvoters();
-    if (upvoters.contains(userId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already upvoted this deal before!");
-    }
-    final List<ObjectId> downvoters = deal.getDownvoters();
-
-    downvoters.remove(userId);
-    upvoters.add(userId);
-    final int upVoteCount = upvoters.size();
-    final int downVoteCount = downvoters.size();
-    deal.setDealScore(upVoteCount - downVoteCount);
-    repository.save(deal);
-
-    return deal;
-  }
-
-  @Override
-  public Deal downvote(String id) throws Exception {
+  public Deal voteDeal(String id, VoteType voteType) throws Exception {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
         .orElseThrow(DealNotFoundException::new);
     final List<ObjectId> upvoters = deal.getUpvoters();
     final List<ObjectId> downvoters = deal.getDownvoters();
-    if (downvoters.contains(userId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already downvoted this deal before!");
+
+    if (voteType.equals(VoteType.UP)) {
+      if (upvoters.contains(userId)) {
+        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+        throw new Exception("You've already upvoted this deal before!");
+      }
+      downvoters.remove(userId);
+      upvoters.add(userId);
+    } else if (voteType.equals(VoteType.DOWN)) {
+      if (downvoters.contains(userId)) {
+        // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+        throw new Exception("You've already downvoted this deal before!");
+      }
+      upvoters.remove(userId);
+      downvoters.add(userId);
+    } else if (voteType.equals(VoteType.UNVOTE)) {
+      upvoters.remove(userId);
+      downvoters.remove(userId);
     }
 
-    upvoters.remove(userId);
-    downvoters.add(userId);
     final int upVoteCount = upvoters.size();
     final int downVoteCount = downvoters.size();
     deal.setDealScore(upVoteCount - downVoteCount);
