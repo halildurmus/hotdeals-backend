@@ -50,7 +50,7 @@ public class User implements Serializable {
   @NotBlank
   private String avatar;
 
-  private List<String> blockedUsers = new ArrayList<>();
+  private Map<String, Boolean> blockedUsers = new HashMap<>();
 
   private List<String> fcmTokens = new ArrayList<>();
 

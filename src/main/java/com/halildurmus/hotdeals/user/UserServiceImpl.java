@@ -134,29 +134,31 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void block(String userId) throws Exception {
-    repository.findById(userId).orElseThrow(UserNotFoundException::new);
+  public void block(String id) throws Exception {
+    repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
-    final List<String> blockedUsers = user.getBlockedUsers();
-    if (blockedUsers.contains(userId)) {
+    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
+    if (blockedUsers.containsKey(id)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
       throw new Exception("You've already blocked this user before!");
     }
 
-    blockedUsers.add(userId);
+    blockedUsers.put(id, true);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
   }
 
   @Override
-  public void unblock(String userId) throws Exception {
-    repository.findById(userId).orElseThrow(UserNotFoundException::new);
+  public void unblock(String id) throws Exception {
+    repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
-    final List<String> blockedUsers = user.getBlockedUsers();
-    if (!blockedUsers.contains(userId)) {
+    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
+    if (!blockedUsers.containsKey(id)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
       throw new Exception("You've already unblocked this user before!");
     }
 
-    blockedUsers.remove(userId);
+    blockedUsers.remove(id);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
   }
