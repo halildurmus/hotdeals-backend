@@ -245,8 +245,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     final ExceptionResponse response = ExceptionResponse.builder()
         .dateTime(LocalDateTime.now())
-        .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()).error(e.getLocalizedMessage())
-        .message(sb.substring(0, sb.length() - 2)).build();
+        .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+        .error(e.getLocalizedMessage()).message(sb.substring(0, sb.length() - 2)).build();
 
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
@@ -266,10 +266,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
   ResponseEntity<ExceptionResponse> handleException(Exception e) {
     final ExceptionResponse response = ExceptionResponse.builder()
         .dateTime(LocalDateTime.now())
-        .status(HttpStatus.BAD_REQUEST.value()).error(e.getLocalizedMessage())
-        .message(e.getMessage()).build();
+        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        .error(e.getLocalizedMessage()).message(e.getMessage()).build();
 
-    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
 }
