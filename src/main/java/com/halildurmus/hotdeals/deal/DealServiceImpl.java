@@ -48,7 +48,7 @@ public class DealServiceImpl implements DealService {
 
   @Transactional
   @Override
-  public Deal saveOrUpdateDeal(Deal deal) {
+  public Deal saveDeal(Deal deal) {
     final Deal savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
 

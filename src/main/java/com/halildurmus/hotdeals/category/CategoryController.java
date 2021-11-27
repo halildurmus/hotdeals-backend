@@ -16,15 +16,15 @@ public class CategoryController {
   private CategoryService service;
 
   @PostMapping("/categories")
-  public ResponseEntity<Category> saveOrUpdateCategory(@Valid @RequestBody Category category)
+  public ResponseEntity<Category> saveCategory(@Valid @RequestBody Category category)
       throws Exception {
     if (!category.getNames().containsKey("en")) {
       throw new Exception("The category name must have an English translation!");
     }
 
-    final Category response = service.saveOrUpdateCategory(category);
+    final Category savedCategory = service.saveCategory(category);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).body(savedCategory);
   }
 
 }

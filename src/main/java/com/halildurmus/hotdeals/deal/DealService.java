@@ -6,7 +6,7 @@ public interface DealService {
 
   Optional<Deal> findById(String id);
 
-  Deal saveOrUpdateDeal(Deal deal);
+  Deal saveDeal(Deal deal);
 
   void removeDeal(String id) throws Exception;
 
