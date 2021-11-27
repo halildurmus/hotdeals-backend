@@ -97,6 +97,13 @@ public class UserController {
     return ResponseEntity.status(204).build();
   }
 
+  @GetMapping("/users/me/blocks")
+  public ResponseEntity<List<User>> getBlockedUsers(Pageable pageable) {
+    final List<User> blockedUsers = service.getBlockedUsers(pageable);
+
+    return ResponseEntity.ok(blockedUsers);
+  }
+
   @PutMapping("/users/me/blocks/{id}")
   public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
     service.block(id);

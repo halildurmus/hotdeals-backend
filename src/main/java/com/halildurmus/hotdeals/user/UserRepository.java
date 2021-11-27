@@ -1,6 +1,5 @@
 package com.halildurmus.hotdeals.user;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,6 +29,6 @@ public interface UserRepository extends MongoRepository<User, String> {
   @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true")
   Optional<User> findByUid(String uid);
 
-  Page<User> findAllByIdIn(List<String> userIds, Pageable pageable);
+  Page<User> findAllByIdIn(Iterable<String> userIds, Pageable pageable);
 
 }

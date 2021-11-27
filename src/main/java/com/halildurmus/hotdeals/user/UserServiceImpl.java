@@ -160,6 +160,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public List<User> getBlockedUsers(Pageable pageable) {
+    final User user = securityService.getUser();
+    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
+
+    return repository.findAllByIdIn(blockedUsers.keySet(), pageable).getContent();
+  }
+
+  @Override
   public void block(String id) throws Exception {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();

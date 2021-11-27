@@ -21,12 +21,14 @@ public interface UserService {
 
   void unfavoriteDeal(String dealId) throws Exception;
 
-  void addFcmToken(String fcmToken);
-
-  void removeFcmToken(String userUid, String fcmToken);
+  List<User> getBlockedUsers(Pageable pageable);
 
   void block(String userId) throws Exception;
 
   void unblock(String userId) throws Exception;
+
+  void addFcmToken(String fcmToken);
+
+  void removeFcmToken(String userUid, String fcmToken);
 
 }
