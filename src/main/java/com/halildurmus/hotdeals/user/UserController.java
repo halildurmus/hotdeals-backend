@@ -15,10 +15,12 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RepositoryRestController
@@ -89,19 +91,19 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @PostMapping("/users/{id}/block")
+  @PutMapping("/users/{id}/block")
   public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
     service.block(id);
 
-    return ResponseEntity.status(201).build();
+    return ResponseEntity.ok().build();
   }
 
-  @PostMapping("/users/{id}/unblock")
+  @DeleteMapping("/users/{id}/unblock")
   public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id)
       throws Exception {
     service.unblock(id);
 
-    return ResponseEntity.status(201).build();
+    return ResponseEntity.status(204).build();
   }
 
   @GetMapping("/users/me/deals")
