@@ -16,7 +16,7 @@ public class StoreController {
   private StoreService service;
 
   @PostMapping("/stores")
-  public ResponseEntity<Store> saveStore(@Valid @RequestBody Store store) {
+  public ResponseEntity<Store> createStore(@Valid @RequestBody Store store) {
     final Store createdStore = service.saveStore(store);
 
     return ResponseEntity.status(201).body(createdStore);

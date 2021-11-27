@@ -16,7 +16,7 @@ public class CategoryController {
   private CategoryService service;
 
   @PostMapping("/categories")
-  public ResponseEntity<Category> saveCategory(@Valid @RequestBody Category category)
+  public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category)
       throws Exception {
     if (!category.getNames().containsKey("en")) {
       throw new Exception("The category name must have an English translation!");

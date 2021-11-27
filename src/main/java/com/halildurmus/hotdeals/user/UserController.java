@@ -125,7 +125,7 @@ public class UserController {
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> logout(@RequestBody Map<String, String> json) throws Exception {
+  public ResponseEntity<?> removeFcmToken(@RequestBody Map<String, String> json) throws Exception {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
     }

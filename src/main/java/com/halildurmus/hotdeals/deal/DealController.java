@@ -50,7 +50,7 @@ public class DealController {
   }
 
   @PostMapping("/deals")
-  public ResponseEntity<Deal> saveDeal(@Valid @RequestBody Deal deal) {
+  public ResponseEntity<Deal> createDeal(@Valid @RequestBody Deal deal) {
     final Deal createdDeal = service.saveDeal(deal);
 
     return ResponseEntity.status(201).body(createdDeal);
