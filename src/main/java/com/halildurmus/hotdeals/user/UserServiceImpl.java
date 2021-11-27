@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void favoriteDeal(String dealId) throws Exception {
-    repository.findById(dealId).orElseThrow(DealNotFoundException::new);
+    dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (favorites.containsKey(dealId)) {
@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void unfavoriteDeal(String dealId) throws Exception {
-    repository.findById(dealId).orElseThrow(DealNotFoundException::new);
+    dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (!favorites.containsKey(dealId)) {
