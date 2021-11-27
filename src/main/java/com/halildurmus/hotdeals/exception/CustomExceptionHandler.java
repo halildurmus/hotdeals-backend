@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -58,6 +60,21 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         .error(HttpStatus.NOT_FOUND.getReasonPhrase()).message(e.getMessage()).build();
 
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler
+  ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
+    final List<String> errors = new ArrayList<>();
+    for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+      errors.add(violation.getPropertyPath().toString() + violation.getMessage());
+    }
+
+    final ExceptionResponse response = ExceptionResponse.builder()
+        .dateTime(LocalDateTime.now())
+        .status(HttpStatus.BAD_REQUEST.value()).error(e.getLocalizedMessage())
+        .message(errors.toString()).build();
+
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler
