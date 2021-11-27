@@ -8,6 +8,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.DealRepository;
+import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.FakerUtil;
@@ -134,6 +135,44 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public List<Deal> getFavorites(Pageable pageable) {
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+
+    return dealRepository.findAllByIdIn(favorites.keySet(), pageable).getContent();
+  }
+
+  @Override
+  public void favoriteDeal(String dealId) throws Exception {
+    repository.findById(dealId).orElseThrow(DealNotFoundException::new);
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+    if (favorites.containsKey(dealId)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already favorited this deal before!");
+    }
+
+    favorites.put(dealId, true);
+    user.setFavorites(favorites);
+    repository.save(user);
+  }
+
+  @Override
+  public void unfavoriteDeal(String dealId) throws Exception {
+    repository.findById(dealId).orElseThrow(DealNotFoundException::new);
+    final User user = securityService.getUser();
+    final Map<String, Boolean> favorites = user.getFavorites();
+    if (!favorites.containsKey(dealId)) {
+      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
+      throw new Exception("You've already unfavorited this deal before!");
+    }
+
+    favorites.remove(dealId);
+    user.setFavorites(favorites);
+    repository.save(user);
+  }
+
+  @Override
   public void block(String id) throws Exception {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
@@ -169,14 +208,6 @@ public class UserServiceImpl implements UserService {
 
     return dealRepository.findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()),
         pageable).getContent();
-  }
-
-  @Override
-  public List<Deal> getFavorites(Pageable pageable) {
-    final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-
-    return dealRepository.findAllByIdIn(favorites.keySet(), pageable).getContent();
   }
 
 }

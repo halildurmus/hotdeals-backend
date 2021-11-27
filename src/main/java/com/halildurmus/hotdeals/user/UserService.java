@@ -13,6 +13,12 @@ public interface UserService {
 
   User update(JsonPatch patch) throws JsonPatchException, JsonProcessingException;
 
+  List<Deal> getFavorites(Pageable pageable);
+
+  void favoriteDeal(String dealId) throws Exception;
+
+  void unfavoriteDeal(String dealId) throws Exception;
+
   void addFcmToken(String fcmToken);
 
   void removeFcmToken(String userUid, String fcmToken);
@@ -25,6 +31,5 @@ public interface UserService {
 
   List<Deal> getDeals(Pageable pageable);
 
-  List<Deal> getFavorites(Pageable pageable);
 
 }

@@ -67,6 +67,29 @@ public class UserController {
     }
   }
 
+  @GetMapping("/users/me/favorites")
+  public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
+    final List<Deal> favorites = service.getFavorites(pageable);
+
+    return ResponseEntity.ok(favorites);
+  }
+
+  @PutMapping("/users/me/favorites/{dealId}")
+  public ResponseEntity<?> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId)
+      throws Exception {
+    service.favoriteDeal(dealId);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/users/me/favorites/{dealId}")
+  public ResponseEntity<?> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId)
+      throws Exception {
+    service.unfavoriteDeal(dealId);
+
+    return ResponseEntity.status(204).build();
+  }
+
   @PostMapping("/users/add-fcm-token")
   public ResponseEntity<?> addFcmToken(@RequestBody Map<String, String> json) throws Exception {
     if (!json.containsKey("fcmToken")) {
@@ -109,13 +132,6 @@ public class UserController {
   @GetMapping("/users/me/deals")
   public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
     final List<Deal> deals = service.getDeals(pageable);
-
-    return ResponseEntity.ok(deals);
-  }
-
-  @GetMapping("/users/me/favorites")
-  public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
-    final List<Deal> deals = service.getFavorites(pageable);
 
     return ResponseEntity.ok(deals);
   }

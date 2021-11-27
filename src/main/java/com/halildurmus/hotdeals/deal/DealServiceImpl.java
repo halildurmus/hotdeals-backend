@@ -8,9 +8,7 @@ import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
-import com.halildurmus.hotdeals.user.UserRepository;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -31,9 +29,6 @@ public class DealServiceImpl implements DealService {
 
   @Autowired
   private EsDealRepository esDealRepository;
-
-  @Autowired
-  private UserRepository userRepository;
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -67,6 +62,7 @@ public class DealServiceImpl implements DealService {
         .orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
+      // TODO(halildurmus): Return HTTP 403
       throw new Exception("You can only remove your own deal!");
     }
 
@@ -80,36 +76,6 @@ public class DealServiceImpl implements DealService {
     final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
 
     return mongoTemplate.findAndModify(query, update, options, Deal.class);
-  }
-
-  @Override
-  public void favorite(String id) throws Exception {
-    repository.findById(id).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (favorites.containsKey(id)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already favorited this deal before!");
-    }
-
-    favorites.put(id, true);
-    user.setFavorites(favorites);
-    userRepository.save(user);
-  }
-
-  @Override
-  public void unfavorite(String id) throws Exception {
-    repository.findById(id).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (!favorites.containsKey(id)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already unfavorited this deal before!");
-    }
-
-    favorites.remove(id);
-    user.setFavorites(favorites);
-    userRepository.save(user);
   }
 
   @Override
