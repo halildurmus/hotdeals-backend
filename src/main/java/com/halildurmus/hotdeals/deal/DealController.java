@@ -32,28 +32,28 @@ public class DealController {
 
   @GetMapping("/deals/{id}")
   public ResponseEntity<Object> getDeal(@ObjectIdConstraint @PathVariable String id) {
-    final Optional<Deal> response = service.findById(id);
-    if (response.isEmpty()) {
+    final Optional<Deal> deal = service.findById(id);
+    if (deal.isEmpty()) {
       return ResponseEntity.status(404).build();
     }
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(deal);
   }
 
   @GetMapping("/deals/elastic-search")
   public ResponseEntity<List<SearchHit<EsDeal>>> searchDeals(
       @NotBlank @RequestParam(value = "keyword", defaultValue = "") String keyword,
       Pageable pageable) {
-    final List<SearchHit<EsDeal>> response = esDealService.queryDeals(keyword, pageable);
+    final List<SearchHit<EsDeal>> searchHits = esDealService.queryDeals(keyword, pageable);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(searchHits);
   }
 
   @PostMapping("/deals")
   public ResponseEntity<Deal> saveOrUpdateDeal(@Valid @RequestBody Deal deal) {
-    final Deal response = service.saveOrUpdateDeal(deal);
+    final Deal createdDeal = service.saveOrUpdateDeal(deal);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).body(createdDeal);
   }
 
   @DeleteMapping("/deals/{id}")
@@ -84,17 +84,17 @@ public class DealController {
 
   @PostMapping("/deals/{id}/upvote")
   public ResponseEntity<Deal> upvote(@ObjectIdConstraint @PathVariable String id) throws Exception {
-    final Deal response = service.upvote(id);
+    final Deal deal = service.upvote(id);
 
-    return ResponseEntity.ok().body(response);
+    return ResponseEntity.ok().body(deal);
   }
 
   @PostMapping("/deals/{id}/downvote")
   public ResponseEntity<Deal> downvote(@ObjectIdConstraint @PathVariable String id)
       throws Exception {
-    final Deal response = service.downvote(id);
+    final Deal deal = service.downvote(id);
 
-    return ResponseEntity.ok().body(response);
+    return ResponseEntity.ok().body(deal);
   }
 
 }

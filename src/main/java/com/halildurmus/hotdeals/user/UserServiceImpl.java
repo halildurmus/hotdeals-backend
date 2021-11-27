@@ -43,23 +43,23 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User create(User user) {
-    boolean isErrorOccurred;
+    boolean errorOccurred;
     do {
       try {
         final String nickname = fakerUtil.generateNickname();
         user.setNickname(nickname);
         repository.insert(user);
-        isErrorOccurred = false;
+        errorOccurred = false;
       } catch (Exception e) {
         log.error(e.getMessage());
 
         if (e instanceof DuplicateKeyException && e.getMessage().contains("nickname")) {
-          isErrorOccurred = true;
+          errorOccurred = true;
         } else {
           throw e;
         }
       }
-    } while (isErrorOccurred);
+    } while (errorOccurred);
 
     return user;
   }
@@ -136,7 +136,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public void block(String userId) throws Exception {
     repository.findById(userId).orElseThrow(UserNotFoundException::new);
-
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
     if (blockedUsers.contains(userId)) {
@@ -151,7 +150,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public void unblock(String userId) throws Exception {
     repository.findById(userId).orElseThrow(UserNotFoundException::new);
-
     final User user = securityService.getUser();
     final List<String> blockedUsers = user.getBlockedUsers();
     if (!blockedUsers.contains(userId)) {

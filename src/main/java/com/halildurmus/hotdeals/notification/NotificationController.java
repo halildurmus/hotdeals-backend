@@ -20,9 +20,9 @@ public class NotificationController {
   @PostMapping("/notifications")
   public ResponseEntity<Object> sendNotification(@Valid @RequestBody Note note) {
     try {
-      final int response = notificationService.sendNotification(note);
+      final int successCount = notificationService.sendNotification(note);
 
-      return ResponseEntity.status(201).body(response);
+      return ResponseEntity.status(201).body(successCount);
     } catch (FirebaseMessagingException e) {
       return ResponseEntity.status(400).body(HttpStatus.BAD_REQUEST);
     }

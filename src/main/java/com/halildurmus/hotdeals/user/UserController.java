@@ -33,19 +33,19 @@ public class UserController {
 
   @PostMapping("/users")
   public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-    final User response = service.create(user);
+    final User createdUser = service.create(user);
 
-    return ResponseEntity.status(201).body(response);
+    return ResponseEntity.status(201).body(createdUser);
   }
 
   @GetMapping("/users/me")
   public ResponseEntity<Object> getAuthenticatedUser() {
-    User response = securityService.getUser();
-    if (response == null) {
-      return ResponseEntity.status(400).build();
+    final User user = securityService.getUser();
+    if (user == null) {
+      return ResponseEntity.status(401).build();
     }
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(user);
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
@@ -106,16 +106,16 @@ public class UserController {
 
   @GetMapping("/users/me/deals")
   public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
-    final List<Deal> response = service.getDeals(pageable);
+    final List<Deal> deals = service.getDeals(pageable);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(deals);
   }
 
   @GetMapping("/users/me/favorites")
   public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
-    final List<Deal> response = service.getFavorites(pageable);
+    final List<Deal> deals = service.getFavorites(pageable);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(deals);
   }
 
 }
