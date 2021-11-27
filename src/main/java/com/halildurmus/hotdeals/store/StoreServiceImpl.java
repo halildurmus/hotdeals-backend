@@ -11,4 +11,8 @@ public class StoreServiceImpl implements StoreService {
   @Autowired
   private StoreRepository repository;
 
+  @Override
+  public Store saveStore(Store store) {
+    return repository.save(store);
+  }
 }
