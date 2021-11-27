@@ -129,6 +129,7 @@ public class UserController {
     if (!json.containsKey("fcmToken")) {
       throw new Exception("You need to include 'fcmToken' inside the request body!");
     }
+
     final User user = securityService.getUser();
     final String fcmToken = json.get("fcmToken");
     service.removeFcmToken(user.getUid(), fcmToken);
