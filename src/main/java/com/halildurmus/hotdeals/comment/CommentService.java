@@ -8,4 +8,6 @@ public interface CommentService {
 
   List<CommentDTO> getCommentsByDealId(ObjectId dealId, Pageable pageable);
 
+  Comment saveComment(Comment comment) throws Exception;
+
 }

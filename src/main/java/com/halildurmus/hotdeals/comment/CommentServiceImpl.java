@@ -1,5 +1,7 @@
 package com.halildurmus.hotdeals.comment;
 
+import com.halildurmus.hotdeals.deal.DealRepository;
+import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.UserDTO;
 import com.halildurmus.hotdeals.user.UserRepository;
@@ -17,6 +19,9 @@ public class CommentServiceImpl implements CommentService {
 
   @Autowired
   private CommentRepository repository;
+
+  @Autowired
+  private DealRepository dealRepository;
 
   @Autowired
   private UserRepository userRepository;
@@ -45,6 +50,13 @@ public class CommentServiceImpl implements CommentService {
         .message(c.getMessage())
         .createdAt(c.getCreatedAt())
         .build()).collect(Collectors.toList());
+  }
+
+  @Override
+  public Comment saveComment(Comment comment) {
+    dealRepository.findById(comment.getDealId().toString()).orElseThrow(DealNotFoundException::new);
+
+    return repository.save(comment);
   }
 
 }
