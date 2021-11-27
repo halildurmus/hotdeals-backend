@@ -2,11 +2,15 @@ package com.halildurmus.hotdeals.deal;
 
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
+import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -76,16 +80,27 @@ public class DealController {
   }
 
   @PutMapping("/deals/{id}/votes")
-  public ResponseEntity<Deal> upvote(
-      @ObjectIdConstraint @PathVariable String id, @RequestBody VoteType voteType)
-      throws Exception {
+  public ResponseEntity<Deal> voteDeal(
+      @ObjectIdConstraint @PathVariable String id,
+      @Valid @NotNull @RequestBody Map<String, String> json) throws Exception {
+    if (!json.containsKey("voteType")) {
+      throw new Exception("You need to include 'voteType' inside the request body!");
+    } else if (!EnumUtil.isInEnum(json.get("voteType"), VoteType.class)) {
+      throw new Exception(
+          "Invalid voteType! Allowed voteTypes => " + Arrays.toString(VoteType.values()));
+    } else if (json.get("voteType").equals("UNVOTE")) {
+      throw new Exception("To unvote the deal you need to make a DELETE request!");
+    }
+
+    final VoteType voteType = VoteType.valueOf(json.get("voteType"));
     final Deal deal = service.voteDeal(id, voteType);
 
     return ResponseEntity.ok().body(deal);
   }
 
   @DeleteMapping("/deals/{id}/votes")
-  public ResponseEntity<Deal> upvote(@ObjectIdConstraint @PathVariable String id) throws Exception {
+  public ResponseEntity<Deal> removeVote(
+      @ObjectIdConstraint @PathVariable String id) throws Exception {
     final Deal deal = service.voteDeal(id, VoteType.UNVOTE);
 
     return ResponseEntity.ok().body(deal);
