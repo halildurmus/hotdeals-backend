@@ -24,8 +24,10 @@ import org.springframework.data.mongodb.core.aggregation.ArrayOperators.ConcatAr
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -86,18 +88,18 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal voteDeal(String id, VoteType voteType) throws Exception {
+  public Deal voteDeal(String id, VoteType voteType) {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
         .orElseThrow(DealNotFoundException::new);
 
     if (voteType.equals(VoteType.UP) && deal.getUpvoters().contains(userId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already upvoted this deal before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already upvoted this deal before!");
     } else if (voteType.equals(VoteType.DOWN) && deal.getDownvoters().contains(userId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already downvoted this deal before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already downvoted this deal before!");
     }
 
     final Query query = query(where("_id").is(id));
