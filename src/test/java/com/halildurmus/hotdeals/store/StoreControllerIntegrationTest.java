@@ -46,7 +46,7 @@ public class StoreControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /stores")
   public void shouldCreateStoreThenReturnStore() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/stores")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyStores.store1).getJson())
@@ -61,7 +61,7 @@ public class StoreControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /stores (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/stores")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -78,7 +78,7 @@ public class StoreControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldReturnOneStoreInArray() throws Exception {
     mongoTemplate.insert(DummyStores.store1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/stores")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);

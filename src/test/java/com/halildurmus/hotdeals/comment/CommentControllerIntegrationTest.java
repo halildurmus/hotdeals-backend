@@ -5,8 +5,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
+import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,12 +35,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class CommentControllerIntegrationTest extends BaseIntegrationTest {
 
   static User fakeUser = new User("607345b0eeeee1452898128b");
+
   @MockBean
   SecurityService securityService;
+
   @Autowired
   private MongoTemplate mongoTemplate;
+
   @Autowired
   private MockMvc mvc;
+
   @Autowired
   private JacksonTester<Comment> json;
 
@@ -53,10 +60,14 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldCreateCommentThenReturnComment() throws Exception {
     Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
+    final Comment comment = DummyComments.comment1;
+    comment.setDealId(new ObjectId(deal.getId()));
+
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/comments")
         .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(DummyComments.comment1).getJson())
+        .content(json.write(comment).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
@@ -69,7 +80,7 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /comments (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/comments")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -87,7 +98,7 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
 
     mongoTemplate.insert(DummyComments.comment1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/comments")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -97,7 +108,8 @@ public class CommentControllerIntegrationTest extends BaseIntegrationTest {
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
         .andExpect(
-            jsonPath("$._embedded.comments[0].dealId").value(DummyComments.comment1.getDealId().toString()))
+            jsonPath("$._embedded.comments[0].dealId").value(
+                DummyComments.comment1.getDealId().toString()))
         .andExpect(jsonPath("$._embedded.comments[0].postedBy").value(fakeUser.getId()))
         .andExpect(
             jsonPath("$._embedded.comments[0].message").value(DummyComments.comment1.getMessage()));

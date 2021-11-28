@@ -27,7 +27,7 @@ class UserRepositoryTest {
   void findByUidShouldReturnUser() {
     this.userRepository.save(DummyUsers.user1);
 
-    Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
+    final Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getUid(), DummyUsers.user1.getUid());
@@ -35,7 +35,7 @@ class UserRepositoryTest {
 
   @Test
   void findByUidShouldNotReturnUserWhenUidIsInvalid() {
-    Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
+    final Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
 
     assertTrue(user.isEmpty());
   }
@@ -44,7 +44,7 @@ class UserRepositoryTest {
   void findByEmailShouldReturnUser() {
     this.userRepository.save(DummyUsers.user2);
 
-    Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
+    final Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getEmail(), DummyUsers.user2.getEmail());
@@ -52,7 +52,7 @@ class UserRepositoryTest {
 
   @Test
   void findByEmailShouldNotReturnUserWhenEmailIsInvalid() {
-    Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
+    final Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
 
     assertTrue(user.isEmpty());
   }
@@ -61,7 +61,7 @@ class UserRepositoryTest {
   void findByNicknameShouldReturnUser() {
     this.userRepository.save(DummyUsers.user3);
 
-    Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
+    final Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getNickname(), DummyUsers.user3.getNickname());
@@ -69,7 +69,7 @@ class UserRepositoryTest {
 
   @Test
   void findByNicknameShouldNotReturnUserWhenNicknameIsInvalid() {
-    Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
+    final Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
 
     assertTrue(user.isEmpty());
   }

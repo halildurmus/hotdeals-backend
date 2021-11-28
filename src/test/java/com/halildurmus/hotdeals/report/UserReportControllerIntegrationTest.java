@@ -10,6 +10,8 @@ import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
 import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
+import com.halildurmus.hotdeals.user.dummy.DummyUsers;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +74,11 @@ public class UserReportControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldCreateUserReportThenReturnUserReport() throws Exception {
     Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final User user = mongoTemplate.insert(DummyUsers.user1);
+    final UserReport userReport = DummyUserReports.userReport1;
+    userReport.setReportedUser(new ObjectId(user.getId()));
+
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/user-reports")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyUserReports.userReport1).getJson())
@@ -90,7 +96,7 @@ public class UserReportControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /user-reports (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/user-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -108,7 +114,7 @@ public class UserReportControllerIntegrationTest extends BaseIntegrationTest {
 
     mongoTemplate.insert(DummyUserReports.userReport1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/user-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);

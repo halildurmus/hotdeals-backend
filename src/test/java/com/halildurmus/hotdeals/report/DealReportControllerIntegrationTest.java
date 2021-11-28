@@ -6,10 +6,13 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
+import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,10 +75,14 @@ public class DealReportControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldCreateDealReportThenReturnDealReport() throws Exception {
     Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
+    final DealReport dealReport = DummyDealReports.dealReport1;
+    dealReport.setReportedDeal(new ObjectId(deal.getId()));
+
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/deal-reports")
         .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(DummyDealReports.dealReport1).getJson())
+        .content(json.write(dealReport).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
@@ -90,7 +97,7 @@ public class DealReportControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/deal-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -108,7 +115,7 @@ public class DealReportControllerIntegrationTest extends BaseIntegrationTest {
 
     mongoTemplate.insert(DummyDealReports.dealReport1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/deal-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);

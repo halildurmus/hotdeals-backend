@@ -32,12 +32,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class DealControllerIntegrationTest extends BaseIntegrationTest {
 
   static User fakeUser = new User("607345b0eeeee1452898128b");
+
   @MockBean
   SecurityService securityService;
+
   @Autowired
   private MongoTemplate mongoTemplate;
+
   @Autowired
   private MockMvc mvc;
+
   @Autowired
   private JacksonTester<Deal> json;
 
@@ -53,7 +57,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldCreateDealThenReturnDeal() throws Exception {
     Mockito.when(securityService.getUser()).thenReturn(fakeUser);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/deals")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyDeals.deal1).getJson())
@@ -67,7 +71,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deals (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/deals")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -86,7 +90,7 @@ public class DealControllerIntegrationTest extends BaseIntegrationTest {
 
     mongoTemplate.insert(DummyDeals.deal1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/deals")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);

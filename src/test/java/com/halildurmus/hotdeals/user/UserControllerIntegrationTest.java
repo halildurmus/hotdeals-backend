@@ -47,7 +47,7 @@ public class UserControllerIntegrationTest {
   @Test
   @DisplayName("POST /create")
   public void shouldCreateUserThenReturnUser() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/users")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyUsers.user4WithoutNickname).getJson())
@@ -61,7 +61,7 @@ public class UserControllerIntegrationTest {
   @Test
   @DisplayName("GET /users (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/users")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -78,7 +78,7 @@ public class UserControllerIntegrationTest {
   public void shouldReturnOneUserInArray() throws Exception {
     mongoTemplate.insert(DummyUsers.user1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/users")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);

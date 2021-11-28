@@ -9,13 +9,13 @@ public class FakerUtilTest {
 
   @Test
   public void shouldGenerateNickname() {
-    FakerUtil fakerUtil = new FakerUtil();
-    String nickname1 = fakerUtil.generateNickname();
+    final FakerUtil fakerUtil = new FakerUtil();
+    final String nickname1 = fakerUtil.generateNickname();
 
     assertFalse(nickname1.isBlank());
     assertThat(nickname1).hasSizeGreaterThanOrEqualTo(8);
 
-    String nickname2 = fakerUtil.generateNickname();
+    final String nickname2 = fakerUtil.generateNickname();
 
     assertFalse(nickname2.isBlank());
     assertThat(nickname2).isNotEqualTo(nickname1);

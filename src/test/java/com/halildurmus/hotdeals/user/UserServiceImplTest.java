@@ -36,7 +36,7 @@ class UserServiceImplTest {
     when(userRepository.insert(any(User.class))).thenReturn(DummyUsers.user4WithoutNickname);
     userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
 
-    User user = userService.create(DummyUsers.user4WithoutNickname);
+    final User user = userService.create(DummyUsers.user4WithoutNickname);
 
     assertNotNull(user);
     assertEquals(user.getNickname(), "MrNobody123");
@@ -50,7 +50,7 @@ class UserServiceImplTest {
         .thenReturn(DummyUsers.user4WithoutNickname);
     userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
 
-    User user = userService.create(DummyUsers.user4WithoutNickname);
+    final User user = userService.create(DummyUsers.user4WithoutNickname);
 
     verify(userRepository, times(2)).insert(DummyUsers.user4WithoutNickname);
     assertNotNull(user);

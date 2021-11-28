@@ -47,7 +47,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /categories")
   public void shouldCreateCategoryThenReturnCategory() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyCategories.category1).getJson())
@@ -67,7 +67,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /categories (returns empty)")
   public void shouldReturnEmptyArray() throws Exception {
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
@@ -84,7 +84,7 @@ public class CategoryControllerIntegrationTest extends BaseIntegrationTest {
   public void shouldReturnOneCategoryInArray() throws Exception {
     mongoTemplate.insert(DummyCategories.category1);
 
-    RequestBuilder requestBuilder = MockMvcRequestBuilders
+    final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .get("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
