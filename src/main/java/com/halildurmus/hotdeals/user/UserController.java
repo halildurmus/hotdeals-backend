@@ -2,10 +2,8 @@ package com.halildurmus.hotdeals.user;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.deal.Deal;
-import com.halildurmus.hotdeals.exception.ExceptionResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
@@ -13,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,20 +49,10 @@ public class UserController {
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) {
-    try {
-      final User patchedUser = service.update(patch);
+  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) throws Exception {
+    final User patchedUser = service.update(patch);
 
-      return ResponseEntity.ok(patchedUser);
-    } catch (Exception e) {
-      final ExceptionResponse response = ExceptionResponse.builder()
-          .dateTime(LocalDateTime.now())
-          .status(HttpStatus.BAD_REQUEST.value())
-          .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-          .message(e.getMessage()).build();
-
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
+    return ResponseEntity.ok(patchedUser);
   }
 
   @GetMapping("/users/me/deals")

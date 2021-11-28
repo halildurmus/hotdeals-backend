@@ -19,7 +19,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -78,15 +80,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User update(JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+  public User update(JsonPatch patch) {
     final User user = securityService.getUser();
-    final UserPatchDTO patchedUser = patchUser(patch);
-    if (patchedUser.getAvatar().isPresent()) {
-      user.setAvatar(patchedUser.getAvatar().get());
-    } else if (patchedUser.getNickname().isPresent()) {
-      user.setNickname(patchedUser.getNickname().get());
+    try {
+      final UserPatchDTO patchedUser = patchUser(patch);
+      if (patchedUser.getAvatar().isPresent()) {
+        user.setAvatar(patchedUser.getAvatar().get());
+      } else if (patchedUser.getNickname().isPresent()) {
+        user.setNickname(patchedUser.getNickname().get());
+      }
+      repository.save(user);
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
-    repository.save(user);
 
     return user;
   }
@@ -119,6 +125,14 @@ public class UserServiceImpl implements UserService {
     } else {
       log.warn("removeFcmToken() -> " + user + " does not have this fcmToken: " + fcmToken);
     }
+  }
+
+  @Override
+  public List<Deal> getDeals(Pageable pageable) {
+    final User user = securityService.getUser();
+
+    return dealRepository.findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()),
+        pageable).getContent();
   }
 
   @Override
@@ -195,14 +209,6 @@ public class UserServiceImpl implements UserService {
     blockedUsers.remove(id);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
-  }
-
-  @Override
-  public List<Deal> getDeals(Pageable pageable) {
-    final User user = securityService.getUser();
-
-    return dealRepository.findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()),
-        pageable).getContent();
   }
 
 }
