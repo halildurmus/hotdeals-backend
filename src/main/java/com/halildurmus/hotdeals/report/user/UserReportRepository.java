@@ -27,7 +27,7 @@ public interface UserReportRepository extends MongoRepository<UserReport, String
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "userReports", key = "#id", condition = "#id.blank != true")
+  @Cacheable(value = "userReports", key = "#id", condition = "#id.blank != true and #result != null")
   Optional<UserReport> findById(String id);
 
   @Override

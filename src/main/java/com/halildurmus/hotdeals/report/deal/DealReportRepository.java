@@ -27,7 +27,7 @@ public interface DealReportRepository extends MongoRepository<DealReport, String
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "dealReports", key = "#id", condition = "#id.blank != true")
+  @Cacheable(value = "dealReports", key = "#id", condition = "#id.blank != true and #result != null")
   Optional<DealReport> findById(String id);
 
   @Override

@@ -26,7 +26,7 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "categories", key = "#id", condition = "#id.blank != true")
+  @Cacheable(value = "categories", key = "#id", condition = "#id.blank != true and #result != null")
   Optional<Category> findById(String id);
 
   Optional<Category> findByCategory(String category);

@@ -34,13 +34,13 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   })
   void deleteById(String id);
 
-  @Cacheable(value = "comments:countCommentsByDealId", key = "#dealId", condition = "#dealId != null")
+  @Cacheable(value = "comments:countCommentsByDealId", key = "#dealId", condition = "#dealId != null and #result != null")
   int countCommentsByDealId(ObjectId dealId);
 
-  @Cacheable(value = "comments:countCommentsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
+  @Cacheable(value = "comments:countCommentsByPostedBy", key = "#postedBy", condition = "#postedBy != null and #result != null")
   int countCommentsByPostedBy(ObjectId postedBy);
 
-  @Cacheable(value = "comments:findByDealIdOrderByCreatedAt", key = "T(java.lang.String).format('%s-%s', #dealId, #pageable)", condition = "#dealId != null")
+  @Cacheable(value = "comments:findByDealIdOrderByCreatedAt", key = "T(java.lang.String).format('%s-%s', #dealId, #pageable)", condition = "#dealId != null and #result != null")
   Page<Comment> findByDealIdOrderByCreatedAt(ObjectId dealId, Pageable pageable);
 
 }

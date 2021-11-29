@@ -28,10 +28,10 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       })
   <S extends Deal> S save(S entity);
 
-  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null")
+  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null and #result != null")
   int countDealsByStore(ObjectId storeId);
 
-  @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
+  @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null and #result != null")
   int countDealsByPostedBy(ObjectId postedBy);
 
   Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
@@ -45,16 +45,16 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   @Cacheable("deals:findAllByOrderByDiscountPrice")
   Page<Deal> findAllByOrderByDiscountPrice(Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByCategoryStartsWith", key = "T(java.lang.String).format('%s-%s', #category, #pageable)", condition = "#category.blank != true")
+  @Cacheable(value = "deals:findAllByCategoryStartsWith", key = "T(java.lang.String).format('%s-%s', #category, #pageable)", condition = "#category.blank != true and #result != null")
   Page<Deal> findAllByCategoryStartsWith(String category, Pageable pageable);
 
   @Query("{ $or: [{\"title\" : { $regex: /.*?0.*/, $options: 'i'}}, {\"description\" : { $regex: /.*?0.*/, $options: 'i'}}] }")
   Page<Deal> queryDeals(String keyword, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null")
+  @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null and #result != null")
   Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByStore", key = "T(java.lang.String).format('%s-%s', #storeId, #pageable)", condition = "#storeId != null")
+  @Cacheable(value = "deals:findAllByStore", key = "T(java.lang.String).format('%s-%s', #storeId, #pageable)", condition = "#storeId != null and #result != null")
   Page<Deal> findAllByStore(ObjectId storeId, Pageable pageable);
 
 }

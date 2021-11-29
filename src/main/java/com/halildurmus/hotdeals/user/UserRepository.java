@@ -20,13 +20,13 @@ public interface UserRepository extends MongoRepository<User, String> {
   })
   <S extends User> S save(S entity);
 
-  @Cacheable(value = "users:findByEmail", key = "#email", condition = "#email.blank != true")
+  @Cacheable(value = "users:findByEmail", key = "#email", condition = "#email.blank != true and #result != null")
   Optional<User> findByEmail(String email);
 
-  @Cacheable(value = "users:findByNickname", key = "#nickname", condition = "#nickname.blank != true")
+  @Cacheable(value = "users:findByNickname", key = "#nickname", condition = "#nickname.blank != true and #result != null")
   Optional<User> findByNickname(String nickname);
 
-  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true")
+  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true and #result != null")
   Optional<User> findByUid(String uid);
 
   Page<User> findAllByIdIn(Iterable<String> userIds, Pageable pageable);
