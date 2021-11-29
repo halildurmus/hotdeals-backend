@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 @RepositoryRestController
 @Validated
@@ -49,7 +51,7 @@ public class UserController {
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) throws Exception {
+  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) {
     final User patchedUser = service.update(patch);
 
     return ResponseEntity.ok(patchedUser);
@@ -70,16 +72,14 @@ public class UserController {
   }
 
   @PutMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<?> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId)
-      throws Exception {
+  public ResponseEntity<?> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.favoriteDeal(dealId);
 
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<?> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId)
-      throws Exception {
+  public ResponseEntity<?> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
 
     return ResponseEntity.status(204).build();
@@ -93,25 +93,24 @@ public class UserController {
   }
 
   @PutMapping("/users/me/blocks/{id}")
-  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) throws Exception {
+  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) {
     service.block(id);
 
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/users/me/blocks/{id}")
-  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id)
-      throws Exception {
+  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id) {
     service.unblock(id);
 
     return ResponseEntity.status(204).build();
   }
 
   @PutMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> addFcmToken(@Valid @NotNull @RequestBody Map<String, String> json)
-      throws Exception {
+  public ResponseEntity<?> addFcmToken(@Valid @NotNull @RequestBody Map<String, String> json) {
     if (!json.containsKey("fcmToken")) {
-      throw new Exception("You need to include 'fcmToken' inside the request body!");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "You need to include 'fcmToken' inside the request body!");
     }
 
     final String fcmToken = json.get("fcmToken");
@@ -121,10 +120,10 @@ public class UserController {
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> removeFcmToken(@Valid @NotNull @RequestBody Map<String, String> json)
-      throws Exception {
+  public ResponseEntity<?> removeFcmToken(@Valid @NotNull @RequestBody Map<String, String> json) {
     if (!json.containsKey("fcmToken")) {
-      throw new Exception("You need to include 'fcmToken' inside the request body!");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "You need to include 'fcmToken' inside the request body!");
     }
 
     final User user = securityService.getUser();

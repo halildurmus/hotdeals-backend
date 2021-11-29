@@ -66,13 +66,12 @@ public class DealServiceImpl implements DealService {
 
   @Transactional
   @Override
-  public void removeDeal(String id) throws Exception {
+  public void removeDeal(String id) {
     final Deal deal = repository.findById(id)
         .orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
-      // TODO(halildurmus): Return HTTP 403
-      throw new Exception("You can only remove your own deal!");
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only remove your own deal!");
     }
 
     repository.deleteById(id);
@@ -88,16 +87,16 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal voteDeal(String id, VoteType voteType) {
+  public Deal voteDeal(String id, DealVoteType voteType) {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)
         .orElseThrow(DealNotFoundException::new);
 
-    if (voteType.equals(VoteType.UP) && deal.getUpvoters().contains(userId)) {
+    if (voteType.equals(DealVoteType.UP) && deal.getUpvoters().contains(userId)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already upvoted this deal before!");
-    } else if (voteType.equals(VoteType.DOWN) && deal.getDownvoters().contains(userId)) {
+    } else if (voteType.equals(DealVoteType.DOWN) && deal.getDownvoters().contains(userId)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already downvoted this deal before!");
     }
@@ -106,14 +105,14 @@ public class DealServiceImpl implements DealService {
     final AggregationUpdate update = AggregationUpdate.update();
     final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
 
-    if (voteType.equals(VoteType.UNVOTE)) {
+    if (voteType.equals(DealVoteType.UNVOTE)) {
       update.set("upvoters").toValue(filter("upvoters").as("id")
           .by(valueOf("id").notEqualToValue(userId)));
       update.set("downvoters").toValue(filter("downvoters").as("id")
           .by(valueOf("id").notEqualToValue(userId)));
     } else {
-      final String fieldName1 = voteType.equals(VoteType.UP) ? "upvoters" : "downvoters";
-      final String fieldName2 = voteType.equals(VoteType.UP) ? "downvoters" : "upvoters";
+      final String fieldName1 = voteType.equals(DealVoteType.UP) ? "upvoters" : "downvoters";
+      final String fieldName2 = voteType.equals(DealVoteType.UP) ? "downvoters" : "upvoters";
       update.set(fieldName1).toValue(ConcatArrays.arrayOf(fieldName1)
           .concat(ConcatArrays.arrayOf(new ArrayList<>(List.of(userId)))));
       update.set(fieldName2).toValue(filter(fieldName2).as("id")

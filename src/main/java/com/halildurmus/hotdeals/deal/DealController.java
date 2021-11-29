@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 @RepositoryRestController
 @Validated
@@ -69,14 +71,10 @@ public class DealController {
   }
 
   @DeleteMapping("/deals/{id}")
-  public ResponseEntity<Object> removeDeal(@ObjectIdConstraint @PathVariable String id) {
-    try {
-      service.removeDeal(id);
+  public ResponseEntity<?> removeDeal(@ObjectIdConstraint @PathVariable String id) {
+    service.removeDeal(id);
 
-      return ResponseEntity.status(204).build();
-    } catch (Exception e) {
-      return ResponseEntity.status(403).build();
-    }
+    return ResponseEntity.status(204).build();
   }
 
   @PutMapping("/deals/{id}/votes")
@@ -84,15 +82,17 @@ public class DealController {
       @ObjectIdConstraint @PathVariable String id,
       @Valid @NotNull @RequestBody Map<String, String> json) throws Exception {
     if (!json.containsKey("voteType")) {
-      throw new Exception("You need to include 'voteType' inside the request body!");
-    } else if (!EnumUtil.isInEnum(json.get("voteType"), VoteType.class)) {
-      throw new Exception(
-          "Invalid voteType! Allowed voteTypes => " + Arrays.toString(VoteType.values()));
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "You need to include 'voteType' inside the request body!");
+    } else if (!EnumUtil.isInEnum(json.get("voteType"), DealVoteType.class)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Invalid voteType! Allowed voteTypes => " + Arrays.toString(DealVoteType.values()));
     } else if (json.get("voteType").equals("UNVOTE")) {
-      throw new Exception("To unvote the deal you need to make a DELETE request!");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "To unvote the deal you need to make a DELETE request!");
     }
 
-    final VoteType voteType = VoteType.valueOf(json.get("voteType"));
+    final DealVoteType voteType = DealVoteType.valueOf(json.get("voteType"));
     final Deal deal = service.voteDeal(id, voteType);
 
     return ResponseEntity.ok().body(deal);
@@ -100,8 +100,8 @@ public class DealController {
 
   @DeleteMapping("/deals/{id}/votes")
   public ResponseEntity<Deal> removeVote(
-      @ObjectIdConstraint @PathVariable String id) throws Exception {
-    final Deal deal = service.voteDeal(id, VoteType.UNVOTE);
+      @ObjectIdConstraint @PathVariable String id) {
+    final Deal deal = service.voteDeal(id, DealVoteType.UNVOTE);
 
     return ResponseEntity.ok().body(deal);
   }

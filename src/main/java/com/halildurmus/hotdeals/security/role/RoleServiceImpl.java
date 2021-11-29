@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Slf4j
@@ -19,24 +21,24 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public void addRole(String uid, String role) {
     try {
-      UserRecord user = firebaseAuth.getUser(uid);
-      Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
+      final UserRecord user = firebaseAuth.getUser(uid);
+      final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
       claims.putIfAbsent(role, true);
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
-      log.error("Firebase Auth Exception", e);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Firebase Auth Exception", e);
     }
   }
 
   @Override
   public void removeRole(String uid, String role) {
     try {
-      UserRecord user = firebaseAuth.getUser(uid);
-      Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
+      final UserRecord user = firebaseAuth.getUser(uid);
+      final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
       claims.remove(role);
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
-      log.error("Firebase Auth Exception", e);
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Firebase Auth Exception", e);
     }
   }
 

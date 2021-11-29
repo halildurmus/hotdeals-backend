@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.core.SearchHit;
 
 public interface EsDealService {
 
-  EsDeal saveOrUpdate(EsDeal esDeal);
+  EsDeal save(EsDeal esDeal);
 
   Page<EsDeal> findAll(Pageable pageable);
 

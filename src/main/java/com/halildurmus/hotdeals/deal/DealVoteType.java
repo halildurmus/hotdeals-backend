@@ -1,5 +1,5 @@
 package com.halildurmus.hotdeals.deal;
 
-public enum VoteType {
+public enum DealVoteType {
   UP, DOWN, UNVOTE
 }

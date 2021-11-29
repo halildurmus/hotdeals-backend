@@ -12,7 +12,9 @@ import com.halildurmus.hotdeals.user.UserService;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Autowired
   private UserService userService;
 
-  public int sendNotification(Note note) throws FirebaseMessagingException {
+  public int sendNotification(Note note) {
     final User user = securityService.getUser();
     final Map<String, String> data = note.getData();
     data.put("actor", user.getId());
@@ -45,7 +47,12 @@ public class NotificationServiceImpl implements NotificationService {
         .addAllTokens(note.getTokens())
         .build();
 
-    final BatchResponse batchResponse = firebaseMessaging.sendMulticast(message);
+    BatchResponse batchResponse;
+    try {
+      batchResponse = firebaseMessaging.sendMulticast(message);
+    } catch (FirebaseMessagingException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "", e);
+    }
     log.debug(batchResponse.getSuccessCount() + " messages were sent successfully");
 
     // Removes invalid FCM tokens

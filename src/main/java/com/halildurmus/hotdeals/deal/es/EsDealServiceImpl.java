@@ -16,7 +16,7 @@ public class EsDealServiceImpl implements EsDealService {
   private EsDealRepository repository;
 
   @Override
-  public EsDeal saveOrUpdate(EsDeal esDeal) {
+  public EsDeal save(EsDeal esDeal) {
     return repository.save(esDeal);
   }
 

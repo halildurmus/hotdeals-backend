@@ -8,8 +8,8 @@ public interface DealService {
 
   Deal saveDeal(Deal deal);
 
-  void removeDeal(String id) throws Exception;
+  void removeDeal(String id);
 
-  Deal voteDeal(String id, VoteType voteType) throws Exception;
+  Deal voteDeal(String id, DealVoteType voteType);
 
 }

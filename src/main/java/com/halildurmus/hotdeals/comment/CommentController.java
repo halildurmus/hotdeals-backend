@@ -32,8 +32,7 @@ public class CommentController {
   }
 
   @PostMapping("/comments")
-  public ResponseEntity<Comment> createComment(@Valid @RequestBody Comment comment)
-      throws Exception {
+  public ResponseEntity<Comment> createComment(@Valid @RequestBody Comment comment) {
     final Comment savedComment = service.saveComment(comment);
 
     return ResponseEntity.status(201).body(savedComment);

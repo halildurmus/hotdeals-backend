@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
       }
       repository.save(user);
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
     }
 
     return user;
@@ -144,13 +144,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void favoriteDeal(String dealId) throws Exception {
+  public void favoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (favorites.containsKey(dealId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already favorited this deal before!");
+      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+          "You've already favorited this deal before!");
     }
 
     favorites.put(dealId, true);
@@ -159,13 +159,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void unfavoriteDeal(String dealId) throws Exception {
+  public void unfavoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> favorites = user.getFavorites();
     if (!favorites.containsKey(dealId)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already unfavorited this deal before!");
+      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+          "You've already unfavorited this deal before!");
     }
 
     favorites.remove(dealId);
@@ -182,13 +182,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void block(String id) throws Exception {
+  public void block(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
     if (blockedUsers.containsKey(id)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already blocked this user before!");
+      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+          "You've already blocked this user before!");
     }
 
     blockedUsers.put(id, true);
@@ -197,13 +197,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void unblock(String id) throws Exception {
+  public void unblock(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
     final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
     if (!blockedUsers.containsKey(id)) {
-      // TODO(halildurmus): Return HTTP 304 NOT MODIFIED
-      throw new Exception("You've already unblocked this user before!");
+      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+          "You've already unblocked this user before!");
     }
 
     blockedUsers.remove(id);
