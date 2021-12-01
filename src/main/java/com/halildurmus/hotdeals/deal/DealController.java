@@ -11,8 +11,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
@@ -37,6 +37,14 @@ public class DealController {
   @Autowired
   private EsDealService esDealService;
 
+  @GetMapping("/deals/suggestions")
+  public ResponseEntity<List<SearchHit<EsDeal>>> getSuggestions(@NotBlank @Size(min = 3, max = 100)
+  @RequestParam(value = "query", defaultValue = "") String query) {
+    final List<SearchHit<EsDeal>> searchHits = esDealService.getSuggestions(query);
+
+    return ResponseEntity.ok(searchHits);
+  }
+
   @GetMapping("/deals/{id}")
   public ResponseEntity<Object> getDeal(@ObjectIdConstraint @PathVariable String id) {
     final Optional<Deal> deal = service.findById(id);
@@ -45,15 +53,6 @@ public class DealController {
     }
 
     return ResponseEntity.ok(deal);
-  }
-
-  @GetMapping("/deals/elastic-search")
-  public ResponseEntity<List<SearchHit<EsDeal>>> searchDeals(
-      @NotBlank @RequestParam(value = "keyword", defaultValue = "") String keyword,
-      Pageable pageable) {
-    final List<SearchHit<EsDeal>> searchHits = esDealService.queryDeals(keyword, pageable);
-
-    return ResponseEntity.ok(searchHits);
   }
 
   @PostMapping("/deals")

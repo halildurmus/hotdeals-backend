@@ -11,6 +11,6 @@ public interface EsDealService {
 
   Page<EsDeal> findAll(Pageable pageable);
 
-  List<SearchHit<EsDeal>> queryDeals(String keyword, Pageable pageable);
+  List<SearchHit<EsDeal>> getSuggestions(String query);
 
 }

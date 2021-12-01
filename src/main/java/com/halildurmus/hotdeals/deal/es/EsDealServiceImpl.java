@@ -26,7 +26,7 @@ public class EsDealServiceImpl implements EsDealService {
   }
 
   @Override
-  public List<SearchHit<EsDeal>> queryDeals(String keyword, Pageable pageable) {
-    return repository.queryDeals(keyword, pageable);
+  public List<SearchHit<EsDeal>> getSuggestions(String query) {
+    return repository.getSuggestions(query, Pageable.ofSize(5));
   }
 }
