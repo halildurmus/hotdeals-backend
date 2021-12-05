@@ -37,6 +37,13 @@ public class EsDeal {
     this.id = deal.getId();
     this.title = deal.getTitle();
     this.description = deal.getDescription();
+    final NumberFacet discountPriceFacet = new NumberFacet("discountPrice",
+        deal.getDiscountPrice());
+    this.numberFacets.add(discountPriceFacet);
+    final StringFacet categoryFacet = new StringFacet("category", deal.getCategory());
+    final StringFacet storeFacet = new StringFacet("store", deal.getStore().toString());
+    this.stringFacets.add(categoryFacet);
+    this.stringFacets.add(storeFacet);
   }
 
 }
