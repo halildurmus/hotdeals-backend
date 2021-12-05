@@ -1,6 +1,8 @@
 package com.halildurmus.hotdeals.deal.es;
 
 import com.halildurmus.hotdeals.deal.Deal;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -24,6 +26,12 @@ public class EsDeal {
 
   @Field(type = FieldType.Text)
   private String description;
+
+  @Field(type = FieldType.Nested)
+  private List<NumberFacet> numberFacets = new ArrayList<>();
+
+  @Field(type = FieldType.Nested)
+  private List<StringFacet> stringFacets = new ArrayList<>();
 
   public EsDeal(Deal deal) {
     this.id = deal.getId();
