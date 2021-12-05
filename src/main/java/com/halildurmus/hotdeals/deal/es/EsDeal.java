@@ -18,7 +18,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class EsDeal {
 
   @Id
-  @Field(type = FieldType.Text)
+  @Field(type = FieldType.Keyword)
   private String id;
 
   @Field(type = FieldType.Search_As_You_Type)
