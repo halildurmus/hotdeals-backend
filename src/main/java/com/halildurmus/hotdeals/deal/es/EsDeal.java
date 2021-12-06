@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.deal.es;
 
 import com.halildurmus.hotdeals.deal.Deal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -27,6 +28,9 @@ public class EsDeal {
   @Field(type = FieldType.Text)
   private String description;
 
+  @Field(type = FieldType.Date)
+  private Instant createdAt;
+
   @Field(type = FieldType.Nested)
   private List<NumberFacet> numberFacets = new ArrayList<>();
 
@@ -37,6 +41,7 @@ public class EsDeal {
     this.id = deal.getId();
     this.title = deal.getTitle();
     this.description = deal.getDescription();
+    this.createdAt = deal.getCreatedAt();
     final NumberFacet discountPriceFacet = new NumberFacet("discountPrice",
         deal.getDiscountPrice());
     this.numberFacets.add(discountPriceFacet);
