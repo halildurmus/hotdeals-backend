@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Document(indexName = "deal")
-@TypeAlias("deal")
+@TypeAlias("esDeal")
 @Data
 @NoArgsConstructor
 public class EsDeal {
@@ -28,6 +28,9 @@ public class EsDeal {
   @Field(type = FieldType.Text)
   private String description;
 
+  @Field(type = FieldType.Keyword)
+  private String coverPhoto;
+
   @Field(type = FieldType.Date)
   private Instant createdAt;
 
@@ -41,6 +44,7 @@ public class EsDeal {
     this.id = deal.getId();
     this.title = deal.getTitle();
     this.description = deal.getDescription();
+    this.coverPhoto = deal.getCoverPhoto();
     this.createdAt = deal.getCreatedAt();
     final NumberFacet discountPriceFacet = new NumberFacet("discountPrice",
         deal.getDiscountPrice());
