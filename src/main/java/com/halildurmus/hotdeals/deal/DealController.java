@@ -77,9 +77,8 @@ public class DealController {
   }
 
   @PutMapping("/deals/{id}/votes")
-  public ResponseEntity<Deal> voteDeal(
-      @ObjectIdConstraint @PathVariable String id,
-      @Valid @NotNull @RequestBody Map<String, String> json) throws Exception {
+  public ResponseEntity<Deal> voteDeal(@ObjectIdConstraint @PathVariable String id,
+      @Valid @NotNull @RequestBody Map<String, String> json) {
     if (!json.containsKey("voteType")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "You need to include 'voteType' inside the request body!");
