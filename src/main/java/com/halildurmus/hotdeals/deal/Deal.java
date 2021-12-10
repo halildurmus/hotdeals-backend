@@ -53,16 +53,13 @@ public class Deal implements Serializable {
   @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
   private List<ObjectId> downvoters = new ArrayList<>();
 
-  @Indexed
   @NotBlank
   private String category;
 
-  @Indexed
   @NotBlank
   @Size(min = 10, max = 100)
   private String title;
 
-  @Indexed
   @NotBlank
   @Size(min = 10, max = 3000)
   private String description;
@@ -117,4 +114,5 @@ public class Deal implements Serializable {
     this.dealUrl = dealUrl;
     this.photos = photos;
   }
+
 }
