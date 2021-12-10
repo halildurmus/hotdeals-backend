@@ -17,6 +17,7 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder.Type;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -35,7 +36,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -64,9 +64,30 @@ public class EsDealServiceImpl implements EsDealService {
     return repository.findAll(pageable);
   }
 
+  private MultiMatchQueryBuilder createAutocompleteQuery(String query) {
+    return new MultiMatchQueryBuilder(query, "title", "title._2gram", "title._3gram")
+        .type(Type.BOOL_PREFIX);
+  }
+
   @Override
-  public List<SearchHit<EsDeal>> getSuggestions(String query) {
-    return repository.getSuggestions(query, Pageable.ofSize(5));
+  public JsonNode getSuggestions(String query) {
+    final Request request = new Request("GET", "/deal/_search");
+    final SearchSourceBuilder searchSource = new SearchSourceBuilder();
+    searchSource.from(0).size(5);
+    searchSource.query(createAutocompleteQuery(query));
+    searchSource.fetchSource("title", null);
+    request.setJsonEntity(searchSource.toString());
+
+    final JsonNode jsonNode;
+    try {
+      final Response response = client.getLowLevelClient().performRequest(request);
+      final String responseBody = EntityUtils.toString(response.getEntity());
+      jsonNode = new ObjectMapper().readTree(responseBody).get("hits");
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    return jsonNode;
   }
 
   private NestedQueryBuilder createStringFacetFilter(String facetName, String facetValue) {

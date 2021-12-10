@@ -1,7 +1,6 @@
 package com.halildurmus.hotdeals.deal;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
@@ -16,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,9 +105,9 @@ public class DealController {
   }
 
   @GetMapping("/deals/suggestions")
-  public ResponseEntity<List<SearchHit<EsDeal>>> getSuggestions(@NotBlank @Size(min = 3, max = 100)
+  public ResponseEntity<JsonNode> getSuggestions(@NotBlank @Size(min = 3, max = 100)
   @RequestParam(value = "query") String query) {
-    final List<SearchHit<EsDeal>> searchHits = esDealService.getSuggestions(query);
+    final JsonNode searchHits = esDealService.getSuggestions(query);
 
     return ResponseEntity.ok(searchHits);
   }
