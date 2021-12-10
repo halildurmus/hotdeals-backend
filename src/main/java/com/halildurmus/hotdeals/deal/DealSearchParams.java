@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.deal.es;
+package com.halildurmus.hotdeals.deal;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,7 @@ public class DealSearchParams {
 
   private String query;
   private List<String> categories;
-  private List<Double> discountPricesFrom;
-  private List<Double> discountPricesTo;
+  private List<PriceRange> prices;
   private List<String> stores;
   private String sortBy;
   private String order;
