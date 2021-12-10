@@ -20,7 +20,7 @@ public interface DealRepository extends MongoRepository<Deal, String> {
           @CacheEvict(value = "deals:countDealsByPostedBy", key = "#entity.postedBy"),
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
-          @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true),
+          @CacheEvict(value = "deals:findAllByOrderByPrice", allEntries = true),
           @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
       })
   <S extends Deal> S save(S entity);
@@ -39,8 +39,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
   @Cacheable("deals:findAllByOrderByDealScoreDesc")
   Page<Deal> findAllByOrderByDealScoreDesc(Pageable pageable);
 
-  @Cacheable("deals:findAllByOrderByDiscountPrice")
-  Page<Deal> findAllByOrderByDiscountPrice(Pageable pageable);
+  @Cacheable("deals:findAllByOrderByPrice")
+  Page<Deal> findAllByOrderByPrice(Pageable pageable);
 
   @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null and #result != null")
   Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);

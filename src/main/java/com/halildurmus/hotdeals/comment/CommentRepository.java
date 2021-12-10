@@ -21,7 +21,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
           @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
-          @CacheEvict(value = "deals:findAllByOrderByDiscountPrice", allEntries = true)
+          @CacheEvict(value = "deals:findAllByOrderByPrice", allEntries = true)
       })
   <S extends Comment> S save(S entity);
 

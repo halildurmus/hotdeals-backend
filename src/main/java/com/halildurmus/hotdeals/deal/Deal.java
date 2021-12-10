@@ -65,10 +65,10 @@ public class Deal implements Serializable {
   private String description;
 
   @NotNull
-  private Double price;
+  private Double originalPrice;
 
   @NotNull
-  private Double discountPrice;
+  private Double price;
 
   @URL
   @NotNull
@@ -90,24 +90,24 @@ public class Deal implements Serializable {
   @Setter(AccessLevel.NONE)
   private Instant updatedAt;
 
-  public Deal(String title, String description, double price, double discountPrice, ObjectId store,
+  public Deal(String title, String description, double originalPrice, double price, ObjectId store,
       String category, String coverPhoto, String dealUrl) {
     this.title = title;
     this.description = description;
+    this.originalPrice = originalPrice;
     this.price = price;
-    this.discountPrice = discountPrice;
     this.store = store;
     this.category = category;
     this.coverPhoto = coverPhoto;
     this.dealUrl = dealUrl;
   }
 
-  public Deal(String title, String description, double price, double discountPrice, ObjectId store,
+  public Deal(String title, String description, double originalPrice, double price, ObjectId store,
       String category, String coverPhoto, String dealUrl, List<String> photos) {
     this.title = title;
     this.description = description;
+    this.originalPrice = originalPrice;
     this.price = price;
-    this.discountPrice = discountPrice;
     this.store = store;
     this.category = category;
     this.coverPhoto = coverPhoto;

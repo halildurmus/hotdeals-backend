@@ -46,9 +46,8 @@ public class EsDeal {
     this.description = deal.getDescription();
     this.coverPhoto = deal.getCoverPhoto();
     this.createdAt = deal.getCreatedAt();
-    final NumberFacet discountPriceFacet = new NumberFacet("discountPrice",
-        deal.getDiscountPrice());
-    this.numberFacets.add(discountPriceFacet);
+    final NumberFacet priceFacet = new NumberFacet("price", deal.getPrice());
+    this.numberFacets.add(priceFacet);
     final StringFacet categoryFacet = new StringFacet("category", deal.getCategory());
     final StringFacet storeFacet = new StringFacet("store", deal.getStore().toString());
     this.stringFacets.add(categoryFacet);
