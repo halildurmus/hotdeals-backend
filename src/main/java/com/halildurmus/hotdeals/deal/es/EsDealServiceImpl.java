@@ -82,7 +82,7 @@ public class EsDealServiceImpl implements EsDealService {
     try {
       final Response response = client.getLowLevelClient().performRequest(request);
       final String responseBody = EntityUtils.toString(response.getEntity());
-      jsonNode = new ObjectMapper().readTree(responseBody).get("hits");
+      jsonNode = new ObjectMapper().readTree(responseBody).get("hits").get("hits");
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
