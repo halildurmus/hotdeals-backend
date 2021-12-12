@@ -225,14 +225,14 @@ public class EsDealServiceImpl implements EsDealService {
 
   private FilterAggregationBuilder createAllFiltersAgg(DealSearchParams searchParams) {
     final FilterAggregationBuilder allFiltersAgg = new FilterAggregationBuilder(
-        "aggsAllFilters", createFilters(searchParams, null));
+        "aggAllFilters", createFilters(searchParams, null));
 
     return allFiltersAgg.subAggregation(createAllFiltersSubAgg("stringFacets"))
         .subAggregation(createAllFiltersSubAgg("numberFacets"));
   }
 
   private FilterAggregationBuilder createFilterAgg(String fieldName, String facetName) {
-    return new FilterAggregationBuilder("aggsSpecial",
+    return new FilterAggregationBuilder("aggSpecial",
         QueryBuilders.matchQuery(fieldName, facetName));
   }
 
@@ -252,7 +252,7 @@ public class EsDealServiceImpl implements EsDealService {
 
   private FilterAggregationBuilder createCategoryAgg(DealSearchParams searchParams) {
     final FilterAggregationBuilder categoryAgg = new FilterAggregationBuilder(
-        "aggsCategory", createFilters(searchParams, "category"));
+        "aggCategory", createFilters(searchParams, "category"));
     final NestedAggregationBuilder nestedAgg = createNestedSubAgg(
         "stringFacets", "category");
 
@@ -261,7 +261,7 @@ public class EsDealServiceImpl implements EsDealService {
 
   private FilterAggregationBuilder createStoreAgg(DealSearchParams searchParams) {
     final FilterAggregationBuilder storeAgg = new FilterAggregationBuilder(
-        "aggsStore", createFilters(searchParams, "store"));
+        "aggStore", createFilters(searchParams, "store"));
     final NestedAggregationBuilder nestedAgg = createNestedSubAgg(
         "stringFacets", "store");
 
