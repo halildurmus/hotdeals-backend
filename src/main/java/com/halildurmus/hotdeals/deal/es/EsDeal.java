@@ -31,6 +31,9 @@ public class EsDeal {
   @Field(type = FieldType.Keyword)
   private String coverPhoto;
 
+  @Field(type = FieldType.Double)
+  private Double originalPrice;
+
   @Field(type = FieldType.Date)
   private Instant createdAt;
 
@@ -45,6 +48,7 @@ public class EsDeal {
     this.title = deal.getTitle();
     this.description = deal.getDescription();
     this.coverPhoto = deal.getCoverPhoto();
+    this.originalPrice = deal.getOriginalPrice();
     this.createdAt = deal.getCreatedAt();
     final NumberFacet priceFacet = new NumberFacet("price", deal.getPrice());
     this.numberFacets.add(priceFacet);
