@@ -108,7 +108,10 @@ public class EsDealServiceImpl implements EsDealService {
     final TermQueryBuilder facetNameTermQuery = new TermQueryBuilder(
         facetGroup + ".facetName", facetName);
     final RangeQueryBuilder facetValueRangeQuery = QueryBuilders.rangeQuery(
-        facetGroup + ".facetValue").gte(from).lt(to);
+        facetGroup + ".facetValue").gte(from);
+    if (to != null) {
+      facetValueRangeQuery.lt(to);
+    }
     boolQuery.filter(facetNameTermQuery).filter(facetValueRangeQuery);
 
     return new NestedQueryBuilder(facetGroup, boolQuery, ScoreMode.Avg);

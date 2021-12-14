@@ -42,13 +42,16 @@ public class DealController {
   private EsDealService esDealService;
 
   private List<PriceRange> parsePricesParam(List<String> prices) {
-    List<PriceRange> priceRanges = new ArrayList<>();
+    final List<PriceRange> priceRanges = new ArrayList<>();
     try {
       for (String p : prices) {
         final String[] arr = p.split(":");
         final double from = Double.parseDouble(arr[0]);
-        final double to = Double.parseDouble(arr[1]);
-        if (from < 0 || to < 0 || from > to) {
+        Double to = null;
+        if (!arr[1].equals("*")) {
+          to = Double.parseDouble(arr[1]);
+        }
+        if (to != null && (from < 0 || to < 0 || from > to)) {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid prices!");
         }
         priceRanges.add(new PriceRange(from, to));
