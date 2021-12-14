@@ -65,7 +65,7 @@ public class DealController {
 
   @GetMapping("/deals/searches")
   public ResponseEntity<?> searchDeals(
-      @RequestParam(value = "query", required = false) String query,
+      @RequestParam(value = "query") String query,
       @RequestParam(value = "categories", required = false) List<String> categories,
       @RequestParam(value = "prices", required = false) List<String> prices,
       @RequestParam(value = "stores", required = false) List<String> stores,
