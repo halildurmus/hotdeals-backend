@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.security.role;
 
+import com.halildurmus.hotdeals.util.EnumUtil;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,15 +20,11 @@ public class RoleController {
   @Autowired
   private RoleService service;
 
-  private boolean isInvalidRole(String value) {
-    return Arrays.stream(Role.class.getEnumConstants()).noneMatch(e -> e.name().equals(value));
-  }
-
   @PutMapping
   public ResponseEntity<?> addRole(@RequestParam String uid, @RequestParam String role) {
-    if (isInvalidRole(role)) {
+    if (!EnumUtil.isInEnum(role, Role.class)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid role! Allowed roles => " + Arrays.toString(Role.values()));
+          "Invalid role! Supported roles => " + Arrays.toString(Role.values()));
     }
 
     service.addRole(uid, role);
@@ -37,9 +34,9 @@ public class RoleController {
 
   @DeleteMapping
   public ResponseEntity<?> removeRole(@RequestParam String uid, @RequestParam String role) {
-    if (isInvalidRole(role)) {
+    if (!EnumUtil.isInEnum(role, Role.class)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid role! Allowed roles => " + Arrays.toString(Role.values()));
+          "Invalid role! Supported roles => " + Arrays.toString(Role.values()));
     }
 
     service.removeRole(uid, role);
