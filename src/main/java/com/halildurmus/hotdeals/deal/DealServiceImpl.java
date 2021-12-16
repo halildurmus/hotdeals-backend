@@ -5,6 +5,12 @@ import static org.springframework.data.mongodb.core.aggregation.ComparisonOperat
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
@@ -33,15 +39,15 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class DealServiceImpl implements DealService {
 
+  private final ObjectMapper objectMapper = JsonMapper.builder()
+      .findAndAddModules()
+      .build();
   @Autowired
   private DealRepository repository;
-
   @Autowired
   private EsDealRepository esDealRepository;
-
   @Autowired
   private MongoTemplate mongoTemplate;
-
   @Autowired
   private SecurityService securityService;
 
@@ -64,11 +70,54 @@ public class DealServiceImpl implements DealService {
     return savedDeal;
   }
 
+  private DealPatchDTO applyPatchToDeal(JsonPatch patch)
+      throws JsonPatchException, JsonProcessingException {
+    final DealPatchDTO dealPatchDTO = new DealPatchDTO();
+    // Converts the deal to a JsonNode
+    final JsonNode target = objectMapper.convertValue(dealPatchDTO, JsonNode.class);
+    // Applies the patch to the deal
+    final JsonNode patched = patch.apply(target);
+
+    // Converts the JsonNode to a DealPatchDTO instance
+    return objectMapper.treeToValue(patched, DealPatchDTO.class);
+  }
+
+  @Override
+  public Deal patchDeal(String id, JsonPatch patch) {
+    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
+    final User user = securityService.getUser();
+    if (!user.getId().equals(deal.getPostedBy().toString())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
+    }
+    try {
+      final DealPatchDTO patchedDeal = applyPatchToDeal(patch);
+      deal.setIsExpired(patchedDeal.getIsExpired());
+      repository.save(deal);
+    } catch (Exception e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+    }
+
+    return deal;
+  }
+
+  @Transactional
+  @Override
+  public Deal updateDeal(Deal deal) {
+    repository.findById(deal.getId()).orElseThrow(DealNotFoundException::new);
+    final User user = securityService.getUser();
+    if (!user.getId().equals(deal.getPostedBy().toString())) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
+    }
+    final Deal savedDeal = repository.save(deal);
+    esDealRepository.save(new EsDeal(deal));
+
+    return savedDeal;
+  }
+
   @Transactional
   @Override
   public void removeDeal(String id) {
-    final Deal deal = repository.findById(id)
-        .orElseThrow(DealNotFoundException::new);
+    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only remove your own deal!");

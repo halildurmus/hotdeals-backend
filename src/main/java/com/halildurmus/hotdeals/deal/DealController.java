@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.deal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -132,9 +134,17 @@ public class DealController {
     return ResponseEntity.status(201).body(createdDeal);
   }
 
+  @PatchMapping(value = "/deals/{id}", consumes = "application/json-patch+json")
+  public ResponseEntity<Object> patchDeal(@ObjectIdConstraint @PathVariable String id,
+      @RequestBody JsonPatch patch) {
+    final Deal patchedDeal = service.patchDeal(id, patch);
+
+    return ResponseEntity.ok(patchedDeal);
+  }
+
   @PutMapping("/deals")
   public ResponseEntity<Deal> updateDeal(@Valid @RequestBody Deal deal) {
-    final Deal updatedDeal = service.saveDeal(deal);
+    final Deal updatedDeal = service.updateDeal(deal);
 
     return ResponseEntity.status(200).body(updatedDeal);
   }
