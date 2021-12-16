@@ -9,7 +9,7 @@ public interface UserService {
 
   User create(User user);
 
-  User update(JsonPatch patch);
+  User patchUser(JsonPatch patch);
 
   List<Deal> getDeals(Pageable pageable);
 

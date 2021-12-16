@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     return user;
   }
 
-  private UserPatchDTO patchUser(JsonPatch patch)
+  private UserPatchDTO applyPatchToUser(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
     final UserPatchDTO userPatchDTO = new UserPatchDTO();
     // Converts the user to a JsonNode
@@ -80,10 +80,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User update(JsonPatch patch) {
+  public User patchUser(JsonPatch patch) {
     final User user = securityService.getUser();
     try {
-      final UserPatchDTO patchedUser = patchUser(patch);
+      final UserPatchDTO patchedUser = applyPatchToUser(patch);
       if (patchedUser.getAvatar().isPresent()) {
         user.setAvatar(patchedUser.getAvatar().get());
       } else if (patchedUser.getNickname().isPresent()) {

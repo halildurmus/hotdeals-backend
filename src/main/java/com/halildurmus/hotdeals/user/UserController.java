@@ -52,7 +52,7 @@ public class UserController {
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
   public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) {
-    final User patchedUser = service.update(patch);
+    final User patchedUser = service.patchUser(patch);
 
     return ResponseEntity.ok(patchedUser);
   }
