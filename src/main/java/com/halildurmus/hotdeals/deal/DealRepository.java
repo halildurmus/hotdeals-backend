@@ -18,9 +18,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       evict = {
           @CacheEvict(value = "deals:countDealsByStore", key = "#entity.store"),
           @CacheEvict(value = "deals:countDealsByPostedBy", key = "#entity.postedBy"),
-          @CacheEvict(value = "deals:findAllByOrderByCreatedAtDesc", allEntries = true),
-          @CacheEvict(value = "deals:findAllByOrderByDealScoreDesc", allEntries = true),
-          @CacheEvict(value = "deals:findAllByOrderByPrice", allEntries = true),
+          @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
       })
   <S extends Deal> S save(S entity);
@@ -33,14 +32,11 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
 
-  @Cacheable("deals:findAllByOrderByCreatedAtDesc")
-  Page<Deal> findAllByOrderByCreatedAtDesc(Pageable pageable);
+  @Cacheable("deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc")
+  Page<Deal> findAllByIsExpiredIsFalseOrderByCreatedAtDesc(Pageable pageable);
 
-  @Cacheable("deals:findAllByOrderByDealScoreDesc")
-  Page<Deal> findAllByOrderByDealScoreDesc(Pageable pageable);
-
-  @Cacheable("deals:findAllByOrderByPrice")
-  Page<Deal> findAllByOrderByPrice(Pageable pageable);
+  @Cacheable("deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc")
+  Page<Deal> findAllByIsExpiredIsFalseOrderByDealScoreDesc(Pageable pageable);
 
   @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null and #result != null")
   Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);
