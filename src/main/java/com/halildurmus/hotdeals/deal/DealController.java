@@ -71,6 +71,7 @@ public class DealController {
       @RequestParam(value = "categories", required = false) List<String> categories,
       @RequestParam(value = "prices", required = false) List<String> prices,
       @RequestParam(value = "stores", required = false) List<String> stores,
+      @RequestParam(value = "hideExpired", required = false, defaultValue = "false") Boolean hideExpired,
       @RequestParam(value = "sortBy", required = false) String sortBy,
       @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
       Pageable pageable) {
@@ -95,11 +96,12 @@ public class DealController {
         .categories(categories)
         .prices(priceRanges)
         .stores(stores)
+        .hideExpired(hideExpired)
         .sortBy(sortBy)
         .order(order)
         .build();
     // If all search params except 'order' are null then return HTTP 400
-    if (searchParams.equals(DealSearchParams.builder().order("asc").build())) {
+    if (searchParams.equals(DealSearchParams.builder().hideExpired(false).order("asc").build())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "You have to provide at least one parameter!");
     }

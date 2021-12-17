@@ -177,6 +177,20 @@ public class EsDealServiceImpl implements EsDealService {
     //.fuzziness("AUTO");
   }
 
+  private TermQueryBuilder createTermQuery() {
+    return new TermQueryBuilder("isExpired", false);
+  }
+
+  private BoolQueryBuilder createBoolQuery(Boolean hideExpired, String query) {
+    final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
+    if (hideExpired) {
+      boolQuery.filter(createTermQuery());
+    }
+    boolQuery.must(createMultiMatchQuery(query));
+
+    return boolQuery;
+  }
+
   private BoolQueryBuilder createFilters(DealSearchParams searchParams, String exclude) {
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
     if (searchParams.getCategories() == null && searchParams.getPrices() == null
@@ -312,7 +326,7 @@ public class EsDealServiceImpl implements EsDealService {
     }
 
     if (!ObjectUtils.isEmpty(searchParams.getQuery())) {
-      searchSource.query(createMultiMatchQuery(searchParams.getQuery()));
+      searchSource.query(createBoolQuery(searchParams.getHideExpired(), searchParams.getQuery()));
     }
 
     for (AggregationBuilder aggregation : createAggregations(searchParams)) {

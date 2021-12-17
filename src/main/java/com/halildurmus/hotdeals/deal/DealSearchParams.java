@@ -16,6 +16,7 @@ public class DealSearchParams {
   private List<String> categories;
   private List<PriceRange> prices;
   private List<String> stores;
+  private Boolean hideExpired;
   private String sortBy;
   private String order;
 
