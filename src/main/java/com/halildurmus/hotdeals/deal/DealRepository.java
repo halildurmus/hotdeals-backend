@@ -14,6 +14,14 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface DealRepository extends MongoRepository<Deal, String> {
 
   @Override
+  @Caching(evict = {
+      @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc", allEntries = true),
+      @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc", allEntries = true),
+      @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
+  })
+  void deleteById(String id);
+
+  @Override
   @Caching(put = {@CachePut(value = "deals", key = "#entity.id")},
       evict = {
           @CacheEvict(value = "deals:countDealsByStore", key = "#entity.store"),
