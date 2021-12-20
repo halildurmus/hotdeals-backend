@@ -38,8 +38,10 @@ public class NotificationServiceImpl implements NotificationService {
     // TODO(halildurmus): add back image property
     final AndroidNotification androidNotification = AndroidNotification
         .builder()
-        .setTitle(note.getTitle())
-        .setBody(note.getBody())
+        .setTitleLocalizationKey(note.getTitleLocKey())
+        .addAllTitleLocalizationArgs(note.getTitleLocArgs())
+        .setBodyLocalizationKey(note.getBodyLocKey())
+        .addAllBodyLocalizationArgs(note.getBodyLocArgs())
         .build();
 
     final AndroidConfig androidConfig = AndroidConfig.builder()

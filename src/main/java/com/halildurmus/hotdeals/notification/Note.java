@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.notification;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
@@ -13,10 +14,14 @@ import lombok.NoArgsConstructor;
 public class Note {
 
   @NotBlank
-  private String title;
+  private String titleLocKey;
 
   @NotBlank
-  private String body;
+  private String bodyLocKey;
+
+  private List<String> titleLocArgs = new ArrayList<>();
+
+  private List<String> bodyLocArgs = new ArrayList<>();
 
   @NotNull
   private Map<String, String> data;
