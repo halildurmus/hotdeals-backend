@@ -1,10 +1,11 @@
 package com.halildurmus.hotdeals.notification;
 
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.SendResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
@@ -34,14 +35,19 @@ public class NotificationServiceImpl implements NotificationService {
     final Map<String, String> data = note.getData();
     data.put("actor", user.getId());
 
-    final Notification notification = Notification
+    // TODO(halildurmus): add back image property
+    final AndroidNotification androidNotification = AndroidNotification
         .builder()
         .setTitle(note.getTitle())
         .setBody(note.getBody())
         .build();
 
+    final AndroidConfig androidConfig = AndroidConfig.builder()
+        .setNotification(androidNotification)
+        .setPriority(AndroidConfig.Priority.HIGH).build();
+
     final MulticastMessage message = MulticastMessage.builder()
-        .setNotification(notification)
+        .setAndroidConfig(androidConfig)
         .putAllData(note.getData())
         .addAllTokens(note.getTokens())
         .build();
