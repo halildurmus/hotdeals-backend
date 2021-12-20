@@ -18,8 +18,6 @@ public class Note {
   @NotBlank
   private String body;
 
-  private String image;
-
   @NotNull
   private Map<String, String> data;
 

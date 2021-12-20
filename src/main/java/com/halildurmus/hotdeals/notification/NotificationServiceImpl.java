@@ -38,7 +38,6 @@ public class NotificationServiceImpl implements NotificationService {
         .builder()
         .setTitle(note.getTitle())
         .setBody(note.getBody())
-        .setImage(note.getImage())
         .build();
 
     final MulticastMessage message = MulticastMessage.builder()
