@@ -1,9 +1,4 @@
 api-version: "1.0"
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 spring:
   cache:
     redis:
