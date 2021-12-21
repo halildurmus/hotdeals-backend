@@ -22,6 +22,9 @@ public class EsDeal {
   @Field(type = FieldType.Keyword)
   private String id;
 
+  @Field(type = FieldType.Keyword)
+  private String postedBy;
+
   @Field(type = FieldType.Search_As_You_Type)
   private String title;
 
@@ -48,6 +51,7 @@ public class EsDeal {
 
   public EsDeal(Deal deal) {
     this.id = deal.getId();
+    this.postedBy = deal.getPostedBy().toString();
     this.title = deal.getTitle();
     this.description = deal.getDescription();
     this.coverPhoto = deal.getCoverPhoto();
