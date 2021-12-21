@@ -39,12 +39,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     final Notification notification = Notification
         .builder()
-        .setBody(note.getBodyLocArgs().get(0))
+        .setTitle(note.getTitle())
+        .setBody(note.getBody())
         .build();
 
-    // TODO(halildurmus): add back image property
     final AndroidNotification androidNotification = AndroidNotification
         .builder()
+        .setImage(note.getImage())
+        .setTitle(note.getTitle())
+        .setBody(note.getBody())
         .setTitleLocalizationKey(note.getTitleLocKey())
         .addAllTitleLocalizationArgs(note.getTitleLocArgs())
         .setBodyLocalizationKey(note.getBodyLocKey())
@@ -80,6 +83,7 @@ public class NotificationServiceImpl implements NotificationService {
           final String fcmToken = note.getTokens().get(i);
           final String userUid = note.getData().get("uid");
           userService.removeFcmToken(userUid, fcmToken);
+          log.debug(fcmToken + " were removed successfully from the user");
         }
       }
     }

@@ -3,7 +3,6 @@ package com.halildurmus.hotdeals.notification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,11 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Note {
 
-  @NotBlank
+  private String title;
+
   private String titleLocKey;
 
-  @NotBlank
+  private String body;
+
   private String bodyLocKey;
+
+  private String image;
 
   private List<String> titleLocArgs = new ArrayList<>();
 
