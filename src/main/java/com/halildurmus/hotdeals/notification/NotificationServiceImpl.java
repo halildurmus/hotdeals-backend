@@ -69,10 +69,10 @@ public class NotificationServiceImpl implements NotificationService {
     BatchResponse batchResponse;
     try {
       batchResponse = firebaseMessaging.sendMulticast(message);
+      log.debug(batchResponse.getSuccessCount() + " messages were sent successfully");
     } catch (FirebaseMessagingException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "", e);
     }
-    log.debug(batchResponse.getSuccessCount() + " messages were sent successfully");
 
     // Removes invalid FCM tokens
     for (int i = 0; i < batchResponse.getResponses().size(); i++) {
