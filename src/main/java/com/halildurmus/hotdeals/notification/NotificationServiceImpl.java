@@ -10,6 +10,7 @@ import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.SendResponse;
 import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.FCMTokenParams;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.UserService;
 import java.util.Map;
@@ -80,9 +81,10 @@ public class NotificationServiceImpl implements NotificationService {
       if (sendResponse.getException() != null) {
         final String errorCode = sendResponse.getException().getMessagingErrorCode().name();
         if (errorCode.equals("INVALID_ARGUMENT") || errorCode.equals("UNREGISTERED")) {
-          final String fcmToken = note.getTokens().get(i);
           final String userUid = note.getData().get("uid");
-          userService.removeFcmToken(userUid, fcmToken);
+          final String fcmToken = note.getTokens().get(i);
+          final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token(fcmToken).build();
+          userService.removeFCMToken(userUid, fcmTokenParams);
           log.debug(fcmToken + " were removed successfully from the user");
         }
       }
