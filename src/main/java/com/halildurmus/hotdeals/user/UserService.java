@@ -25,8 +25,8 @@ public interface UserService {
 
   void unblock(String userId);
 
-  void addFcmToken(String fcmToken);
+  void addFCMToken(FCMTokenParams fcmTokenParams);
 
-  void removeFcmToken(String userUid, String fcmToken);
+  void removeFCMToken(String userUid, FCMTokenParams fcmTokenParams);
 
 }

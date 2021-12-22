@@ -98,33 +98,32 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void addFcmToken(String fcmToken) {
+  public void addFCMToken(FCMTokenParams fcmTokenParams) {
+    final String deviceId = fcmTokenParams.getDeviceId();
+    final String token = fcmTokenParams.getToken();
     final User user = securityService.getUser();
-    final List<String> fcmTokens = user.getFcmTokens();
-    if (!fcmTokens.contains(fcmToken)) {
-      fcmTokens.add(fcmToken);
-      user.setFcmTokens(fcmTokens);
-      repository.save(user);
-    } else {
-      log.warn("addFcmToken() -> " + user + " already has this fcmToken: " + fcmToken);
-    }
+    final Map<String, String> fcmTokens = user.getFcmTokens();
+    fcmTokens.put(deviceId, token);
+    user.setFcmTokens(fcmTokens);
+    repository.save(user);
   }
 
   @Override
-  public void removeFcmToken(String userUid, String fcmToken) {
+  public void removeFCMToken(String userUid, FCMTokenParams fcmTokenParams) {
     final User user = repository.findByUid(userUid).orElse(null);
     if (user == null) {
       return;
     }
-
-    final List<String> fcmTokens = user.getFcmTokens();
-    if (fcmTokens.contains(fcmToken)) {
-      fcmTokens.remove(fcmToken);
-      user.setFcmTokens(fcmTokens);
-      repository.save(user);
-    } else {
-      log.warn("removeFcmToken() -> " + user + " does not have this fcmToken: " + fcmToken);
+    final String token = fcmTokenParams.getToken();
+    final Map<String, String> fcmTokens = user.getFcmTokens();
+    final boolean isTokenRemoved = fcmTokens.entrySet()
+        .removeIf(entry -> (token.equals(entry.getValue())));
+    if (!isTokenRemoved) {
+      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
+          "User does not have this token!");
     }
+    user.setFcmTokens(fcmTokens);
+    repository.save(user);
   }
 
   @Override

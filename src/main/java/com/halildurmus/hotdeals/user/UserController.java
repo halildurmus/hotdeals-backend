@@ -5,9 +5,8 @@ import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
-import java.util.Map;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -107,28 +106,20 @@ public class UserController {
   }
 
   @PutMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> addFcmToken(@Valid @NotNull @RequestBody Map<String, String> json) {
-    if (!json.containsKey("fcmToken")) {
+  public ResponseEntity<?> addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+    if (ObjectUtils.isEmpty(fcmTokenParams.getDeviceId())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "You need to include 'fcmToken' inside the request body!");
+          "deviceId parameter cannot be empty!");
     }
-
-    final String fcmToken = json.get("fcmToken");
-    service.addFcmToken(fcmToken);
+    service.addFCMToken(fcmTokenParams);
 
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> removeFcmToken(@Valid @NotNull @RequestBody Map<String, String> json) {
-    if (!json.containsKey("fcmToken")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "You need to include 'fcmToken' inside the request body!");
-    }
-
+  public ResponseEntity<?> removeFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     final User user = securityService.getUser();
-    final String fcmToken = json.get("fcmToken");
-    service.removeFcmToken(user.getUid(), fcmToken);
+    service.removeFCMToken(user.getUid(), fcmTokenParams);
 
     return ResponseEntity.status(204).build();
   }

@@ -2,9 +2,7 @@ package com.halildurmus.hotdeals.user;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -52,7 +50,7 @@ public class User implements Serializable {
 
   private Map<String, Boolean> blockedUsers = new HashMap<>();
 
-  private List<String> fcmTokens = new ArrayList<>();
+  private Map<String, String> fcmTokens = new HashMap<>();
 
   private Map<String, Boolean> favorites = new HashMap<>();
 
