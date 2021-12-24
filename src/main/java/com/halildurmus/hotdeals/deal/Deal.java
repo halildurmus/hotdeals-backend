@@ -85,6 +85,8 @@ public class Deal implements Serializable {
   private int views = 0;
 
   @CreatedDate
+  // See https://github.com/spring-projects/spring-data-rest/issues/1565
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Setter(AccessLevel.NONE)
   private Instant createdAt;
 
