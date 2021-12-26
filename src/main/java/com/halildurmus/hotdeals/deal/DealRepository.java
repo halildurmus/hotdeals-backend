@@ -15,8 +15,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   @Override
   @Caching(evict = {
-      @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc", allEntries = true),
-      @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc", allEntries = true),
+      @CacheEvict(value = "deals:findAllByStatusEqualsOrderByCreatedAtDesc", allEntries = true),
+      @CacheEvict(value = "deals:findAllByStatusEqualsOrderByDealScoreDesc", allEntries = true),
       @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
   })
   void deleteById(String id);
@@ -26,8 +26,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       evict = {
           @CacheEvict(value = "deals:countDealsByStore", key = "#entity.store"),
           @CacheEvict(value = "deals:countDealsByPostedBy", key = "#entity.postedBy"),
-          @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc", allEntries = true),
-          @CacheEvict(value = "deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByStatusEqualsOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByStatusEqualsOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
       })
   <S extends Deal> S save(S entity);
@@ -40,11 +40,11 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
 
-  @Cacheable("deals:findAllByIsExpiredIsFalseOrderByCreatedAtDesc")
-  Page<Deal> findAllByIsExpiredIsFalseOrderByCreatedAtDesc(Pageable pageable);
+  @Cacheable("deals:findAllByStatusEqualsOrderByCreatedAtDesc")
+  Page<Deal> findAllByStatusEqualsOrderByCreatedAtDesc(DealStatus status, Pageable pageable);
 
-  @Cacheable("deals:findAllByIsExpiredIsFalseOrderByDealScoreDesc")
-  Page<Deal> findAllByIsExpiredIsFalseOrderByDealScoreDesc(Pageable pageable);
+  @Cacheable("deals:findAllByStatusEqualsOrderByDealScoreDesc")
+  Page<Deal> findAllByStatusEqualsOrderByDealScoreDesc(DealStatus status, Pageable pageable);
 
   @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null and #result != null")
   Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);

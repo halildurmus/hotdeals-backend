@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.deal;
 
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DealPatchDTO {
 
-  private Boolean isExpired;
+  @NotNull
+  private DealStatus status;
 
 }

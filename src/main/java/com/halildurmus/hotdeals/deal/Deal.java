@@ -78,7 +78,7 @@ public class Deal implements Serializable {
   @NotNull
   private String dealUrl;
 
-  private Boolean isExpired = false;
+  private DealStatus status = DealStatus.ACTIVE;
 
   private List<String> photos = new ArrayList<>();
 

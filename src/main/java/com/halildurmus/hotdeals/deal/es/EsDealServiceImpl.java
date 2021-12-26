@@ -178,7 +178,7 @@ public class EsDealServiceImpl implements EsDealService {
   }
 
   private TermQueryBuilder createTermQuery() {
-    return new TermQueryBuilder("isExpired", false);
+    return new TermQueryBuilder("status", "ACTIVE");
   }
 
   private BoolQueryBuilder createBoolQuery(Boolean hideExpired, String query) {

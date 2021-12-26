@@ -91,7 +91,7 @@ public class DealServiceImpl implements DealService {
     }
     try {
       final DealPatchDTO patchedDeal = applyPatchToDeal(patch);
-      deal.setIsExpired(patchedDeal.getIsExpired());
+      deal.setStatus(patchedDeal.getStatus());
       repository.save(deal);
       esDealRepository.save(new EsDeal(deal));
     } catch (Exception e) {
