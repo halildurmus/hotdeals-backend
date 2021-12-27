@@ -32,21 +32,21 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       })
   <S extends Deal> S save(S entity);
 
-  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null and #result != null")
+  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null")
   int countDealsByStore(ObjectId storeId);
 
-  @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null and #result != null")
+  @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
   int countDealsByPostedBy(ObjectId postedBy);
 
   Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
 
-  @Cacheable("deals:findAllByStatusEqualsOrderByCreatedAtDesc")
+  @Cacheable(value = "deals:findAllByStatusEqualsOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #status, #pageable)", condition = "#status != null")
   Page<Deal> findAllByStatusEqualsOrderByCreatedAtDesc(DealStatus status, Pageable pageable);
 
-  @Cacheable("deals:findAllByStatusEqualsOrderByDealScoreDesc")
+  @Cacheable(value = "deals:findAllByStatusEqualsOrderByDealScoreDesc", key = "T(java.lang.String).format('%s-%s', #status, #pageable)", condition = "#status != null")
   Page<Deal> findAllByStatusEqualsOrderByDealScoreDesc(DealStatus status, Pageable pageable);
 
-  @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null and #result != null")
+  @Cacheable(value = "deals:findAllByPostedByOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #postedBy, #pageable)", condition = "#postedBy != null")
   Page<Deal> findAllByPostedByOrderByCreatedAtDesc(ObjectId postedBy, Pageable pageable);
 
 }
