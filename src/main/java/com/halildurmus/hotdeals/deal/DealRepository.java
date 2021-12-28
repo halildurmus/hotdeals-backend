@@ -15,6 +15,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   @Override
   @Caching(evict = {
+      @CacheEvict(value = "deals:findAllByCategoryStartsWithOrderByCreatedAtDesc", allEntries = true),
+      @CacheEvict(value = "deals:findAllByStoreOrderByCreatedAtDesc", allEntries = true),
       @CacheEvict(value = "deals:findAllByStatusEqualsOrderByCreatedAtDesc", allEntries = true),
       @CacheEvict(value = "deals:findAllByStatusEqualsOrderByDealScoreDesc", allEntries = true),
       @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
@@ -26,6 +28,8 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       evict = {
           @CacheEvict(value = "deals:countDealsByStore", key = "#entity.store"),
           @CacheEvict(value = "deals:countDealsByPostedBy", key = "#entity.postedBy"),
+          @CacheEvict(value = "deals:findAllByCategoryStartsWithOrderByCreatedAtDesc", allEntries = true),
+          @CacheEvict(value = "deals:findAllByStoreOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByStatusEqualsOrderByCreatedAtDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByStatusEqualsOrderByDealScoreDesc", allEntries = true),
           @CacheEvict(value = "deals:findAllByPostedByOrderByCreatedAtDesc", allEntries = true),
@@ -37,6 +41,12 @@ public interface DealRepository extends MongoRepository<Deal, String> {
 
   @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
   int countDealsByPostedBy(ObjectId postedBy);
+
+  @Cacheable(value = "deals:findAllByCategoryStartsWithOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #category, #pageable)", condition = "#category.blank != true")
+  Page<Deal> findAllByCategoryStartsWithOrderByCreatedAtDesc(String category, Pageable pageable);
+
+  @Cacheable(value = "deals:findAllByStoreOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #storeId, #pageable)", condition = "#storeId != null")
+  Page<Deal> findAllByStoreOrderByCreatedAtDesc(ObjectId storeId, Pageable pageable);
 
   Page<Deal> findAllByIdIn(Iterable<String> ids, Pageable pageable);
 
