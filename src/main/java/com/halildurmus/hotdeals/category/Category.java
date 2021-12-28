@@ -1,15 +1,14 @@
 package com.halildurmus.hotdeals.category;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -45,11 +44,12 @@ public class Category implements Serializable {
   private String iconFontFamily;
 
   @CreatedDate
-  @Setter(AccessLevel.NONE)
+  // See https://github.com/spring-projects/spring-data-rest/issues/1565
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant createdAt;
 
   @LastModifiedDate
-  @Setter(AccessLevel.NONE)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
 
   public Category(Map<String, String> names, String parent, String category, String iconLigature,
