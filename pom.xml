@@ -179,6 +179,8 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
+      <!-- Pinned Elasticsearch related dependencies to older versions -->
+      <!-- See https://github.com/elastic/elasticsearch/issues/76091 -->
       <dependency>
         <artifactId>spring-data-elasticsearch</artifactId>
         <groupId>org.springframework.data</groupId>
