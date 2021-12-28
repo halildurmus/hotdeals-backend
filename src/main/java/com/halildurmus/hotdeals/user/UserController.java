@@ -1,12 +1,15 @@
 package com.halildurmus.hotdeals.user;
 
 import com.github.fge.jsonpatch.JsonPatch;
+import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
 import javax.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
@@ -27,6 +30,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserController {
 
   @Autowired
+  private MapStructMapper mapStructMapper;
+
+  @Autowired
+  private CommentService commentService;
+
+  @Autowired
   private UserService service;
 
   @Autowired
@@ -37,6 +46,14 @@ public class UserController {
     final User createdUser = service.create(user);
 
     return ResponseEntity.status(201).body(createdUser);
+  }
+
+  @GetMapping("/users/{id}/comments-count")
+  public ResponseEntity<Integer> getComments(
+      @ObjectIdConstraint @PathVariable String id, Pageable pageable) {
+    final int commentCount = commentService.countCommentsByPostedById(new ObjectId(id));
+
+    return ResponseEntity.ok(commentCount);
   }
 
   @GetMapping("/users/me")

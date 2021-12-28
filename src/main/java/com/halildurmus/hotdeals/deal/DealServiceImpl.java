@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
@@ -42,6 +43,8 @@ public class DealServiceImpl implements DealService {
   private final ObjectMapper objectMapper = JsonMapper.builder()
       .findAndAddModules()
       .build();
+  @Autowired
+  private CommentService commentService;
   @Autowired
   private DealRepository repository;
   @Autowired
@@ -124,6 +127,7 @@ public class DealServiceImpl implements DealService {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only remove your own deal!");
     }
 
+    commentService.deleteDealComments(id);
     repository.deleteById(id);
     esDealRepository.deleteById(id);
   }

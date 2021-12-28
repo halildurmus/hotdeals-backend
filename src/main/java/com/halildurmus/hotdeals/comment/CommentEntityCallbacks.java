@@ -21,9 +21,8 @@ class CommentEntityCallbacks implements BeforeSaveCallback<Comment> {
   public Comment onBeforeSave(Comment comment, Document document, String collection) {
     if (collection.equals("comments") && ObjectUtils.isEmpty(comment.getPostedBy())) {
       final User user = securityService.getUser();
-      final ObjectId userId = new ObjectId(user.getId());
-      comment.setPostedBy(userId);
-      document.put("postedBy", userId);
+      comment.setPostedBy(user);
+      document.put("postedBy", new ObjectId(user.getId()));
     }
 
     return comment;

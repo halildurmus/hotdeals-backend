@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserDTO implements Serializable {
+public class UserGetDTO implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
 

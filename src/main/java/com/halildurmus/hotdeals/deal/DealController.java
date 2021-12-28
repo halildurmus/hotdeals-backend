@@ -2,7 +2,14 @@ package com.halildurmus.hotdeals.deal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.halildurmus.hotdeals.comment.Comment;
+import com.halildurmus.hotdeals.comment.CommentGetDTO;
+import com.halildurmus.hotdeals.comment.CommentPostDTO;
+import com.halildurmus.hotdeals.comment.CommentService;
+import com.halildurmus.hotdeals.comment.CommentsDTO;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
+import com.halildurmus.hotdeals.exception.DealNotFoundException;
+import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.ArrayList;
@@ -10,11 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
@@ -36,6 +46,12 @@ public class DealController {
 
   private final List<String> supportedSortBys = List.of("createdAt", "price");
   private final List<String> supportedOrders = List.of("asc", "desc");
+
+  @Autowired
+  private MapStructMapper mapStructMapper;
+
+  @Autowired
+  private CommentService commentService;
 
   @Autowired
   private DealService service;
@@ -156,6 +172,35 @@ public class DealController {
     service.removeDeal(id);
 
     return ResponseEntity.status(204).build();
+  }
+
+  @GetMapping("/deals/{id}/comments")
+  public ResponseEntity<CommentsDTO> getComments(
+      @ObjectIdConstraint @PathVariable String id, Pageable pageable) {
+    final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id),
+        pageable);
+    final List<CommentGetDTO> commentGetDTOS = comments.getContent().stream()
+        .map(comment -> mapStructMapper.commentToCommentGetDto(comment)).collect(
+            Collectors.toList());
+    final CommentsDTO commentsDTO = CommentsDTO.builder()
+        .count(comments.getTotalElements())
+        .comments(commentGetDTOS)
+        .build();
+
+    return ResponseEntity.ok(commentsDTO);
+  }
+
+  @PostMapping("/deals/{id}/comments")
+  public ResponseEntity<CommentGetDTO> createComment(
+      @ObjectIdConstraint @PathVariable String id,
+      @Valid @RequestBody CommentPostDTO commentPostDTO) {
+    service.findById(id).orElseThrow(DealNotFoundException::new);
+    commentPostDTO.setDealId(new ObjectId(id));
+    final Comment savedComment = commentService.saveComment(
+        mapStructMapper.commentPostDtoToComment(commentPostDTO));
+    final CommentGetDTO commentGetDTO = mapStructMapper.commentToCommentGetDto(savedComment);
+
+    return ResponseEntity.status(201).body(commentGetDTO);
   }
 
   @PutMapping("/deals/{id}/votes")
