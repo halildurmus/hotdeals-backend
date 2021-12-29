@@ -43,59 +43,43 @@ public class UserController {
 
   @PostMapping("/users")
   public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-    final User createdUser = service.create(user);
-
-    return ResponseEntity.status(201).body(createdUser);
+    return ResponseEntity.status(201).body(service.create(user));
   }
 
   @GetMapping("/users/{id}/comments-count")
-  public ResponseEntity<Integer> getComments(
-      @ObjectIdConstraint @PathVariable String id, Pageable pageable) {
-    final int commentCount = commentService.countCommentsByPostedById(new ObjectId(id));
-
-    return ResponseEntity.ok(commentCount);
+  public ResponseEntity<Integer> countComments(@ObjectIdConstraint @PathVariable String id) {
+    return ResponseEntity.ok(commentService.countCommentsByPostedById(new ObjectId(id)));
   }
 
   @GetMapping("/users/me")
-  public ResponseEntity<Object> getAuthenticatedUser() {
-    final User user = securityService.getUser();
-    if (user == null) {
-      return ResponseEntity.status(401).build();
-    }
-
-    return ResponseEntity.ok(user);
+  public ResponseEntity<User> getAuthenticatedUser() {
+    return ResponseEntity.ok(securityService.getUser());
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<Object> updateUser(@RequestBody JsonPatch patch) {
-    final User patchedUser = service.patchUser(patch);
-
-    return ResponseEntity.ok(patchedUser);
+  public ResponseEntity<User> updateUser(@RequestBody JsonPatch patch) {
+    return ResponseEntity.ok(service.patchUser(patch));
   }
 
   @GetMapping("/users/me/deals")
   public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
-    final List<Deal> deals = service.getDeals(pageable);
-
-    return ResponseEntity.ok(deals);
+    return ResponseEntity.ok(service.getDeals(pageable));
   }
 
   @GetMapping("/users/me/favorites")
   public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
-    final List<Deal> favorites = service.getFavorites(pageable);
-
-    return ResponseEntity.ok(favorites);
+    return ResponseEntity.ok(service.getFavorites(pageable));
   }
 
   @PutMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<?> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+  public ResponseEntity<Void> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.favoriteDeal(dealId);
 
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<?> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+  public ResponseEntity<Void> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
 
     return ResponseEntity.status(204).build();
@@ -103,27 +87,25 @@ public class UserController {
 
   @GetMapping("/users/me/blocks")
   public ResponseEntity<List<User>> getBlockedUsers(Pageable pageable) {
-    final List<User> blockedUsers = service.getBlockedUsers(pageable);
-
-    return ResponseEntity.ok(blockedUsers);
+    return ResponseEntity.ok(service.getBlockedUsers(pageable));
   }
 
   @PutMapping("/users/me/blocks/{id}")
-  public ResponseEntity<?> blockUser(@ObjectIdConstraint @PathVariable String id) {
+  public ResponseEntity<Void> blockUser(@ObjectIdConstraint @PathVariable String id) {
     service.block(id);
 
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/users/me/blocks/{id}")
-  public ResponseEntity<?> unblockUser(@ObjectIdConstraint @PathVariable String id) {
+  public ResponseEntity<Void> unblockUser(@ObjectIdConstraint @PathVariable String id) {
     service.unblock(id);
 
     return ResponseEntity.status(204).build();
   }
 
   @PutMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+  public ResponseEntity<Void> addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     if (ObjectUtils.isEmpty(fcmTokenParams.getDeviceId())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "deviceId parameter cannot be empty!");
@@ -134,7 +116,7 @@ public class UserController {
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<?> removeFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+  public ResponseEntity<Void> removeFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     final User user = securityService.getUser();
     service.removeFCMToken(user.getUid(), fcmTokenParams);
 

@@ -16,6 +16,12 @@ public class CommentServiceImpl implements CommentService {
   private CommentRepository repository;
 
   @Override
+  public int countCommentsByDealId(ObjectId dealId) {
+    return repository.countCommentsByDealId(dealId);
+  }
+
+
+  @Override
   public int countCommentsByPostedById(ObjectId postedById) {
     return repository.countCommentsByPostedById(postedById);
   }

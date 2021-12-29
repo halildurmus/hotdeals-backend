@@ -17,9 +17,7 @@ public class DealReportController {
 
   @PostMapping("/deal-reports")
   public ResponseEntity<DealReport> createDealReport(@Valid @RequestBody DealReport dealReport) {
-    final DealReport createdDealReport = service.saveDealReport(dealReport);
-
-    return ResponseEntity.status(201).body(createdDealReport);
+    return ResponseEntity.status(201).body(service.saveDealReport(dealReport));
   }
 
 }

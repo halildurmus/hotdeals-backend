@@ -24,9 +24,7 @@ public class CategoryController {
           "The category name must have an English translation!");
     }
 
-    final Category savedCategory = service.saveCategory(category);
-
-    return ResponseEntity.status(201).body(savedCategory);
+    return ResponseEntity.status(201).body(service.saveCategory(category));
   }
 
 }

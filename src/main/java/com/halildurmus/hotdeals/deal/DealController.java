@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -82,7 +81,7 @@ public class DealController {
   }
 
   @GetMapping("/deals/searches")
-  public ResponseEntity<?> searchDeals(
+  public ResponseEntity<JsonNode> searchDeals(
       @RequestParam(value = "query") String query,
       @RequestParam(value = "categories", required = false) List<String> categories,
       @RequestParam(value = "prices", required = false) List<String> prices,
@@ -122,53 +121,38 @@ public class DealController {
           "You have to provide at least one parameter!");
     }
 
-    final JsonNode searchResults = esDealService.searchDeals(searchParams, pageable);
-
-    return ResponseEntity.ok(searchResults);
+    return ResponseEntity.ok(esDealService.searchDeals(searchParams, pageable));
   }
 
   @GetMapping("/deals/suggestions")
   public ResponseEntity<JsonNode> getSuggestions(@NotBlank @Size(min = 3, max = 100)
   @RequestParam(value = "query") String query) {
-    final JsonNode searchHits = esDealService.getSuggestions(query);
-
-    return ResponseEntity.ok(searchHits);
+    return ResponseEntity.ok(esDealService.getSuggestions(query));
   }
 
   @GetMapping("/deals/{id}")
-  public ResponseEntity<Object> getDeal(@ObjectIdConstraint @PathVariable String id) {
-    final Optional<Deal> deal = service.findById(id);
-    if (deal.isEmpty()) {
-      return ResponseEntity.status(404).build();
-    }
-
-    return ResponseEntity.ok(deal);
+  public ResponseEntity<Deal> getDeal(@ObjectIdConstraint @PathVariable String id) {
+    return ResponseEntity.of(service.findById(id));
   }
 
   @PostMapping("/deals")
   public ResponseEntity<Deal> createDeal(@Valid @RequestBody Deal deal) {
-    final Deal createdDeal = service.saveDeal(deal);
-
-    return ResponseEntity.status(201).body(createdDeal);
+    return ResponseEntity.status(201).body(service.saveDeal(deal));
   }
 
   @PatchMapping(value = "/deals/{id}", consumes = "application/json-patch+json")
-  public ResponseEntity<Object> patchDeal(@ObjectIdConstraint @PathVariable String id,
+  public ResponseEntity<Deal> patchDeal(@ObjectIdConstraint @PathVariable String id,
       @RequestBody JsonPatch patch) {
-    final Deal patchedDeal = service.patchDeal(id, patch);
-
-    return ResponseEntity.ok(patchedDeal);
+    return ResponseEntity.ok(service.patchDeal(id, patch));
   }
 
   @PutMapping("/deals")
   public ResponseEntity<Deal> updateDeal(@Valid @RequestBody Deal deal) {
-    final Deal updatedDeal = service.updateDeal(deal);
-
-    return ResponseEntity.status(200).body(updatedDeal);
+    return ResponseEntity.status(200).body(service.updateDeal(deal));
   }
 
   @DeleteMapping("/deals/{id}")
-  public ResponseEntity<?> removeDeal(@ObjectIdConstraint @PathVariable String id) {
+  public ResponseEntity<Void> removeDeal(@ObjectIdConstraint @PathVariable String id) {
     service.removeDeal(id);
 
     return ResponseEntity.status(204).build();
@@ -189,6 +173,12 @@ public class DealController {
 
     return ResponseEntity.ok(commentsDTO);
   }
+
+  @GetMapping("/deals/{id}/comments-count")
+  public ResponseEntity<Integer> countComments(@ObjectIdConstraint @PathVariable String id) {
+    return ResponseEntity.ok(commentService.countCommentsByDealId(new ObjectId(id)));
+  }
+
 
   @PostMapping("/deals/{id}/comments")
   public ResponseEntity<CommentGetDTO> createComment(
@@ -217,16 +207,13 @@ public class DealController {
           "To unvote the deal you need to make a DELETE request!");
     }
     final DealVoteType voteType = DealVoteType.valueOf(json.get("voteType"));
-    final Deal deal = service.voteDeal(id, voteType);
 
-    return ResponseEntity.ok().body(deal);
+    return ResponseEntity.ok().body(service.voteDeal(id, voteType));
   }
 
   @DeleteMapping("/deals/{id}/votes")
   public ResponseEntity<Deal> removeVote(@ObjectIdConstraint @PathVariable String id) {
-    final Deal deal = service.voteDeal(id, DealVoteType.UNVOTE);
-
-    return ResponseEntity.ok().body(deal);
+    return ResponseEntity.ok().body(service.voteDeal(id, DealVoteType.UNVOTE));
   }
 
 }

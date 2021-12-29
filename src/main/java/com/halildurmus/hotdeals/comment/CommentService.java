@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
 
+  int countCommentsByDealId(ObjectId dealId);
+
   int countCommentsByPostedById(ObjectId postedById);
 
   void deleteDealComments(String dealId);

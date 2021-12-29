@@ -17,9 +17,7 @@ public class UserReportController {
 
   @PostMapping("/user-reports")
   public ResponseEntity<UserReport> createUserReport(@Valid @RequestBody UserReport userReport) {
-    final UserReport createdUserReport = service.saveUserReport(userReport);
-
-    return ResponseEntity.status(201).body(createdUserReport);
+    return ResponseEntity.status(201).body(service.saveUserReport(userReport));
   }
 
 }

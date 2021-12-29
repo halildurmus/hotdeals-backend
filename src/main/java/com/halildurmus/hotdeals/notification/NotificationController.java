@@ -19,7 +19,7 @@ public class NotificationController {
   private NotificationService notificationService;
 
   @PostMapping("/notifications")
-  public ResponseEntity<Object> sendNotification(@Valid @RequestBody Note note) {
+  public ResponseEntity<Integer> sendNotification(@Valid @RequestBody Note note) {
     if (ObjectUtils.isEmpty(note.getTitle()) && ObjectUtils.isEmpty(note.getTitleLocKey())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "title or titleLocKey parameters cannot be empty");
@@ -28,9 +28,7 @@ public class NotificationController {
           "body or bodyLocKey parameters cannot be empty");
     }
 
-    final int successCount = notificationService.sendNotification(note);
-
-    return ResponseEntity.status(201).body(successCount);
+    return ResponseEntity.status(201).body(notificationService.sendNotification(note));
   }
 
 }
