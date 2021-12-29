@@ -16,13 +16,13 @@ public class CommentServiceImpl implements CommentService {
   private CommentRepository repository;
 
   @Override
-  public int countCommentsByDealId(ObjectId dealId) {
+  public int getCommentCountByDealId(ObjectId dealId) {
     return repository.countCommentsByDealId(dealId);
   }
 
 
   @Override
-  public int countCommentsByPostedById(ObjectId postedById) {
+  public int getCommentCountByPostedById(ObjectId postedById) {
     return repository.countCommentsByPostedById(postedById);
   }
 
@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public Comment saveComment(Comment comment) {
+  public Comment save(Comment comment) {
     return repository.save(comment);
   }
 

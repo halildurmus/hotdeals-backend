@@ -44,7 +44,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class DealController {
 
   private final List<String> supportedSortBys = List.of("createdAt", "price");
-  private final List<String> supportedOrders = List.of("asc", "desc");
+  private final List<String> orderTypes = List.of("asc", "desc");
 
   @Autowired
   private MapStructMapper mapStructMapper;
@@ -101,9 +101,9 @@ public class DealController {
           "Invalid sortBy! Supported sortBy values => " + supportedSortBys);
     }
 
-    if (order != null && !supportedOrders.contains(order)) {
+    if (order != null && !orderTypes.contains(order)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid order! Supported order values => " + supportedOrders);
+          "Invalid order! Supported order values => " + orderTypes);
     }
 
     final DealSearchParams searchParams = DealSearchParams.builder()
@@ -174,21 +174,21 @@ public class DealController {
     return ResponseEntity.ok(commentsDTO);
   }
 
-  @GetMapping("/deals/{id}/comments-count")
-  public ResponseEntity<Integer> countComments(@ObjectIdConstraint @PathVariable String id) {
-    return ResponseEntity.ok(commentService.countCommentsByDealId(new ObjectId(id)));
+  @GetMapping("/deals/{id}/comment-count")
+  public ResponseEntity<Integer> getCommentCount(@ObjectIdConstraint @PathVariable String id) {
+    return ResponseEntity.ok(commentService.getCommentCountByDealId(new ObjectId(id)));
   }
 
 
   @PostMapping("/deals/{id}/comments")
-  public ResponseEntity<CommentGetDTO> createComment(
+  public ResponseEntity<CommentGetDTO> postComment(
       @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
     commentPostDTO.setDealId(new ObjectId(id));
-    final Comment savedComment = commentService.saveComment(
+    final Comment comment = commentService.save(
         mapStructMapper.commentPostDtoToComment(commentPostDTO));
-    final CommentGetDTO commentGetDTO = mapStructMapper.commentToCommentGetDto(savedComment);
+    final CommentGetDTO commentGetDTO = mapStructMapper.commentToCommentGetDto(comment);
 
     return ResponseEntity.status(201).body(commentGetDTO);
   }
@@ -212,7 +212,7 @@ public class DealController {
   }
 
   @DeleteMapping("/deals/{id}/votes")
-  public ResponseEntity<Deal> removeVote(@ObjectIdConstraint @PathVariable String id) {
+  public ResponseEntity<Deal> deleteVote(@ObjectIdConstraint @PathVariable String id) {
     return ResponseEntity.ok().body(service.voteDeal(id, DealVoteType.UNVOTE));
   }
 

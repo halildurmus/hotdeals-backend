@@ -48,7 +48,7 @@ public class UserController {
 
   @GetMapping("/users/{id}/comments-count")
   public ResponseEntity<Integer> countComments(@ObjectIdConstraint @PathVariable String id) {
-    return ResponseEntity.ok(commentService.countCommentsByPostedById(new ObjectId(id)));
+    return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
   }
 
   @GetMapping("/users/me")
