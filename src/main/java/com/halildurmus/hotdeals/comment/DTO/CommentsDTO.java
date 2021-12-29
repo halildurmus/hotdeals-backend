@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.comment;
+package com.halildurmus.hotdeals.comment.DTO;
 
 import java.util.List;
 import lombok.Builder;

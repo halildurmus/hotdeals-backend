@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.comment;
+package com.halildurmus.hotdeals.comment.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;

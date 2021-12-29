@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.comment;
+package com.halildurmus.hotdeals.comment.DTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.user.UserGetDTO;
@@ -13,7 +13,7 @@ import org.bson.types.ObjectId;
 public class CommentGetDTO {
 
   private final String message;
-  
+
   private String id;
 
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
