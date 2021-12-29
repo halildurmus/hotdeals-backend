@@ -64,36 +64,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
+    final String[] adminAntPatternsGET = {"/actuator/**", "/deal-reports/**", "/user-reports/**",
+        "/users"};
+    final String[] adminAntPatternsPOST = {"/categories", "/stores"};
+    final String[] adminAntPatternsPATCH = {"/users/*"};
+    final String[] adminAntPatternsPUT = {"/categories/*", "/deal-reports/*",
+        "/stores/*", "/users/*", "/user-reports/*"};
+    final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/deal-reports/*",
+        "/users/*", "/user-reports/*"};
+    final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/deals/**",
+        "/stores", "/users/*", "/users/*/comments-count"};
+    final String[] publicAntPatternsPOST = {"/users"};
+
     httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
         .formLogin().disable()
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-        .antMatchers(HttpMethod.GET, "/actuator/*").permitAll()
-        .antMatchers(HttpMethod.GET, "/categories").permitAll()
-        .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
-        .antMatchers(HttpMethod.GET, "/stores").permitAll()
-        .antMatchers(HttpMethod.GET, "/users").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/users/*").permitAll()
-        .antMatchers(HttpMethod.GET, "/users/*/comments-count").permitAll()
-        .antMatchers(HttpMethod.POST, "/users").permitAll()
-        .antMatchers(HttpMethod.POST, "/categories").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/categories/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/categories/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.POST, "/stores").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/stores/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/stores/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/deal-reports/**").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/deal-reports/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/deal-reports/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PATCH, "/users/me").authenticated()
-        .antMatchers(HttpMethod.PATCH, "/users/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/users/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/users/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/user-reports/**").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, "/user-reports/*").access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, "/user-reports/*").access("hasRole('ROLE_SUPER')")
+        .antMatchers("/users/me/**").authenticated()
+        .antMatchers(HttpMethod.GET, publicAntPatternsGET).permitAll()
+        .antMatchers(HttpMethod.GET, adminAntPatternsGET).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.POST, publicAntPatternsPOST).permitAll()
+        .antMatchers(HttpMethod.POST, adminAntPatternsPOST).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PUT, adminAntPatternsPUT).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.DELETE, adminAntPatternsDELETE).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PATCH, adminAntPatternsPATCH).access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
