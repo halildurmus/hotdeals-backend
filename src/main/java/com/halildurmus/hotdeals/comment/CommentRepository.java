@@ -16,6 +16,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Override
   @Caching(put = {@CachePut(value = "comments", key = "#entity.id")},
       evict = {
+          @CacheEvict(value = "comments:countCommentsByDealId", key = "#entity.dealId.toString()"),
           @CacheEvict(value = "comments:countCommentsByPostedById", key = "#entity.postedBy.id"),
           @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true)
       })
@@ -24,6 +25,7 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
 
   @Caching(evict = {
       @CacheEvict(value = "comments", allEntries = true),
+      @CacheEvict(value = "comments:countCommentsByDealId", allEntries = true),
       @CacheEvict(value = "comments:countCommentsByPostedById", allEntries = true),
       @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true)
   })
@@ -32,10 +34,14 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
   @Override
   @Caching(evict = {
       @CacheEvict(value = "comments", key = "#id"),
+      @CacheEvict(value = "comments:countCommentsByDealId", allEntries = true),
       @CacheEvict(value = "comments:countCommentsByPostedById", allEntries = true),
       @CacheEvict(value = "comments:findByDealIdOrderByCreatedAt", allEntries = true)
   })
   void deleteById(String id);
+
+  @Cacheable(value = "comments:countCommentsByDealId", key = "#dealId.toString()", condition = "#dealId != null")
+  int countCommentsByDealId(ObjectId dealId);
 
   @Cacheable(value = "comments:countCommentsByPostedById", key = "#postedById.toString()", condition = "#postedById != null")
     // Parameter needs to be ObjectId
