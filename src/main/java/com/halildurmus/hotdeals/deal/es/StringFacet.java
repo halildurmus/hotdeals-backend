@@ -6,7 +6,6 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Data
-@AllArgsConstructor
 public class StringFacet {
 
   @Field(type = FieldType.Keyword)

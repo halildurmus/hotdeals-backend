@@ -3,10 +3,8 @@ package com.halildurmus.hotdeals.deal.DTO;
 import com.halildurmus.hotdeals.deal.DealStatus;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class DealPatchDTO {
 
   @NotNull
