@@ -174,7 +174,6 @@ public class EsDealServiceImpl implements EsDealService {
 
   private MultiMatchQueryBuilder createMultiMatchQuery(String query) {
     return new MultiMatchQueryBuilder(query, "title", "description");
-    //.fuzziness("AUTO");
   }
 
   private TermQueryBuilder createTermQuery() {
