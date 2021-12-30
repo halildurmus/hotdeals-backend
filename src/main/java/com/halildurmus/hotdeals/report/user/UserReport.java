@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 public class UserReport extends Report {
 
   @NotNull
-  @DocumentReference(lazy = true)
+  @DocumentReference
   private User reportedUser;
 
   @NotEmpty
