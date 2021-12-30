@@ -33,7 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Autowired
   private UserService userService;
 
-  public int sendNotification(Note note) {
+  private MulticastMessage createMulticastMessage(Note note) {
     final User user = securityService.getUser();
     final Map<String, String> data = note.getData();
     data.put("actor", user.getId());
@@ -60,13 +60,16 @@ public class NotificationServiceImpl implements NotificationService {
         .setNotification(androidNotification)
         .setPriority(Priority.HIGH).build();
 
-    final MulticastMessage message = MulticastMessage.builder()
+    return MulticastMessage.builder()
         .setNotification(notification)
         .setAndroidConfig(androidConfig)
         .putAllData(note.getData())
         .addAllTokens(note.getTokens())
         .build();
+  }
 
+  public int sendNotification(Note note) {
+    final MulticastMessage message = createMulticastMessage(note);
     BatchResponse batchResponse;
     try {
       batchResponse = firebaseMessaging.sendMulticast(message);
@@ -84,7 +87,7 @@ public class NotificationServiceImpl implements NotificationService {
           final String userUid = note.getData().get("uid");
           final String fcmToken = note.getTokens().get(i);
           final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token(fcmToken).build();
-          userService.removeFCMToken(userUid, fcmTokenParams);
+          userService.deleteFCMToken(userUid, fcmTokenParams);
           log.debug(fcmToken + " were removed successfully from the user");
         }
       }
