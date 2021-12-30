@@ -1,7 +1,7 @@
 package com.halildurmus.hotdeals.comment.DTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.halildurmus.hotdeals.user.UserGetDTO;
+import com.halildurmus.hotdeals.user.DTO.UserGetDTO;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.time.Instant;
 import lombok.Builder;

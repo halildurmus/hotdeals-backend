@@ -3,8 +3,8 @@ package com.halildurmus.hotdeals.mapstruct;
 import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.DTO.CommentGetDTO;
 import com.halildurmus.hotdeals.comment.DTO.CommentPostDTO;
+import com.halildurmus.hotdeals.user.DTO.UserGetDTO;
 import com.halildurmus.hotdeals.user.User;
-import com.halildurmus.hotdeals.user.UserGetDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

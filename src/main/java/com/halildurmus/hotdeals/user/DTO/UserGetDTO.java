@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.user;
+package com.halildurmus.hotdeals.user.DTO;
 
 import java.io.Serializable;
 import java.time.Instant;

@@ -11,6 +11,7 @@ import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.DTO.UserPatchDTO;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
 import java.util.Map;

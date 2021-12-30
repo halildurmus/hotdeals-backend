@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.user;
+package com.halildurmus.hotdeals.user.DTO;
 
 import java.util.Optional;
 import javax.validation.constraints.NotBlank;
