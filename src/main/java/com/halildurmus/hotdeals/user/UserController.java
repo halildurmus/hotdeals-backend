@@ -47,7 +47,7 @@ public class UserController {
   }
 
   @GetMapping("/users/{id}/comments-count")
-  public ResponseEntity<Integer> countComments(@ObjectIdConstraint @PathVariable String id) {
+  public ResponseEntity<Integer> getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
     return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
   }
 
@@ -57,7 +57,7 @@ public class UserController {
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<User> updateUser(@RequestBody JsonPatch patch) {
+  public ResponseEntity<User> patchUser(@RequestBody JsonPatch patch) {
     return ResponseEntity.ok(service.patchUser(patch));
   }
 
@@ -116,9 +116,9 @@ public class UserController {
   }
 
   @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<Void> removeFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+  public ResponseEntity<Void> deleteFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     final User user = securityService.getUser();
-    service.removeFCMToken(user.getUid(), fcmTokenParams);
+    service.deleteFCMToken(user.getUid(), fcmTokenParams);
 
     return ResponseEntity.status(204).build();
   }

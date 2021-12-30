@@ -31,7 +31,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public void removeRole(String uid, String role) {
+  public void deleteRole(String uid, String role) {
     try {
       final UserRecord user = firebaseAuth.getUser(uid);
       final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());

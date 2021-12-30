@@ -4,6 +4,6 @@ public interface RoleService {
 
   void addRole(String uid, String role);
 
-  void removeRole(String uid, String role);
+  void deleteRole(String uid, String role);
 
 }

@@ -32,12 +32,12 @@ public class RoleController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Void> removeRole(@RequestParam String uid, @RequestParam String role) {
+  public ResponseEntity<Void> deleteRole(@RequestParam String uid, @RequestParam String role) {
     if (!EnumUtil.isInEnum(role, Role.class)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Invalid role! Supported roles => " + Arrays.toString(Role.values()));
     }
-    service.removeRole(uid, role);
+    service.deleteRole(uid, role);
 
     return ResponseEntity.status(204).build();
   }

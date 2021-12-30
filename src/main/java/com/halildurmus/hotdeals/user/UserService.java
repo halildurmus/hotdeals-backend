@@ -27,6 +27,6 @@ public interface UserService {
 
   void addFCMToken(FCMTokenParams fcmTokenParams);
 
-  void removeFCMToken(String userUid, FCMTokenParams fcmTokenParams);
+  void deleteFCMToken(String userUid, FCMTokenParams fcmTokenParams);
 
 }

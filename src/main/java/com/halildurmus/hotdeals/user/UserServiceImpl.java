@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService {
         errorOccurred = false;
       } catch (Exception e) {
         log.error(e.getMessage());
-
         if (e instanceof DuplicateKeyException && e.getMessage().contains("nickname")) {
           errorOccurred = true;
         } else {
@@ -110,16 +109,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void removeFCMToken(String userUid, FCMTokenParams fcmTokenParams) {
+  public void deleteFCMToken(String userUid, FCMTokenParams fcmTokenParams) {
     final User user = repository.findByUid(userUid).orElse(null);
     if (user == null) {
       return;
     }
     final String token = fcmTokenParams.getToken();
     final Map<String, String> fcmTokens = user.getFcmTokens();
-    final boolean isTokenRemoved = fcmTokens.entrySet()
+    final boolean isTokenExists = fcmTokens.entrySet()
         .removeIf(entry -> (token.equals(entry.getValue())));
-    if (!isTokenRemoved) {
+    if (!isTokenExists) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "User does not have this token!");
     }
@@ -152,7 +151,6 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already favorited this deal before!");
     }
-
     favorites.put(dealId, true);
     user.setFavorites(favorites);
     repository.save(user);
@@ -167,7 +165,6 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already unfavorited this deal before!");
     }
-
     favorites.remove(dealId);
     user.setFavorites(favorites);
     repository.save(user);
@@ -190,7 +187,6 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already blocked this user before!");
     }
-
     blockedUsers.put(id, true);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
@@ -205,7 +201,6 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already unblocked this user before!");
     }
-
     blockedUsers.remove(id);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
