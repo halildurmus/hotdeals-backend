@@ -80,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and().authorizeRequests()
         .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .antMatchers("/users/me/**").authenticated()
+        .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
+        .access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, publicAntPatternsGET).permitAll()
         .antMatchers(HttpMethod.GET, adminAntPatternsGET).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.POST, publicAntPatternsPOST).permitAll()
