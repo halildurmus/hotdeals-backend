@@ -64,14 +64,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    final String[] adminAntPatternsGET = {"/actuator/**", "/deal-reports/**", "/user-reports/**",
-        "/users"};
+    final String[] adminAntPatternsGET = {"/actuator/**", "/users"};
     final String[] adminAntPatternsPOST = {"/categories", "/stores"};
     final String[] adminAntPatternsPATCH = {"/users/*"};
-    final String[] adminAntPatternsPUT = {"/categories/*", "/deal-reports/*",
-        "/stores/*", "/users/*", "/user-reports/*"};
-    final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/deal-reports/*",
-        "/users/*", "/user-reports/*"};
+    final String[] adminAntPatternsPUT = {"/categories/*", "/stores/*", "/users/*"};
+    final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/users/*"};
     final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/deals/**",
         "/stores", "/users/*", "/users/*/comments-count"};
     final String[] publicAntPatternsPOST = {"/users"};
