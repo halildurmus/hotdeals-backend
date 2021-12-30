@@ -3,9 +3,12 @@ package com.halildurmus.hotdeals.user;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.deal.Deal;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
+
+  Optional<User> findById(String id);
 
   User create(User user);
 

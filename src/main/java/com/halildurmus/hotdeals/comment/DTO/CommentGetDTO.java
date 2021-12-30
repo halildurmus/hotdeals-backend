@@ -12,15 +12,15 @@ import org.bson.types.ObjectId;
 @Builder
 public class CommentGetDTO {
 
-  private final String message;
-
-  private String id;
+  private final String id;
 
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
-  private ObjectId dealId;
+  private final ObjectId dealId;
 
-  private UserGetDTO postedBy;
+  private final UserGetDTO postedBy;
 
-  private Instant createdAt;
+  private final String message;
+
+  private final Instant createdAt;
 
 }

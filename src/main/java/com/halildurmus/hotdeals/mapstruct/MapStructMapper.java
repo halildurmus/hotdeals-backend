@@ -1,8 +1,18 @@
 package com.halildurmus.hotdeals.mapstruct;
 
+import com.halildurmus.hotdeals.category.Category;
+import com.halildurmus.hotdeals.category.DTO.CategoryGetDTO;
+import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
 import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.DTO.CommentGetDTO;
 import com.halildurmus.hotdeals.comment.DTO.CommentPostDTO;
+import com.halildurmus.hotdeals.report.deal.DTO.DealReportPostDTO;
+import com.halildurmus.hotdeals.report.deal.DealReport;
+import com.halildurmus.hotdeals.report.user.DTO.UserReportPostDTO;
+import com.halildurmus.hotdeals.report.user.UserReport;
+import com.halildurmus.hotdeals.store.DTO.StoreGetDTO;
+import com.halildurmus.hotdeals.store.DTO.StorePostDTO;
+import com.halildurmus.hotdeals.store.Store;
 import com.halildurmus.hotdeals.user.DTO.UserGetDTO;
 import com.halildurmus.hotdeals.user.User;
 import org.mapstruct.Mapper;
@@ -10,12 +20,24 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface MapStructMapper {
 
-  Comment commentPostDtoToComment(CommentPostDTO commentPostDTO);
+  Category categoryPostDTOCategory(CategoryPostDTO categoryPostDTO);
 
-  CommentGetDTO commentToCommentGetDto(Comment comment);
+  CategoryGetDTO categoryToCategoryGetDTO(Category category);
 
-  User userGetDtoToUser(UserGetDTO userGetDTO);
+  Comment commentPostDTOToComment(CommentPostDTO commentPostDTO);
 
-  UserGetDTO userToUserGetDto(User user);
+  CommentGetDTO commentToCommentGetDTO(Comment comment);
+
+  DealReport dealReportPostDTOToDealReport(DealReportPostDTO dealReportPostDTO);
+
+  Store storePostDTOStore(StorePostDTO storePostDTO);
+
+  StoreGetDTO storeToStoreGetDTO(Store store);
+
+  User userGetDTOToUser(UserGetDTO userGetDTO);
+
+  UserGetDTO userToUserGetDTO(User user);
+
+  UserReport userReportPostDTOToUserReport(UserReportPostDTO userReportPostDTO);
 
 }

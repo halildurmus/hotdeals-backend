@@ -15,6 +15,7 @@ import com.halildurmus.hotdeals.user.DTO.UserPatchDTO;
 import com.halildurmus.hotdeals.util.FakerUtil;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,11 @@ public class UserServiceImpl implements UserService {
     this.dealRepository = dealRepository;
     this.repository = userRepository;
     this.fakerUtil = fakerUtil;
+  }
+
+  @Override
+  public Optional<User> findById(String id) {
+    return repository.findById(id);
   }
 
   @Override

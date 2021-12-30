@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class DummyCategories {
 
-  public static Category category1 = new Category(
-      Map.of("en", "Computers", "tr", "Bilgisayarlar"),
-      "/", "/computers",
-      "computer", "MaterialIcons");
+  public static Category category1 = Category.builder()
+      .names(Map.of("en", "Computers", "tr", "Bilgisayarlar"))
+      .parent("/").category("/computers").iconLigature("computer")
+      .iconFontFamily("MaterialIcons").build();
 
 }

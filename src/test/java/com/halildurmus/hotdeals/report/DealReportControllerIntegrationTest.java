@@ -12,7 +12,6 @@ import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,7 +76,7 @@ public class DealReportControllerIntegrationTest extends BaseIntegrationTest {
 
     final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
     final DealReport dealReport = DummyDealReports.dealReport1;
-    dealReport.setReportedDeal(new ObjectId(deal.getId()));
+    dealReport.setReportedDeal(deal);
 
     final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/deal-reports")

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,7 +21,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "categories")
 @TypeAlias("category")
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Category implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
@@ -51,14 +55,5 @@ public class Category implements Serializable {
   @LastModifiedDate
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
-
-  public Category(Map<String, String> names, String parent, String category, String iconLigature,
-      String iconFontFamily) {
-    this.names = names;
-    this.parent = parent;
-    this.category = category;
-    this.iconLigature = iconLigature;
-    this.iconFontFamily = iconFontFamily;
-  }
 
 }

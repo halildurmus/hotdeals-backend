@@ -1,7 +1,10 @@
 package com.halildurmus.hotdeals.category;
 
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,7 +17,17 @@ public class CategoryServiceImpl implements CategoryService {
   private CategoryRepository repository;
 
   @Override
-  public Category saveCategory(Category category) {
+  public Page<Category> findAll(Pageable pageable) {
+    return repository.findAll(pageable);
+  }
+
+  @Override
+  public Optional<Category> findById(String id) {
+    return repository.findById(id);
+  }
+
+  @Override
+  public Category save(Category category) {
     if (!category.getParent().equals("/")) {
       repository.findByCategory(category.getParent())
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,

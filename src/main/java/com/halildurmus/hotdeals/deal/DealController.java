@@ -10,6 +10,8 @@ import com.halildurmus.hotdeals.comment.DTO.CommentsDTO;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
+import com.halildurmus.hotdeals.report.deal.DealReport;
+import com.halildurmus.hotdeals.report.deal.DealReportService;
 import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.ArrayList;
@@ -51,6 +53,9 @@ public class DealController {
 
   @Autowired
   private CommentService commentService;
+
+  @Autowired
+  private DealReportService dealReportService;
 
   @Autowired
   private DealService service;
@@ -163,12 +168,12 @@ public class DealController {
       @ObjectIdConstraint @PathVariable String id, Pageable pageable) {
     final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id),
         pageable);
-    final List<CommentGetDTO> commentGetDTOS = comments.getContent().stream()
-        .map(comment -> mapStructMapper.commentToCommentGetDto(comment)).collect(
+    final List<CommentGetDTO> commentGetDTOs = comments.getContent().stream()
+        .map(comment -> mapStructMapper.commentToCommentGetDTO(comment)).collect(
             Collectors.toList());
     final CommentsDTO commentsDTO = CommentsDTO.builder()
         .count(comments.getTotalElements())
-        .comments(commentGetDTOS)
+        .comments(commentGetDTOs)
         .build();
 
     return ResponseEntity.ok(commentsDTO);
@@ -187,10 +192,18 @@ public class DealController {
     service.findById(id).orElseThrow(DealNotFoundException::new);
     commentPostDTO.setDealId(new ObjectId(id));
     final Comment comment = commentService.save(
-        mapStructMapper.commentPostDtoToComment(commentPostDTO));
-    final CommentGetDTO commentGetDTO = mapStructMapper.commentToCommentGetDto(comment);
+        mapStructMapper.commentPostDTOToComment(commentPostDTO));
 
-    return ResponseEntity.status(201).body(commentGetDTO);
+    return ResponseEntity.status(201).body(mapStructMapper.commentToCommentGetDTO(comment));
+  }
+
+  @PostMapping("/deals/{id}/reports")
+  public ResponseEntity<Void> createDealReport(@ObjectIdConstraint @PathVariable String id,
+      @Valid @RequestBody DealReport dealReport) {
+    service.findById(id).orElseThrow(DealNotFoundException::new);
+    dealReportService.save(dealReport);
+    
+    return ResponseEntity.status(201).build();
   }
 
   @PutMapping("/deals/{id}/votes")
