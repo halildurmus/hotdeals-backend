@@ -3,7 +3,6 @@ package com.halildurmus.hotdeals.user;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.Deal;
-import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
@@ -28,9 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RepositoryRestController
 @Validated
 public class UserController {
-
-  @Autowired
-  private MapStructMapper mapStructMapper;
 
   @Autowired
   private CommentService commentService;
