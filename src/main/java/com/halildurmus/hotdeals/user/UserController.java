@@ -4,11 +4,17 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
+import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.report.user.UserReportService;
 import com.halildurmus.hotdeals.security.SecurityService;
+import com.halildurmus.hotdeals.user.DTO.UserBasicDTO;
+import com.halildurmus.hotdeals.user.DTO.UserExtendedDTO;
+import com.halildurmus.hotdeals.user.DTO.UserPostDTO;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 @RepositoryRestController
@@ -35,6 +42,9 @@ public class UserController {
   private CommentService commentService;
 
   @Autowired
+  private MapStructMapper mapStructMapper;
+
+  @Autowired
   private UserService service;
 
   @Autowired
@@ -43,9 +53,42 @@ public class UserController {
   @Autowired
   private UserReportService userReportService;
 
+  @GetMapping("/users/{id}")
+  public ResponseEntity<UserBasicDTO> getUser(@ObjectIdConstraint @PathVariable String id) {
+    final Optional<User> user = service.findById(id);
+    if (user.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(mapStructMapper.userToUserBasicDTO(user.get()));
+  }
+
+  @GetMapping("/users/{id}/extended")
+  public ResponseEntity<UserExtendedDTO> getUserExtended(
+      @ObjectIdConstraint @PathVariable String id) {
+    final Optional<User> user = service.findById(id);
+    if (user.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
+  }
+
+  @GetMapping("/users/search/findByUid")
+  public ResponseEntity<UserExtendedDTO> getUserByUid(@RequestParam String uid) {
+    final Optional<User> user = service.findByUid(uid);
+    if (user.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
+  }
+
   @PostMapping("/users")
-  public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-    return ResponseEntity.status(201).body(service.create(user));
+  public ResponseEntity<UserBasicDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
+    final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
+
+    return ResponseEntity.status(201).body(mapStructMapper.userToUserBasicDTO(user));
   }
 
   @GetMapping("/users/{id}/comments-count")
@@ -57,7 +100,8 @@ public class UserController {
   public ResponseEntity<Void> createDealReport(
       @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody UserReport userReport) {
-    service.findById(id).orElseThrow(UserNotFoundException::new);
+    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
+    userReport.setReportedUser(user);
     userReportService.save(userReport);
 
     return ResponseEntity.status(201).build();
@@ -69,8 +113,8 @@ public class UserController {
   }
 
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<User> patchUser(@RequestBody JsonPatch patch) {
-    return ResponseEntity.ok(service.patchUser(patch));
+  public ResponseEntity<UserExtendedDTO> patchUser(@RequestBody JsonPatch patch) {
+    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(service.patchUser(patch)));
   }
 
   @GetMapping("/users/me/deals")
@@ -98,8 +142,13 @@ public class UserController {
   }
 
   @GetMapping("/users/me/blocks")
-  public ResponseEntity<List<User>> getBlockedUsers(Pageable pageable) {
-    return ResponseEntity.ok(service.getBlockedUsers(pageable));
+  public ResponseEntity<List<UserExtendedDTO>> getBlockedUsers(Pageable pageable) {
+    final List<User> blockedUsers = service.getBlockedUsers(pageable);
+    final List<UserExtendedDTO> blockedUserExtendedDTOs = blockedUsers.stream()
+        .map(user -> mapStructMapper.userToUserExtendedDTO(user)).collect(
+            Collectors.toList());
+
+    return ResponseEntity.ok(blockedUserExtendedDTOs);
   }
 
   @PutMapping("/users/me/blocks/{id}")

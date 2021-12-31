@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
@@ -7,10 +8,10 @@ import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -22,7 +23,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 @TypeAlias("user")
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
@@ -55,22 +58,12 @@ public class User implements Serializable {
   private Map<String, Boolean> favorites = new HashMap<>();
 
   @CreatedDate
-  @Setter(AccessLevel.NONE)
+  // See https://github.com/spring-projects/spring-data-rest/issues/1565
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant createdAt;
 
   @LastModifiedDate
-  @Setter(AccessLevel.NONE)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
-
-  public User(String id) {
-    this.id = id;
-  }
-
-  public User(String uid, String email, String nickname, String avatar) {
-    this.uid = uid;
-    this.email = email;
-    this.nickname = nickname;
-    this.avatar = avatar;
-  }
 
 }

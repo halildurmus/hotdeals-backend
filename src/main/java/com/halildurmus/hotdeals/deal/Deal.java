@@ -12,10 +12,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,8 +39,8 @@ public class Deal implements Serializable {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId postedBy;
 
-  @JsonSerialize(using = ObjectIdJsonSerializer.class)
   @NotNull
+  @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId store;
 
   private int dealScore = 0;
@@ -87,11 +85,10 @@ public class Deal implements Serializable {
   @CreatedDate
   // See https://github.com/spring-projects/spring-data-rest/issues/1565
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  @Setter(AccessLevel.NONE)
   private Instant createdAt;
 
   @LastModifiedDate
-  @Setter(AccessLevel.NONE)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
 
   public Deal(String title, String description, double originalPrice, double price, ObjectId store,

@@ -52,6 +52,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Optional<User> findByUid(String uid) {
+    return repository.findByUid(uid);
+  }
+
+  @Override
   public User create(User user) {
     boolean errorOccurred;
     do {

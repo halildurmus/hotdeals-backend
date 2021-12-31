@@ -24,6 +24,8 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
@@ -65,9 +67,29 @@ public class DealServiceImpl implements DealService {
     return deal;
   }
 
+  @Override
+  public Page<Deal> getDealsByCategory(String category, Pageable pageable) {
+    return repository.findAllByCategoryStartsWithOrderByCreatedAtDesc(category, pageable);
+  }
+
+  @Override
+  public Page<Deal> getDealsByStoreId(ObjectId storeId, Pageable pageable) {
+    return repository.findAllByStoreOrderByCreatedAtDesc(storeId, pageable);
+  }
+
+  @Override
+  public Page<Deal> getLatestActiveDeals(Pageable pageable) {
+    return repository.findAllByStatusEqualsOrderByCreatedAtDesc(DealStatus.ACTIVE, pageable);
+  }
+
+  @Override
+  public Page<Deal> getMostLikedActiveDeals(Pageable pageable) {
+    return repository.findAllByStatusEqualsOrderByDealScoreDesc(DealStatus.ACTIVE, pageable);
+  }
+
   @Transactional
   @Override
-  public Deal saveDeal(Deal deal) {
+  public Deal save(Deal deal) {
     final Deal savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
 

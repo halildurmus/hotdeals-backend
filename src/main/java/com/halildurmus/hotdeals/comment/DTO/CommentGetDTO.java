@@ -1,7 +1,7 @@
 package com.halildurmus.hotdeals.comment.DTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.halildurmus.hotdeals.user.DTO.UserGetDTO;
+import com.halildurmus.hotdeals.user.DTO.UserBasicDTO;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.time.Instant;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class CommentGetDTO {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private final ObjectId dealId;
 
-  private final UserGetDTO postedBy;
+  private final UserBasicDTO postedBy;
 
   private final String message;
 

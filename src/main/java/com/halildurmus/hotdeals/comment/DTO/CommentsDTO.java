@@ -8,8 +8,8 @@ import lombok.Data;
 @Builder
 public class CommentsDTO {
 
-  private long count;
+  private final long count;
 
-  private List<CommentGetDTO> comments;
+  private final List<CommentGetDTO> comments;
 
 }

@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureMockMvc(addFilters = false)
 public class CommentControllerIntegrationTest extends BaseIntegrationTest {
 
-  static User fakeUser = new User("607345b0eeeee1452898128b");
+  static User fakeUser = User.builder().id("607345b0eeeee1452898128b").build();
 
   @MockBean
   SecurityService securityService;

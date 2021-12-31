@@ -10,6 +10,8 @@ public interface UserService {
 
   Optional<User> findById(String id);
 
+  Optional<User> findByUid(String uid);
+
   User create(User user);
 
   User patchUser(JsonPatch patch);
