@@ -64,13 +64,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    final String[] adminAntPatternsGET = {"/actuator/**", "/users"};
+    final String[] adminAntPatternsGET = {"/actuator/**", "/deals", "/deals/", "/users", "/users/"};
     final String[] adminAntPatternsPOST = {"/categories", "/stores"};
     final String[] adminAntPatternsPATCH = {"/users/*"};
     final String[] adminAntPatternsPUT = {"/categories/*", "/stores/*", "/users/*"};
     final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/users/*"};
-    final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/deals/**",
-        "/stores", "/users/*", "/users/*/comments-count"};
+    final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/stores",
+        "/users/*/comments-count"};
     final String[] publicAntPatternsPOST = {"/users"};
 
     httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
@@ -84,6 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, publicAntPatternsGET).permitAll()
         .antMatchers(HttpMethod.GET, adminAntPatternsGET).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.GET, "/deals/**", "/users/*").permitAll()
         .antMatchers(HttpMethod.POST, publicAntPatternsPOST).permitAll()
         .antMatchers(HttpMethod.POST, adminAntPatternsPOST).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, adminAntPatternsPUT).access("hasRole('ROLE_SUPER')")
