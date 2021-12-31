@@ -4,7 +4,6 @@ import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.report.Report;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @NoArgsConstructor
 public class DealReport extends Report {
 
-  @NotNull
   @DocumentReference
   private Deal reportedDeal;
 
