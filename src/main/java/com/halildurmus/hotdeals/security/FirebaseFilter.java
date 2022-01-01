@@ -61,7 +61,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
     return authorization.substring(7);
   }
 
-  private User firebaseTokenToUserDto(FirebaseToken decodedToken) {
+  private User firebaseTokenToUser(FirebaseToken decodedToken) {
     return userRepository.findByUid(decodedToken.getUid()).orElse(null);
   }
 
@@ -97,7 +97,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
       throw e;
     }
 
-    User user = firebaseTokenToUserDto(decodedToken);
+    final User user = firebaseTokenToUser(decodedToken);
     logger.info("User: " + user);
     final List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
     FirebaseAuthenticationToken authentication = new FirebaseAuthenticationToken(
