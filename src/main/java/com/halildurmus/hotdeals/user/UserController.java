@@ -46,13 +46,20 @@ public class UserController {
   private MapStructMapper mapStructMapper;
 
   @Autowired
-  private UserService service;
-
-  @Autowired
   private SecurityService securityService;
 
   @Autowired
+  private UserService service;
+
+  @Autowired
   private UserReportService userReportService;
+
+  @PostMapping("/users")
+  public ResponseEntity<UserBasicDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
+    final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
+
+    return ResponseEntity.status(201).body(mapStructMapper.userToUserBasicDTO(user));
+  }
 
   @GetMapping("/users/{id}")
   public ResponseEntity<UserBasicDTO> getUser(@ObjectIdConstraint @PathVariable String id) {
@@ -64,6 +71,11 @@ public class UserController {
     return ResponseEntity.ok(mapStructMapper.userToUserBasicDTO(user.get()));
   }
 
+  @GetMapping("/users/{id}/comments-count")
+  public ResponseEntity<Integer> getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
+    return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
+  }
+
   @GetMapping("/users/{id}/extended")
   public ResponseEntity<UserExtendedDTO> getUserExtended(
       @ObjectIdConstraint @PathVariable String id) {
@@ -73,28 +85,6 @@ public class UserController {
     }
 
     return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
-  }
-
-  @GetMapping("/users/search/findByUid")
-  public ResponseEntity<UserExtendedDTO> getUserByUid(@RequestParam String uid) {
-    final Optional<User> user = service.findByUid(uid);
-    if (user.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
-  }
-
-  @PostMapping("/users")
-  public ResponseEntity<UserBasicDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
-    final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
-
-    return ResponseEntity.status(201).body(mapStructMapper.userToUserBasicDTO(user));
-  }
-
-  @GetMapping("/users/{id}/comments-count")
-  public ResponseEntity<Integer> getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
-    return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
   }
 
   @PostMapping("/users/{id}/reports")
@@ -109,6 +99,7 @@ public class UserController {
     return ResponseEntity.status(201).build();
   }
 
+
   @GetMapping("/users/me")
   public ResponseEntity<User> getAuthenticatedUser() {
     return ResponseEntity.ok(securityService.getUser());
@@ -117,30 +108,6 @@ public class UserController {
   @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
   public ResponseEntity<UserExtendedDTO> patchUser(@RequestBody JsonPatch patch) {
     return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(service.patchUser(patch)));
-  }
-
-  @GetMapping("/users/me/deals")
-  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
-    return ResponseEntity.ok(service.getDeals(pageable));
-  }
-
-  @GetMapping("/users/me/favorites")
-  public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
-    return ResponseEntity.ok(service.getFavorites(pageable));
-  }
-
-  @PutMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<Void> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
-    service.favoriteDeal(dealId);
-
-    return ResponseEntity.ok().build();
-  }
-
-  @DeleteMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<Void> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
-    service.unfavoriteDeal(dealId);
-
-    return ResponseEntity.status(204).build();
   }
 
   @GetMapping("/users/me/blocks")
@@ -167,6 +134,30 @@ public class UserController {
     return ResponseEntity.status(204).build();
   }
 
+  @GetMapping("/users/me/deals")
+  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
+    return ResponseEntity.ok(service.getDeals(pageable));
+  }
+
+  @GetMapping("/users/me/favorites")
+  public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
+    return ResponseEntity.ok(service.getFavorites(pageable));
+  }
+
+  @PutMapping("/users/me/favorites/{dealId}")
+  public ResponseEntity<Void> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+    service.favoriteDeal(dealId);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/users/me/favorites/{dealId}")
+  public ResponseEntity<Void> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+    service.unfavoriteDeal(dealId);
+
+    return ResponseEntity.status(204).build();
+  }
+
   @PutMapping("/users/me/fcm-tokens")
   public ResponseEntity<Void> addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     if (ObjectUtils.isEmpty(fcmTokenParams.getDeviceId())) {
@@ -184,6 +175,16 @@ public class UserController {
     service.deleteFCMToken(user.getUid(), fcmTokenParams);
 
     return ResponseEntity.status(204).build();
+  }
+
+  @GetMapping("/users/search/findByUid")
+  public ResponseEntity<UserExtendedDTO> getUserByUid(@RequestParam String uid) {
+    final Optional<User> user = service.findByUid(uid);
+    if (user.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
   }
 
 }
