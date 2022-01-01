@@ -2,9 +2,10 @@ package com.halildurmus.hotdeals.deal.DTO;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.halildurmus.hotdeals.deal.DealStatus;
-import com.halildurmus.hotdeals.util.ObjectIdArrayJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
+import com.halildurmus.hotdeals.util.ObjectIdSetJsonSerializer;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -24,11 +25,11 @@ public class DealGetDTO {
 
   private final int dealScore;
 
-  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private final List<ObjectId> upvoters;
+  @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
+  private final HashSet<ObjectId> upvoters;
 
-  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private final List<ObjectId> downvoters;
+  @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
+  private final HashSet<ObjectId> downvoters;
 
   private final String category;
 

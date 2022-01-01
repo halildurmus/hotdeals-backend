@@ -3,11 +3,12 @@ package com.halildurmus.hotdeals.deal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.halildurmus.hotdeals.util.ObjectIdArrayJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
+import com.halildurmus.hotdeals.util.ObjectIdSetJsonSerializer;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -45,11 +46,11 @@ public class Deal implements Serializable {
 
   private int dealScore = 0;
 
-  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private List<ObjectId> upvoters = new ArrayList<>();
+  @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
+  private HashSet<ObjectId> upvoters = new HashSet<>();
 
-  @JsonSerialize(using = ObjectIdArrayJsonSerializer.class)
-  private List<ObjectId> downvoters = new ArrayList<>();
+  @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
+  private HashSet<ObjectId> downvoters = new HashSet<>();
 
   @NotBlank
   private String category;
