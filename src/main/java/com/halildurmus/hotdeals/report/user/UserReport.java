@@ -2,7 +2,7 @@ package com.halildurmus.hotdeals.report.user;
 
 import com.halildurmus.hotdeals.report.Report;
 import com.halildurmus.hotdeals.user.User;
-import java.util.List;
+import java.util.EnumSet;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,6 +24,6 @@ public class UserReport extends Report {
   private User reportedUser;
 
   @NotEmpty
-  private List<UserReportReason> reasons;
+  private EnumSet<UserReportReason> reasons;
 
 }
