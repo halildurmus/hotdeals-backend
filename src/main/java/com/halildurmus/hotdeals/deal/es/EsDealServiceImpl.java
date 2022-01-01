@@ -333,9 +333,6 @@ public class EsDealServiceImpl implements EsDealService {
     }
 
     searchSource.postFilter(createFilters(searchParams, null));
-
-    System.out.println(searchSource);
-
     request.setJsonEntity(searchSource.toString());
 
     return request;

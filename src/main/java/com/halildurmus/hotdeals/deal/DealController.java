@@ -12,6 +12,7 @@ import com.halildurmus.hotdeals.deal.DTO.DealPostDTO;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
+import com.halildurmus.hotdeals.report.deal.DTO.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
 import com.halildurmus.hotdeals.util.EnumUtil;
@@ -257,8 +258,10 @@ public class DealController {
 
   @PostMapping("/deals/{id}/reports")
   public ResponseEntity<Void> createDealReport(@ObjectIdConstraint @PathVariable String id,
-      @Valid @RequestBody DealReport dealReport) {
+      @Valid @RequestBody DealReportPostDTO dealReportPostDTO) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
+    final DealReport dealReport = mapStructMapper.dealReportPostDTOToDealReport(
+        dealReportPostDTO);
     dealReport.setReportedDeal(deal);
     dealReportService.save(dealReport);
 

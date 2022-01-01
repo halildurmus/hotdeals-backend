@@ -194,7 +194,6 @@ public class DealServiceImpl implements DealService {
       update.set(fieldName2).toValue(filter(fieldName2).as("id")
           .by(valueOf("id").notEqualToValue(userId)));
     }
-
     update.set("dealScore").toValue(Subtract.valueOf(Size.lengthOfArray("upvoters"))
         .subtract(Size.lengthOfArray("downvoters")));
 

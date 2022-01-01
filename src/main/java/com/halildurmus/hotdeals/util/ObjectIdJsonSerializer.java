@@ -18,6 +18,6 @@ public class ObjectIdJsonSerializer extends JsonSerializer<ObjectId> {
     } catch (IOException e) {
       log.error("Object ID not serialized", e);
     }
-
   }
+
 }

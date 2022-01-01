@@ -20,7 +20,6 @@ public class CommentServiceImpl implements CommentService {
     return repository.countCommentsByDealId(dealId);
   }
 
-
   @Override
   public int getCommentCountByPostedById(ObjectId postedById) {
     return repository.countCommentsByPostedById(postedById);

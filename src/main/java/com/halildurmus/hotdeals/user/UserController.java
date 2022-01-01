@@ -5,6 +5,7 @@ import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
+import com.halildurmus.hotdeals.report.user.DTO.UserReportPostDTO;
 import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.report.user.UserReportService;
 import com.halildurmus.hotdeals.security.SecurityService;
@@ -99,8 +100,9 @@ public class UserController {
   @PostMapping("/users/{id}/reports")
   public ResponseEntity<Void> createDealReport(
       @ObjectIdConstraint @PathVariable String id,
-      @Valid @RequestBody UserReport userReport) {
+      @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
+    final UserReport userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);
     userReport.setReportedUser(user);
     userReportService.save(userReport);
 
