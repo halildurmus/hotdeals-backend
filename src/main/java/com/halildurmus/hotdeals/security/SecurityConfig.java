@@ -28,13 +28,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  ObjectMapper objectMapper;
+  private ObjectMapper objectMapper;
 
   @Autowired
-  SecurityProperties securityProperties;
+  private SecurityProperties securityProperties;
 
   @Autowired
-  FirebaseFilter firebaseFilter;
+  private FirebaseFilter firebaseFilter;
 
   @Bean
   public AuthenticationEntryPoint restAuthenticationEntryPoint() {

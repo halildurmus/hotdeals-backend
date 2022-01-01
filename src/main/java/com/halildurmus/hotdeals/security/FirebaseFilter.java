@@ -31,16 +31,13 @@ public class FirebaseFilter extends OncePerRequestFilter {
   private static final String HEADER_NAME = "Authorization";
 
   @Autowired
-  SecurityService securityService;
+  private SecurityProperties securityProperties;
 
   @Autowired
-  SecurityProperties securityProperties;
+  private RoleService roleService;
 
   @Autowired
-  RoleService roleService;
-
-  @Autowired
-  UserRepository userRepository;
+  private UserRepository userRepository;
 
   @SneakyThrows
   @Override

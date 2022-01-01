@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class FirebaseProperties {
 
-  String databaseUrl;
+  private String databaseUrl;
 
 }

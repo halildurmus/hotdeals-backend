@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Credentials {
 
-  private FirebaseToken decodedToken;
-  private String idToken;
+  private final FirebaseToken decodedToken;
+  private final String idToken;
 
 }
