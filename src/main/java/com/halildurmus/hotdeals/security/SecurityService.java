@@ -9,14 +9,13 @@ import org.springframework.stereotype.Service;
 public class SecurityService {
 
   /**
-   * Returns the authenticated {@code User}.
+   * Gets the authenticated {@code User} if there is one.
    *
-   * @return {@code User}
+   * @return {@code User} if there is an authenticated user; otherwise {@code null}
    */
   public User getUser() {
-    SecurityContext securityContext = SecurityContextHolder.getContext();
-    Object principal = securityContext.getAuthentication().getPrincipal();
-
+    final SecurityContext securityContext = SecurityContextHolder.getContext();
+    final Object principal = securityContext.getAuthentication().getPrincipal();
     if (principal instanceof User) {
       return ((User) principal);
     }
