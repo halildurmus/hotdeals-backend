@@ -5,7 +5,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 @Data
 @Builder
@@ -17,7 +16,6 @@ public class CategoryPostDTO {
   @NotBlank
   private final String parent;
 
-  @Indexed(unique = true)
   @NotBlank
   private final String category;
 
