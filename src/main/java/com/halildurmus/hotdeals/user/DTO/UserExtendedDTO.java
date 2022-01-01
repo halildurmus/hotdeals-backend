@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.user.DTO;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class UserExtendedDTO {
 
   private final String nickname;
 
-  private final Map<String, Boolean> blockedUsers;
+  private final HashSet<String> blockedUsers;
 
   private final Map<String, String> fcmTokens;
 

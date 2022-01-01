@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -51,11 +52,11 @@ public class User implements Serializable {
   @NotBlank
   private String avatar;
 
-  private Map<String, Boolean> blockedUsers = new HashMap<>();
+  private HashSet<String> blockedUsers = new HashSet<>();
+
+  private HashSet<String> favorites = new HashSet<>();
 
   private Map<String, String> fcmTokens = new HashMap<>();
-
-  private Map<String, Boolean> favorites = new HashMap<>();
 
   @CreatedDate
   // See https://github.com/spring-projects/spring-data-rest/issues/1565

@@ -13,6 +13,7 @@ import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.DTO.UserPatchDTO;
 import com.halildurmus.hotdeals.util.FakerUtil;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,21 +149,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<Deal> getFavorites(Pageable pageable) {
     final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
+    final HashSet<String> favorites = user.getFavorites();
 
-    return dealRepository.findAllByIdIn(favorites.keySet(), pageable).getContent();
+    return dealRepository.findAllByIdIn(favorites, pageable).getContent();
   }
 
   @Override
   public void favoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (favorites.containsKey(dealId)) {
+    final HashSet<String> favorites = user.getFavorites();
+    if (favorites.contains(dealId)) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already favorited this deal before!");
     }
-    favorites.put(dealId, true);
+    favorites.add(dealId);
     user.setFavorites(favorites);
     repository.save(user);
   }
@@ -171,8 +172,8 @@ public class UserServiceImpl implements UserService {
   public void unfavoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
-    final Map<String, Boolean> favorites = user.getFavorites();
-    if (!favorites.containsKey(dealId)) {
+    final HashSet<String> favorites = user.getFavorites();
+    if (!favorites.contains(dealId)) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already unfavorited this deal before!");
     }
@@ -184,21 +185,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> getBlockedUsers(Pageable pageable) {
     final User user = securityService.getUser();
-    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
+    final HashSet<String> blockedUsers = user.getBlockedUsers();
 
-    return repository.findAllByIdIn(blockedUsers.keySet(), pageable).getContent();
+    return repository.findAllByIdIn(blockedUsers, pageable).getContent();
   }
 
   @Override
   public void block(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
-    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
-    if (blockedUsers.containsKey(id)) {
+    final HashSet<String> blockedUsers = user.getBlockedUsers();
+    if (blockedUsers.contains(id)) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already blocked this user before!");
     }
-    blockedUsers.put(id, true);
+    blockedUsers.add(id);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
   }
@@ -207,8 +208,8 @@ public class UserServiceImpl implements UserService {
   public void unblock(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
     final User user = securityService.getUser();
-    final Map<String, Boolean> blockedUsers = user.getBlockedUsers();
-    if (!blockedUsers.containsKey(id)) {
+    final HashSet<String> blockedUsers = user.getBlockedUsers();
+    if (!blockedUsers.contains(id)) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
           "You've already unblocked this user before!");
     }
