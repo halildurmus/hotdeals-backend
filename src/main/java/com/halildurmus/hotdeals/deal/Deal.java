@@ -13,6 +13,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -27,7 +29,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "deals")
 @TypeAlias("deal")
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Deal implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
@@ -91,30 +95,5 @@ public class Deal implements Serializable {
   @LastModifiedDate
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
-
-  public Deal(String title, String description, double originalPrice, double price, ObjectId store,
-      String category, String coverPhoto, String dealUrl) {
-    this.title = title;
-    this.description = description;
-    this.originalPrice = originalPrice;
-    this.price = price;
-    this.store = store;
-    this.category = category;
-    this.coverPhoto = coverPhoto;
-    this.dealUrl = dealUrl;
-  }
-
-  public Deal(String title, String description, double originalPrice, double price, ObjectId store,
-      String category, String coverPhoto, String dealUrl, List<String> photos) {
-    this.title = title;
-    this.description = description;
-    this.originalPrice = originalPrice;
-    this.price = price;
-    this.store = store;
-    this.category = category;
-    this.coverPhoto = coverPhoto;
-    this.dealUrl = dealUrl;
-    this.photos = photos;
-  }
 
 }
