@@ -14,13 +14,6 @@ import org.testcontainers.utility.DockerImageName;
 @ActiveProfiles("integration-test")
 public abstract class BaseIntegrationTest {
 
-  // See https://stackoverflow.com/questions/53514532/
-  protected <T> T asParsedJson(Object object) throws JsonProcessingException {
-    String json = new ObjectMapper().writeValueAsString(object);
-
-    return JsonPath.read(json, "$");
-  }
-
   private static final int REDIS_PORT = 6379;
   private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:latest");
   private static final GenericContainer<?> redis;
@@ -35,4 +28,12 @@ public abstract class BaseIntegrationTest {
     registry.add("spring.redis.host", redis::getContainerIpAddress);
     registry.add("spring.redis.port", () -> redis.getMappedPort(REDIS_PORT));
   }
+
+  // See https://stackoverflow.com/questions/53514532/
+  protected <T> T asParsedJson(Object object) throws JsonProcessingException {
+    final String json = new ObjectMapper().writeValueAsString(object);
+
+    return JsonPath.read(json, "$");
+  }
+
 }
