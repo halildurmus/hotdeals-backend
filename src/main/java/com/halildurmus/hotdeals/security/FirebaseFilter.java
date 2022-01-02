@@ -50,7 +50,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
   }
 
   public String parseBearerToken(HttpServletRequest request) throws Exception {
-    String authorization = request.getHeader("Authorization");
+    final String authorization = request.getHeader("Authorization");
     if (!authorization.startsWith("Bearer ")) {
       throw new Exception("Invalid Authorization header! The header must contain a Bearer token.");
     }
