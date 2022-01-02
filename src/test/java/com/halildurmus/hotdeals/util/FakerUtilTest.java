@@ -18,8 +18,8 @@ public class FakerUtilTest {
     final String nickname2 = fakerUtil.generateNickname();
 
     assertFalse(nickname2.isBlank());
-    assertThat(nickname2).isNotEqualTo(nickname1);
     assertThat(nickname2).hasSizeGreaterThanOrEqualTo(8);
+    assertThat(nickname2).isNotEqualTo(nickname1);
   }
 
 }
