@@ -1,5 +1,7 @@
 package com.halildurmus.hotdeals.util;
 
+import java.util.Arrays;
+
 /**
  * A utility class with useful function(s) to make it easier to work with {@code Enum}s.
  */
@@ -14,13 +16,7 @@ public class EnumUtil {
    * otherwise.
    */
   public static <E extends Enum<E>> boolean isInEnum(String value, Class<E> enumClass) {
-    for (E e : enumClass.getEnumConstants()) {
-      if (e.name().equals(value)) {
-        return true;
-      }
-    }
-
-    return false;
+    return Arrays.stream(enumClass.getEnumConstants()).anyMatch(e -> e.name().equals(value));
   }
 
 }
