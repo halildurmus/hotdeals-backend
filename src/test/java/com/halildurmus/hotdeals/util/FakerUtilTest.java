@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 public class FakerUtilTest {
 
   @Test
-  public void shouldGenerateNickname() {
+  public void shouldGenerateRandomNickname() {
     final FakerUtil fakerUtil = new FakerUtil();
     final String nickname1 = fakerUtil.generateNickname();
 
