@@ -1,25 +1,19 @@
 package com.halildurmus.hotdeals.util;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 public class FakerUtilTest {
 
   @Test
-  public void shouldGenerateRandomNickname() {
+  public void generatesRandomNickname() {
     final FakerUtil fakerUtil = new FakerUtil();
-    final String nickname1 = fakerUtil.generateNickname();
+    final String nickname = fakerUtil.generateNickname();
 
-    assertFalse(nickname1.isBlank());
-    assertThat(nickname1).hasSizeGreaterThanOrEqualTo(8);
-
-    final String nickname2 = fakerUtil.generateNickname();
-
-    assertFalse(nickname2.isBlank());
-    assertThat(nickname2).hasSizeGreaterThanOrEqualTo(8);
-    assertThat(nickname2).isNotEqualTo(nickname1);
+    assertThat(nickname).hasSizeGreaterThanOrEqualTo(8);
+    assertThat(nickname).containsPattern(Pattern.compile("^\\w+\\d{3}$"));
   }
 
 }
