@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 public class EnumUtilTest {
 
   @Test
-  public void shouldCheckWhetherTheGivenValueExistsInTheGivenEnumClass() {
+  public void shouldCheckIfGivenValueIsAValidEnumValue() {
     assertTrue(EnumUtil.isInEnum("ACTIVE", Status.class));
     assertTrue(EnumUtil.isInEnum("DISABLED", Status.class));
     assertFalse(EnumUtil.isInEnum("NOTEXISTS", Status.class));
