@@ -19,7 +19,7 @@ public class FakerUtil {
   public String generateNickname() {
     final String prefix = faker.superhero().prefix();
     final String firstName = faker.name().firstName();
-    final String digits = faker.number().digits(2);
+    final String digits = faker.number().digits(3);
 
     return prefix + firstName + digits;
   }
