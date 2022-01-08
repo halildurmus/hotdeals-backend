@@ -38,7 +38,7 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("categories");
   }
 
-  // TODO: Write test cases for validating mandatory fields.
+  // TODO: Write test cases for validating fields.
 
   @Test
   @DisplayName("POST /categories (success)")
