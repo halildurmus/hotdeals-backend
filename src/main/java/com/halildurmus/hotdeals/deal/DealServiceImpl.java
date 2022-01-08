@@ -89,7 +89,7 @@ public class DealServiceImpl implements DealService {
 
   @Transactional
   @Override
-  public Deal save(Deal deal) {
+  public Deal create(Deal deal) {
     final Deal savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
 
@@ -109,7 +109,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal patchDeal(String id, JsonPatch patch) {
+  public Deal patch(String id, JsonPatch patch) {
     final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
@@ -129,7 +129,7 @@ public class DealServiceImpl implements DealService {
 
   @Transactional
   @Override
-  public Deal updateDeal(Deal deal) {
+  public Deal update(Deal deal) {
     repository.findById(deal.getId()).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
@@ -143,7 +143,7 @@ public class DealServiceImpl implements DealService {
 
   @Transactional
   @Override
-  public void removeDeal(String id) {
+  public void delete(String id) {
     final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
@@ -163,7 +163,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
-  public Deal voteDeal(String id, DealVoteType voteType) {
+  public Deal vote(String id, DealVoteType voteType) {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
     final Deal deal = repository.findById(id)

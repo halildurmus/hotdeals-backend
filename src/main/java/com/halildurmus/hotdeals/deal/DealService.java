@@ -18,14 +18,14 @@ public interface DealService {
 
   Page<Deal> getMostLikedActiveDeals(Pageable pageable);
 
-  Deal save(Deal deal);
+  Deal create(Deal deal);
 
-  Deal patchDeal(String id, JsonPatch patch);
+  Deal patch(String id, JsonPatch patch);
 
-  Deal updateDeal(Deal deal);
+  Deal update(Deal deal);
 
-  void removeDeal(String id);
+  void delete(String id);
 
-  Deal voteDeal(String id, DealVoteType voteType);
+  Deal vote(String id, DealVoteType voteType);
 
 }

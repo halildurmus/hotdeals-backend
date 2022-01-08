@@ -196,7 +196,7 @@ public class DealController {
 
   @PostMapping("/deals")
   public ResponseEntity<DealGetDTO> createDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
-    final Deal deal = service.save(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
+    final Deal deal = service.create(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
 
     return ResponseEntity.status(201).body(mapStructMapper.dealToDealGetDTO(deal));
   }
@@ -204,20 +204,22 @@ public class DealController {
   @PatchMapping(value = "/deals/{id}", consumes = "application/json-patch+json")
   public ResponseEntity<DealGetDTO> patchDeal(@ObjectIdConstraint @PathVariable String id,
       @RequestBody JsonPatch patch) {
-    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(service.patchDeal(id, patch)));
+    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(service.patch(id, patch)));
   }
 
-  @PutMapping("/deals")
-  public ResponseEntity<DealGetDTO> updateDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
+  @PutMapping("/deals/{id}")
+  public ResponseEntity<DealGetDTO> updateDeal(@ObjectIdConstraint @PathVariable String id,
+      @Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
+    deal.setId(id);
 
     return ResponseEntity.status(200)
-        .body(mapStructMapper.dealToDealGetDTO(service.updateDeal(deal)));
+        .body(mapStructMapper.dealToDealGetDTO(service.update(deal)));
   }
 
   @DeleteMapping("/deals/{id}")
-  public ResponseEntity<Void> removeDeal(@ObjectIdConstraint @PathVariable String id) {
-    service.removeDeal(id);
+  public ResponseEntity<Void> deleteDeal(@ObjectIdConstraint @PathVariable String id) {
+    service.delete(id);
 
     return ResponseEntity.status(204).build();
   }
@@ -282,14 +284,14 @@ public class DealController {
           "To unvote the deal you need to make a DELETE request!");
     }
     final DealVoteType voteType = DealVoteType.valueOf(json.get("voteType"));
-    final Deal deal = service.voteDeal(id, voteType);
+    final Deal deal = service.vote(id, voteType);
 
     return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(deal));
   }
 
   @DeleteMapping("/deals/{id}/votes")
   public ResponseEntity<DealGetDTO> deleteVote(@ObjectIdConstraint @PathVariable String id) {
-    final Deal deal = service.voteDeal(id, DealVoteType.UNVOTE);
+    final Deal deal = service.vote(id, DealVoteType.UNVOTE);
     return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(deal));
   }
 
