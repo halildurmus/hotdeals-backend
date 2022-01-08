@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.store;
 
+import com.halildurmus.hotdeals.exception.StoreNotFoundException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,21 @@ public class StoreServiceImpl implements StoreService {
   }
 
   @Override
-  public Store save(Store store) {
+  public Store create(Store store) {
     return repository.save(store);
+  }
+
+  @Override
+  public Store update(Store store) {
+    repository.findById(store.getId()).orElseThrow(StoreNotFoundException::new);
+
+    return repository.save(store);
+  }
+
+  @Override
+  public void delete(String id) {
+    repository.findById(id).orElseThrow(StoreNotFoundException::new);
+    repository.deleteById(id);
   }
 
 }
