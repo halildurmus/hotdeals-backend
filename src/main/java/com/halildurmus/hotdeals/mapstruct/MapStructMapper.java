@@ -45,6 +45,8 @@ public interface MapStructMapper {
 
   StoreGetDTO storeToStoreGetDTO(Store store);
 
+  StorePostDTO storeToStorePostDTO(Store store);
+
   User userBasicDTOToUser(UserBasicDTO userBasicDTO);
 
   User userPostDTOToUser(UserPostDTO userPostDTO);
