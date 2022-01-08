@@ -29,6 +29,8 @@ public interface MapStructMapper {
 
   CategoryGetDTO categoryToCategoryGetDTO(Category category);
 
+  CategoryPostDTO categoryToCategoryPostDTO(Category category);
+
   Comment commentPostDTOToComment(CommentPostDTO commentPostDTO);
 
   CommentGetDTO commentToCommentGetDTO(Comment comment);
