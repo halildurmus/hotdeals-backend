@@ -30,6 +30,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
   @Value("${api-version}")
   private String currentApiVersion;
 
+  @ExceptionHandler(CategoryNotFoundException.class)
+  public ResponseEntity<AppError> handleCategoryNotFound(CategoryNotFoundException e) {
+    final AppError error = new AppError(
+        currentApiVersion,
+        Integer.toString(HttpStatus.NOT_FOUND.value()),
+        e.getMessage(),
+        "category-exceptions",
+        "",
+        e.getMessage()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(DealNotFoundException.class)
   public ResponseEntity<AppError> handleDealNotFound(DealNotFoundException e) {
     final AppError error = new AppError(
