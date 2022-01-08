@@ -6,8 +6,29 @@ import java.util.Map;
 public class DummyCategories {
 
   public static Category category1 = Category.builder()
-      .names(Map.of("en", "Computers", "tr", "Bilgisayarlar"))
+      .names(Map.of("en", "Computers", "tr", "Bilgisayar"))
       .parent("/").category("/computers").iconLigature("computer")
+      .iconFontFamily("MaterialIcons").build();
+
+  public static Category category2 = Category.builder()
+      .names(Map.of("en", "Electronics", "tr", "Elektronik"))
+      .parent("/").category("/electronics").iconLigature("devices")
+      .iconFontFamily("MaterialIcons").build();
+
+  public static Category category3 = Category.builder()
+      .names(Map.of("en", "CPUs", "tr", "CPU"))
+      .parent("/computers").category("/computers/cpus").iconLigature("devices")
+      .iconFontFamily("MaterialIcons").build();
+
+  public static Category categoryWithId = Category.builder()
+      .id("5fbe790ec6f0b32014074bb1")
+      .names(Map.of("en", "Computers", "tr", "Bilgisayar"))
+      .parent("/").category("/computers").iconLigature("computer")
+      .iconFontFamily("MaterialIcons").build();
+
+  public static Category categoryWithoutEnglishTranslation = Category.builder()
+      .names(Map.of("tr", "CPU"))
+      .parent("/computers").category("/computers/cpus").iconLigature("devices")
       .iconFontFamily("MaterialIcons").build();
 
 }
