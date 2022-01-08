@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.category;
 
+import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public Category save(Category category) {
+  public Category create(Category category) {
     if (!category.getParent().equals("/")) {
       repository.findByCategory(category.getParent())
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -35,6 +36,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     return repository.save(category);
+  }
+
+  @Override
+  public Category update(Category category) {
+    repository.findById(category.getId()).orElseThrow(CategoryNotFoundException::new);
+
+    return repository.save(category);
+  }
+
+  @Override
+  public void delete(String id) {
+    repository.findById(id).orElseThrow(CategoryNotFoundException::new);
+    repository.deleteById(id);
   }
 
 }
