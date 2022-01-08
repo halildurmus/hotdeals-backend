@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
-public class Note {
+@AllArgsConstructor
+public class Notification {
 
   private String title;
 
