@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "categories", path = "categories")
+@RepositoryRestResource(collectionResourceRel = "categories", exported = false, path = "categories")
 public interface CategoryRepository extends MongoRepository<Category, String> {
 
   @Override
