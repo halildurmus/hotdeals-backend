@@ -58,6 +58,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(StoreNotFoundException.class)
+  public ResponseEntity<AppError> handleStoreNotFound(StoreNotFoundException e) {
+    final AppError error = new AppError(
+        currentApiVersion,
+        Integer.toString(HttpStatus.NOT_FOUND.value()),
+        e.getMessage(),
+        "store-exceptions",
+        "",
+        e.getMessage()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<AppError> handleUserNotFound(UserNotFoundException e) {
     final AppError error = new AppError(
