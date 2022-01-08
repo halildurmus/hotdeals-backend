@@ -19,7 +19,7 @@ public class RoleServiceImpl implements RoleService {
   private FirebaseAuth firebaseAuth;
 
   @Override
-  public void addRole(String uid, String role) {
+  public void add(String uid, String role) {
     try {
       final UserRecord user = firebaseAuth.getUser(uid);
       final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
@@ -31,7 +31,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public void deleteRole(String uid, String role) {
+  public void delete(String uid, String role) {
     try {
       final UserRecord user = firebaseAuth.getUser(uid);
       final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
