@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-public class DealControllerIntegrationTest extends BaseIntegrationTest {
+public class DealIntegrationTest extends BaseIntegrationTest {
 
   static User fakeUser = User.builder().id("607345b0eeeee1452898128b").build();
 
