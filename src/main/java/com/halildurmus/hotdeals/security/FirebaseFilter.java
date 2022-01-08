@@ -69,7 +69,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
         .contains(email)) {
       if (!token.getClaims().containsKey(Role.ROLE_SUPER.name())) {
         try {
-          roleService.addRole(token.getUid(), Role.ROLE_SUPER.name());
+          roleService.add(token.getUid(), Role.ROLE_SUPER.name());
         } catch (Exception e) {
           log.error("Failed to add ROLE_SUPER to the user", e);
         }
