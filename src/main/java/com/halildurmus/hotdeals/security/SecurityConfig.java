@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     final String[] adminAntPatternsPUT = {"/categories/*", "/stores/*", "/users/*"};
     final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/users/*"};
     final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/stores",
-        "/users/*/comments-count"};
+        "/users/*/comment-count"};
     final String[] publicAntPatternsPOST = {"/users"};
 
     httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()

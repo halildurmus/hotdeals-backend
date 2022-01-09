@@ -71,7 +71,7 @@ public class UserController {
     return ResponseEntity.ok(mapStructMapper.userToUserBasicDTO(user.get()));
   }
 
-  @GetMapping("/users/{id}/comments-count")
+  @GetMapping("/users/{id}/comment-count")
   public ResponseEntity<Integer> getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
     return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
   }
