@@ -111,10 +111,6 @@ public class DealController {
         .collect(Collectors.toList());
   }
 
-  @GetMapping("/synchronize")
-  public void synchronizeDeals() {
-    esDealService.synchronizeDeals();
-  }
 
   private List<PriceRange> parsePricesParam(List<String> prices) {
     final List<PriceRange> priceRanges = new ArrayList<>();
