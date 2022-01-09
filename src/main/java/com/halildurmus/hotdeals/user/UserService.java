@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
+  Optional<User> findByEmail(String email);
+
   Optional<User> findById(String id);
 
   Optional<User> findByUid(String uid);

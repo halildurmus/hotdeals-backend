@@ -14,16 +14,13 @@ import com.halildurmus.hotdeals.user.DTO.UserExtendedDTO;
 import com.halildurmus.hotdeals.user.DTO.UserPostDTO;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +29,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RepositoryRestController
+@RestController
+@RequestMapping("/users")
 @Validated
 public class UserController {
 
@@ -54,137 +55,121 @@ public class UserController {
   @Autowired
   private UserReportService userReportService;
 
-  @PostMapping("/users")
-  public ResponseEntity<UserBasicDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserBasicDTO createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
     final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
 
-    return ResponseEntity.status(201).body(mapStructMapper.userToUserBasicDTO(user));
+    return mapStructMapper.userToUserBasicDTO(user);
   }
 
-  @GetMapping("/users/{id}")
-  public ResponseEntity<UserBasicDTO> getUser(@ObjectIdConstraint @PathVariable String id) {
-    final Optional<User> user = service.findById(id);
-    if (user.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+  @GetMapping("/search/findByEmail")
+  public UserExtendedDTO getUserByEmail(@RequestParam String email) {
+    final User user = service.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-    return ResponseEntity.ok(mapStructMapper.userToUserBasicDTO(user.get()));
+    return mapStructMapper.userToUserExtendedDTO(user);
   }
 
-  @GetMapping("/users/{id}/comment-count")
-  public ResponseEntity<Integer> getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
-    return ResponseEntity.ok(commentService.getCommentCountByPostedById(new ObjectId(id)));
+  @GetMapping("/search/findByUid")
+  public UserExtendedDTO getUserByUid(@RequestParam String uid) {
+    final User user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
+
+    return mapStructMapper.userToUserExtendedDTO(user);
   }
 
-  @GetMapping("/users/{id}/extended")
-  public ResponseEntity<UserExtendedDTO> getUserExtended(
-      @ObjectIdConstraint @PathVariable String id) {
-    final Optional<User> user = service.findById(id);
-    if (user.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
+  @GetMapping("/me")
+  public User getAuthenticatedUser() {
+    return securityService.getUser();
   }
 
-  @PostMapping("/users/{id}/reports")
-  public ResponseEntity<Void> createDealReport(
-      @ObjectIdConstraint @PathVariable String id,
-      @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
-    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
-    final UserReport userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);
-    userReport.setReportedUser(user);
-    userReportService.save(userReport);
-
-    return ResponseEntity.status(201).build();
+  @PatchMapping(value = "/me", consumes = "application/json-patch+json")
+  public UserExtendedDTO patchUser(@RequestBody JsonPatch patch) {
+    return mapStructMapper.userToUserExtendedDTO(service.patchUser(patch));
   }
 
-
-  @GetMapping("/users/me")
-  public ResponseEntity<User> getAuthenticatedUser() {
-    return ResponseEntity.ok(securityService.getUser());
-  }
-
-  @PatchMapping(value = "/users/me", consumes = "application/json-patch+json")
-  public ResponseEntity<UserExtendedDTO> patchUser(@RequestBody JsonPatch patch) {
-    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(service.patchUser(patch)));
-  }
-
-  @GetMapping("/users/me/blocks")
-  public ResponseEntity<List<UserExtendedDTO>> getBlockedUsers(Pageable pageable) {
+  @GetMapping("/me/blocks")
+  public List<UserExtendedDTO> getBlockedUsers(Pageable pageable) {
     final List<User> blockedUsers = service.getBlockedUsers(pageable);
-    final List<UserExtendedDTO> blockedUserExtendedDTOs = blockedUsers.stream()
-        .map(user -> mapStructMapper.userToUserExtendedDTO(user)).collect(
-            Collectors.toList());
 
-    return ResponseEntity.ok(blockedUserExtendedDTOs);
+    return blockedUsers.stream().map(mapStructMapper::userToUserExtendedDTO)
+        .collect(Collectors.toList());
   }
 
-  @PutMapping("/users/me/blocks/{id}")
-  public ResponseEntity<Void> blockUser(@ObjectIdConstraint @PathVariable String id) {
+  @PutMapping("/me/blocks/{id}")
+  public void blockUser(@ObjectIdConstraint @PathVariable String id) {
     service.block(id);
-
-    return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("/users/me/blocks/{id}")
-  public ResponseEntity<Void> unblockUser(@ObjectIdConstraint @PathVariable String id) {
+  @DeleteMapping("/me/blocks/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void unblockUser(@ObjectIdConstraint @PathVariable String id) {
     service.unblock(id);
-
-    return ResponseEntity.status(204).build();
   }
 
-  @GetMapping("/users/me/deals")
-  public ResponseEntity<List<Deal>> getDeals(Pageable pageable) {
-    return ResponseEntity.ok(service.getDeals(pageable));
+  @GetMapping("/me/deals")
+  public List<Deal> getDeals(Pageable pageable) {
+    return service.getDeals(pageable);
   }
 
-  @GetMapping("/users/me/favorites")
-  public ResponseEntity<List<Deal>> getFavorites(Pageable pageable) {
-    return ResponseEntity.ok(service.getFavorites(pageable));
+  @GetMapping("/me/favorites")
+  public List<Deal> getFavorites(Pageable pageable) {
+    return service.getFavorites(pageable);
   }
 
-  @PutMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<Void> favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+  @PutMapping("/me/favorites/{dealId}")
+  public void favoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.favoriteDeal(dealId);
-
-    return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("/users/me/favorites/{dealId}")
-  public ResponseEntity<Void> unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
+  @DeleteMapping("/me/favorites/{dealId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void unfavoriteDeal(@ObjectIdConstraint @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
-
-    return ResponseEntity.status(204).build();
   }
 
-  @PutMapping("/users/me/fcm-tokens")
-  public ResponseEntity<Void> addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+  @PutMapping("/me/fcm-tokens")
+  public void addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     if (ObjectUtils.isEmpty(fcmTokenParams.getDeviceId())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "deviceId parameter cannot be empty!");
     }
     service.addFCMToken(fcmTokenParams);
-
-    return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("/users/me/fcm-tokens")
-  public ResponseEntity<Void> deleteFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
+  @DeleteMapping("/me/fcm-tokens")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     final User user = securityService.getUser();
     service.deleteFCMToken(user.getUid(), fcmTokenParams);
-
-    return ResponseEntity.status(204).build();
   }
 
-  @GetMapping("/users/search/findByUid")
-  public ResponseEntity<UserExtendedDTO> getUserByUid(@RequestParam String uid) {
-    final Optional<User> user = service.findByUid(uid);
-    if (user.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+  @GetMapping("/{id}")
+  public UserBasicDTO getUser(@ObjectIdConstraint @PathVariable String id) {
+    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
-    return ResponseEntity.ok(mapStructMapper.userToUserExtendedDTO(user.get()));
+    return mapStructMapper.userToUserBasicDTO(user);
+  }
+
+  @GetMapping("/{id}/comment-count")
+  public int getUsersCommentCount(@ObjectIdConstraint @PathVariable String id) {
+    return commentService.getCommentCountByPostedById(new ObjectId(id));
+  }
+
+  @GetMapping("/{id}/extended")
+  public UserExtendedDTO getUserExtended(@ObjectIdConstraint @PathVariable String id) {
+    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
+
+    return mapStructMapper.userToUserExtendedDTO(user);
+  }
+
+  @PostMapping("/{id}/reports")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void createDealReport(@ObjectIdConstraint @PathVariable String id,
+      @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
+    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
+    final UserReport userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);
+    userReport.setReportedUser(user);
+    userReportService.save(userReport);
   }
 
 }
