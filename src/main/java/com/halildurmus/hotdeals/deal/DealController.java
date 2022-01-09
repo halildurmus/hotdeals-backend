@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -31,9 +30,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,10 +39,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RepositoryRestController
+@RestController
+@RequestMapping("/deals")
 @Validated
 public class DealController {
 
@@ -67,49 +68,52 @@ public class DealController {
   @Autowired
   private EsDealService esDealService;
 
-  @GetMapping("/deals/search/byCategory")
-  public ResponseEntity<List<DealGetDTO>> getDealsByCategory(@RequestParam String category,
-      Pageable pageable) {
+  @GetMapping("/count/byPostedBy")
+  public int getCountDealsByPostedBy(@ObjectIdConstraint @RequestParam String postedBy) {
+    return service.countDealsByPostedBy(new ObjectId(postedBy));
+  }
+
+  @GetMapping("/count/byStore")
+  public int getCountDealsByStore(@ObjectIdConstraint @RequestParam String storeId) {
+    return service.countDealsByStore(new ObjectId(storeId));
+  }
+
+  @GetMapping("/search/byCategory")
+  public List<DealGetDTO> getDealsByCategory(@RequestParam String category, Pageable pageable) {
     final Page<Deal> deals = service.getDealsByCategory(category, pageable);
-    final List<DealGetDTO> dealGetDTOs = deals.getContent().stream()
-        .map(deal -> mapStructMapper.dealToDealGetDTO(deal)).collect(
-            Collectors.toList());
 
-    return ResponseEntity.ok(dealGetDTOs);
+    return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
   }
 
-  @GetMapping("/deals/search/byStoreId")
-  public ResponseEntity<List<DealGetDTO>> getDealsByStoreId(@RequestParam String storeId,
+  @GetMapping("/search/byStoreId")
+  public List<DealGetDTO> getDealsByStoreId(@ObjectIdConstraint @RequestParam String storeId,
       Pageable pageable) {
-    if (!ObjectId.isValid(storeId)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ObjectId!");
-    }
     final Page<Deal> deals = service.getDealsByStoreId(new ObjectId(storeId), pageable);
-    final List<DealGetDTO> dealGetDTOs = deals.getContent().stream()
-        .map(deal -> mapStructMapper.dealToDealGetDTO(deal)).collect(
-            Collectors.toList());
 
-    return ResponseEntity.ok(dealGetDTOs);
+    return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
   }
 
-  @GetMapping("/deals/search/latestActiveDeals")
-  public ResponseEntity<List<DealGetDTO>> getLatestActiveDeals(Pageable pageable) {
+  @GetMapping("/search/latestActive")
+  public List<DealGetDTO> getLatestActiveDeals(Pageable pageable) {
     final Page<Deal> deals = service.getLatestActiveDeals(pageable);
-    final List<DealGetDTO> dealGetDTOs = deals.getContent().stream()
-        .map(deal -> mapStructMapper.dealToDealGetDTO(deal)).collect(
-            Collectors.toList());
 
-    return ResponseEntity.ok(dealGetDTOs);
+    return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
   }
 
-  @GetMapping("/deals/search/mostLikedActiveDeals")
-  public ResponseEntity<List<DealGetDTO>> getMostLikedActiveDeals(Pageable pageable) {
+  @GetMapping("/search/mostLikedActive")
+  public List<DealGetDTO> getMostLikedActiveDeals(Pageable pageable) {
     final Page<Deal> deals = service.getMostLikedActiveDeals(pageable);
-    final List<DealGetDTO> dealGetDTOs = deals.getContent().stream()
-        .map(deal -> mapStructMapper.dealToDealGetDTO(deal)).collect(
-            Collectors.toList());
 
-    return ResponseEntity.ok(dealGetDTOs);
+    return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
+  }
+
+  @GetMapping("/synchronize")
+  public void synchronizeDeals() {
+    esDealService.synchronizeDeals();
   }
 
   private List<PriceRange> parsePricesParam(List<String> prices) {
@@ -134,8 +138,8 @@ public class DealController {
     return priceRanges;
   }
 
-  @GetMapping("/deals/searches")
-  public ResponseEntity<JsonNode> searchDeals(
+  @GetMapping("/searches")
+  public JsonNode searchDeals(
       @RequestParam(value = "query") String query,
       @RequestParam(value = "categories", required = false) List<String> categories,
       @RequestParam(value = "prices", required = false) List<String> prices,
@@ -144,7 +148,6 @@ public class DealController {
       @RequestParam(value = "sortBy", required = false) String sortBy,
       @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
       Pageable pageable) {
-
     List<PriceRange> priceRanges = null;
     if (prices != null) {
       priceRanges = parsePricesParam(prices);
@@ -175,103 +178,93 @@ public class DealController {
           "You have to provide at least one parameter!");
     }
 
-    return ResponseEntity.ok(esDealService.searchDeals(searchParams, pageable));
+    return esDealService.searchDeals(searchParams, pageable);
   }
 
-  @GetMapping("/deals/suggestions")
-  public ResponseEntity<JsonNode> getSuggestions(@NotBlank @Size(min = 3, max = 100)
+  @GetMapping("/suggestions")
+  public JsonNode getSuggestions(@NotBlank @Size(min = 3, max = 100)
   @RequestParam(value = "query") String query) {
-    return ResponseEntity.ok(esDealService.getSuggestions(query));
+    return esDealService.getSuggestions(query);
   }
 
-  @GetMapping("/deals/{id}")
-  public ResponseEntity<DealGetDTO> getDeal(@ObjectIdConstraint @PathVariable String id) {
-    final Optional<Deal> deal = service.findById(id);
-    if (deal.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+  @GetMapping("/{id}")
+  public DealGetDTO getDeal(@ObjectIdConstraint @PathVariable String id) {
+    final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
 
-    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(deal.get()));
+    return mapStructMapper.dealToDealGetDTO(deal);
   }
 
-  @PostMapping("/deals")
-  public ResponseEntity<DealGetDTO> createDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public DealGetDTO createDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = service.create(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
 
-    return ResponseEntity.status(201).body(mapStructMapper.dealToDealGetDTO(deal));
+    return mapStructMapper.dealToDealGetDTO(deal);
   }
 
-  @PatchMapping(value = "/deals/{id}", consumes = "application/json-patch+json")
-  public ResponseEntity<DealGetDTO> patchDeal(@ObjectIdConstraint @PathVariable String id,
+  @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
+  public DealGetDTO patchDeal(@ObjectIdConstraint @PathVariable String id,
       @RequestBody JsonPatch patch) {
-    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(service.patch(id, patch)));
+    return mapStructMapper.dealToDealGetDTO(service.patch(id, patch));
   }
 
-  @PutMapping("/deals/{id}")
-  public ResponseEntity<DealGetDTO> updateDeal(@ObjectIdConstraint @PathVariable String id,
+  @PutMapping("/{id}")
+  public DealGetDTO updateDeal(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
     deal.setId(id);
 
-    return ResponseEntity.status(200)
-        .body(mapStructMapper.dealToDealGetDTO(service.update(deal)));
+    return mapStructMapper.dealToDealGetDTO(service.update(deal));
   }
 
-  @DeleteMapping("/deals/{id}")
-  public ResponseEntity<Void> deleteDeal(@ObjectIdConstraint @PathVariable String id) {
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteDeal(@ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
-
-    return ResponseEntity.status(204).build();
   }
 
-  @GetMapping("/deals/{id}/comments")
-  public ResponseEntity<CommentsDTO> getComments(
-      @ObjectIdConstraint @PathVariable String id, Pageable pageable) {
+  @GetMapping("/{id}/comments")
+  public CommentsDTO getComments(@ObjectIdConstraint @PathVariable String id, Pageable pageable) {
     final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id),
         pageable);
     final List<CommentGetDTO> commentGetDTOs = comments.getContent().stream()
-        .map(comment -> mapStructMapper.commentToCommentGetDTO(comment)).collect(
-            Collectors.toList());
-    final CommentsDTO commentsDTO = CommentsDTO.builder()
-        .count(comments.getTotalElements())
-        .comments(commentGetDTOs)
-        .build();
+        .map(mapStructMapper::commentToCommentGetDTO).collect(Collectors.toList());
 
-    return ResponseEntity.ok(commentsDTO);
+    return CommentsDTO.builder().count(comments.getTotalElements())
+        .comments(commentGetDTOs).build();
   }
 
-  @GetMapping("/deals/{id}/comment-count")
-  public ResponseEntity<Integer> getCommentCount(@ObjectIdConstraint @PathVariable String id) {
-    return ResponseEntity.ok(commentService.getCommentCountByDealId(new ObjectId(id)));
+  @GetMapping("/{id}/comment-count")
+  public int getCommentCount(@ObjectIdConstraint @PathVariable String id) {
+    return commentService.getCommentCountByDealId(new ObjectId(id));
   }
 
 
-  @PostMapping("/deals/{id}/comments")
-  public ResponseEntity<CommentGetDTO> postComment(
-      @ObjectIdConstraint @PathVariable String id,
+  @PostMapping("/{id}/comments")
+  @ResponseStatus(HttpStatus.CREATED)
+  public CommentGetDTO postComment(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
     commentPostDTO.setDealId(new ObjectId(id));
     final Comment comment = commentService.save(
         mapStructMapper.commentPostDTOToComment(commentPostDTO));
 
-    return ResponseEntity.status(201).body(mapStructMapper.commentToCommentGetDTO(comment));
+    return mapStructMapper.commentToCommentGetDTO(comment);
   }
 
-  @PostMapping("/deals/{id}/reports")
-  public ResponseEntity<Void> createDealReport(@ObjectIdConstraint @PathVariable String id,
+  @PostMapping("/{id}/reports")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void createDealReport(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealReportPostDTO dealReportPostDTO) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
     final DealReport dealReport = mapStructMapper.dealReportPostDTOToDealReport(
         dealReportPostDTO);
     dealReport.setReportedDeal(deal);
     dealReportService.save(dealReport);
-
-    return ResponseEntity.status(201).build();
   }
 
-  @PutMapping("/deals/{id}/votes")
-  public ResponseEntity<DealGetDTO> voteDeal(@ObjectIdConstraint @PathVariable String id,
+  @PutMapping("/{id}/votes")
+  public DealGetDTO voteDeal(@ObjectIdConstraint @PathVariable String id,
       @Valid @NotNull @RequestBody Map<String, String> json) {
     if (!json.containsKey("voteType")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -286,13 +279,14 @@ public class DealController {
     final DealVoteType voteType = DealVoteType.valueOf(json.get("voteType"));
     final Deal deal = service.vote(id, voteType);
 
-    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(deal));
+    return mapStructMapper.dealToDealGetDTO(deal);
   }
 
-  @DeleteMapping("/deals/{id}/votes")
-  public ResponseEntity<DealGetDTO> deleteVote(@ObjectIdConstraint @PathVariable String id) {
+  @DeleteMapping("/{id}/votes")
+  public DealGetDTO deleteVote(@ObjectIdConstraint @PathVariable String id) {
     final Deal deal = service.vote(id, DealVoteType.UNVOTE);
-    return ResponseEntity.ok(mapStructMapper.dealToDealGetDTO(deal));
+
+    return mapStructMapper.dealToDealGetDTO(deal);
   }
 
 }

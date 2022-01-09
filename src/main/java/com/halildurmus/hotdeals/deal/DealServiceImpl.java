@@ -58,6 +58,16 @@ public class DealServiceImpl implements DealService {
   private SecurityService securityService;
 
   @Override
+  public int countDealsByPostedBy(ObjectId postedBy) {
+    return repository.countDealsByPostedBy(postedBy);
+  }
+
+  @Override
+  public int countDealsByStore(ObjectId storeId) {
+    return repository.countDealsByStore(storeId);
+  }
+
+  @Override
   public Optional<Deal> findById(String id) {
     final Optional<Deal> deal = repository.findById(id);
     if (deal.isPresent()) {

@@ -8,6 +8,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface DealService {
 
+  int countDealsByPostedBy(ObjectId postedBy);
+
+  int countDealsByStore(ObjectId storeId);
+
   Optional<Deal> findById(String id);
 
   Page<Deal> getDealsByCategory(String category, Pageable pageable);
