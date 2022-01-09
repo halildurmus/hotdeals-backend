@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "deals", path = "deals")
+@RepositoryRestResource(collectionResourceRel = "deals", exported = false, path = "deals")
 public interface DealRepository extends MongoRepository<Deal, String> {
 
   @Override
@@ -36,11 +36,11 @@ public interface DealRepository extends MongoRepository<Deal, String> {
       })
   <S extends Deal> S save(S entity);
 
-  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null")
-  int countDealsByStore(ObjectId storeId);
-
   @Cacheable(value = "deals:countDealsByPostedBy", key = "#postedBy", condition = "#postedBy != null")
   int countDealsByPostedBy(ObjectId postedBy);
+
+  @Cacheable(value = "deals:countDealsByStore", key = "#storeId", condition = "#storeId != null")
+  int countDealsByStore(ObjectId storeId);
 
   @Cacheable(value = "deals:findAllByCategoryStartsWithOrderByCreatedAtDesc", key = "T(java.lang.String).format('%s-%s', #category, #pageable)", condition = "#category.blank != true")
   Page<Deal> findAllByCategoryStartsWithOrderByCreatedAtDesc(String category, Pageable pageable);
