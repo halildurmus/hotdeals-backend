@@ -55,6 +55,8 @@ public interface MapStructMapper {
 
   UserExtendedDTO userToUserExtendedDTO(User user);
 
+  UserPostDTO userToUserPostDTO(User user);
+
   UserReport userReportPostDTOToUserReport(UserReportPostDTO userReportPostDTO);
 
 }
