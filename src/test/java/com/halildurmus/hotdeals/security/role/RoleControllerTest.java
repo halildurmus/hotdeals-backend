@@ -36,8 +36,8 @@ public class RoleControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("PUT /roles (invalid role)")
-  public void putValidationFailsDueToInvalidRoleEnum() throws Exception {
+  @DisplayName("PUT /roles (invalid role enum)")
+  public void putRoleValidationFailsDueToInvalidRoleEnum() throws Exception {
     final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
     params.add("role", "INVALID_ROLE");
@@ -49,8 +49,8 @@ public class RoleControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("PUT /roles (validation fails)")
-  public void putValidationFailsDueToMissingParams() throws Exception {
+  @DisplayName("PUT /roles (no params)")
+  public void putRoleValidationFailsDueToNoParams() throws Exception {
     final RequestBuilder request = put("/roles");
     mvc.perform(request).andExpect(status().isBadRequest());
   }

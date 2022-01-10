@@ -54,7 +54,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /categories (returns empty array)")
-  public void returnsEmptyArray() throws Exception {
+  public void getCategoriesReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
 
     final RequestBuilder request = get("/categories");
@@ -66,7 +66,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /categories (returns 2 categories)")
-  public void returnsTwoCategories() throws Exception {
+  public void getCategoriesReturnsTwoCategories() throws Exception {
     final Page<Category> pagedCategories = new PageImpl<>(
         List.of(DummyCategories.category1, DummyCategories.category2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedCategories);
@@ -82,7 +82,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /categories/{id}")
-  public void returnsSpecificCategory() throws Exception {
+  public void returnsGivenCategory() throws Exception {
     final Category category = DummyCategories.categoryWithId;
     when(service.findById(category.getId())).thenReturn(Optional.of(category));
 
@@ -99,7 +99,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /categories/{id} (category not found)")
-  public void throwsCategoryNotFoundException() {
+  public void getCategoryThrowsCategoryNotFoundException() {
     final Category category = DummyCategories.categoryWithId;
     when(service.findById(category.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/categories/" + category.getId());
@@ -114,7 +114,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("POST /categories (success)")
+  @DisplayName("POST /categories")
   public void createsCategory() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.category3);
@@ -125,7 +125,8 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
         .content(json.write(categoryPostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(categoryPostDTO.getNames()))))
         .andExpect(jsonPath("$.parent").value(categoryPostDTO.getParent()))
@@ -135,14 +136,15 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("POST /categories (validation fails)")
-  public void postValidationFails() throws Exception {
+  @DisplayName("POST /categories (empty body)")
+  public void postCategoryValidationFails() throws Exception {
     final RequestBuilder request = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
         .andExpect(result -> assertTrue(
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
@@ -164,7 +166,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("POST /categories (missing English translation)")
-  public void postValidationFailsDueToMissingEnglishTranslation() throws Exception {
+  public void postCategoryValidationFailsDueToMissingEnglishTranslation() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.categoryWithoutEnglishTranslation);
 
@@ -173,13 +175,14 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
         .content(json.write(categoryPostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
         .andExpect(status().reason(equalTo("The category name must have an English translation!")));
   }
 
   @Test
   @DisplayName("PUT /categories/{id}")
-  public void updatesSpecificCategory() throws Exception {
+  public void updatesGivenCategory() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.category2);
     when(service.update(any(Category.class))).thenReturn(DummyCategories.category2);
@@ -190,7 +193,8 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
         .content(json.write(categoryPostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isOk())
+    mvc.perform(request)
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(categoryPostDTO.getNames()))))
         .andExpect(jsonPath("$.parent").value(categoryPostDTO.getParent()))
         .andExpect(jsonPath("$.category").value(categoryPostDTO.getCategory()))
@@ -199,15 +203,16 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("PUT /categories/{id} (validation fails)")
-  public void putValidationFails() throws Exception {
+  @DisplayName("PUT /categories/{id} (empty body)")
+  public void putCategoryValidationFails() throws Exception {
     final String id = DummyCategories.categoryWithId.getId();
     final RequestBuilder request = put("/categories/" + id)
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
         .andExpect(result -> assertTrue(
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
@@ -229,7 +234,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("DELETE /categories/{id}")
-  public void deletesSpecificCategory() throws Exception {
+  public void deletesGivenCategory() throws Exception {
     final String id = DummyCategories.categoryWithId.getId();
     final RequestBuilder request = delete("/categories/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
@@ -237,7 +242,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("DELETE /categories/{id} (invalid id)")
-  public void throwsConstraintViolationExceptionDueToInvalidId() {
+  public void deleteCategoryThrowsConstraintViolationException() {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/categories/" + id);
 

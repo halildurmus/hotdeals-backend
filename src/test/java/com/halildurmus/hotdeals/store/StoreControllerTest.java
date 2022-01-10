@@ -53,7 +53,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /stores (returns empty array)")
-  public void returnsEmptyArray() throws Exception {
+  public void getStoresReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
 
     final RequestBuilder request = get("/stores");
@@ -65,7 +65,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /stores (returns 2 stores)")
-  public void returnsTwoStores() throws Exception {
+  public void getStoresReturnsTwoStores() throws Exception {
     final Page<Store> pagedStores = new PageImpl<>(
         List.of(DummyStores.store1, DummyStores.store2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedStores);
@@ -83,7 +83,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /stores/{id}")
-  public void returnsSpecificStore() throws Exception {
+  public void returnsGivenStore() throws Exception {
     final Store store = DummyStores.storeWithId;
     when(service.findById(store.getId())).thenReturn(Optional.of(store));
 
@@ -97,7 +97,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("GET /stores/{id} (store not found)")
-  public void throwsStoreNotFoundException() {
+  public void getStoreThrowsStoreNotFoundException() {
     final Store store = DummyStores.storeWithId;
     when(service.findById(store.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/stores/" + store.getId());
@@ -112,7 +112,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("POST /stores (success)")
+  @DisplayName("POST /stores")
   public void createsStore() throws Exception {
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store1);
     when(service.create(any(Store.class))).thenReturn(DummyStores.store1);
@@ -129,8 +129,8 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("POST /stores (validation fails)")
-  public void postValidationFails() throws Exception {
+  @DisplayName("POST /stores (empty body)")
+  public void postStoreValidationFails() throws Exception {
     final RequestBuilder request = post("/stores")
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
@@ -149,7 +149,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("PUT /stores/{id}")
-  public void updatesSpecificStore() throws Exception {
+  public void updatesGivenStore() throws Exception {
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store2);
     when(service.update(any(Store.class))).thenReturn(DummyStores.store2);
     final String id = DummyStores.storeWithId.getId();
@@ -165,8 +165,8 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("PUT /stores/{id} (validation fails)")
-  public void putValidationFails() throws Exception {
+  @DisplayName("PUT /stores/{id} (empty body)")
+  public void putStoreValidationFails() throws Exception {
     final String id = DummyStores.storeWithId.getId();
     final RequestBuilder request = put("/stores/" + id)
         .accept(MediaType.APPLICATION_JSON)
@@ -186,7 +186,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("DELETE /stores/{id}")
-  public void deletesSpecificStore() throws Exception {
+  public void deletesGivenStore() throws Exception {
     final String id = DummyStores.storeWithId.getId();
     final RequestBuilder request = delete("/stores/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
@@ -194,7 +194,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("DELETE /stores/{id} (invalid id)")
-  public void throwsConstraintViolationExceptionDueToInvalidId() {
+  public void deleteStoreThrowsConstraintViolationException() {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/stores/" + id);
 

@@ -35,7 +35,7 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   private NotificationService service;
 
   @Test
-  @DisplayName("POST /notifications (success)")
+  @DisplayName("POST /notifications")
   public void sendsNotification() throws Exception {
     when(service.send(any(Notification.class))).thenReturn(1);
 
@@ -50,8 +50,8 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("POST /notifications (validation fails)")
-  public void postValidationFails() throws Exception {
+  @DisplayName("POST /notifications (empty body)")
+  public void postNotificationValidationFails() throws Exception {
     final RequestBuilder request = post("/notifications")
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
