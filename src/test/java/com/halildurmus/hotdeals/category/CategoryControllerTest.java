@@ -85,8 +85,8 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void returnsGivenCategory() throws Exception {
     final Category category = DummyCategories.categoryWithId;
     when(service.findById(category.getId())).thenReturn(Optional.of(category));
-
     final RequestBuilder request = get("/categories/" + category.getId());
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
