@@ -16,6 +16,7 @@ import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class UserController {
   }
 
   @GetMapping("/search/findByEmail")
-  public UserExtendedDTO getUserByEmail(@RequestParam String email) {
+  public UserExtendedDTO getUserByEmail(@RequestParam @Email String email) {
     final User user = service.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
     return mapStructMapper.userToUserExtendedDTO(user);
