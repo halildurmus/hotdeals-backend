@@ -2,7 +2,7 @@ package com.halildurmus.hotdeals.user;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.comment.CommentService;
-import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.deal.DTO.DealGetDTO;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.report.user.DTO.UserReportPostDTO;
@@ -108,13 +108,15 @@ public class UserController {
   }
 
   @GetMapping("/me/deals")
-  public List<Deal> getDeals(Pageable pageable) {
-    return service.getDeals(pageable);
+  public List<DealGetDTO> getDeals(Pageable pageable) {
+    return service.getDeals(pageable).stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/me/favorites")
-  public List<Deal> getFavorites(Pageable pageable) {
-    return service.getFavorites(pageable);
+  public List<DealGetDTO> getFavorites(Pageable pageable) {
+    return service.getFavorites(pageable).stream().map(mapStructMapper::dealToDealGetDTO)
+        .collect(Collectors.toList());
   }
 
   @PutMapping("/me/favorites/{dealId}")
