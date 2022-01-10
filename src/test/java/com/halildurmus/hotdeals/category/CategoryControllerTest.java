@@ -147,7 +147,19 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
             Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("5 errors")));
+                .contains("Field error in object 'categoryPostDTO' on field 'names'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'category'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'iconLigature'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
   }
 
   @Test
@@ -200,7 +212,19 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
             Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("5 errors")));
+                .contains("Field error in object 'categoryPostDTO' on field 'names'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'category'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'iconLigature'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
   }
 
   @Test

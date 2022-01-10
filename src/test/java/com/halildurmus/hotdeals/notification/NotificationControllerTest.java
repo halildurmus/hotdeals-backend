@@ -62,7 +62,10 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
             Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("2 errors")));
+                .contains("Field error in object 'notification' on field 'data'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'notification' on field 'tokens'")));
   }
 
 }

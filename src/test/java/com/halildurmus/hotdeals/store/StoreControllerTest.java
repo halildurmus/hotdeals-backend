@@ -141,7 +141,10 @@ public class StoreControllerTest extends BaseControllerUnitTest {
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
             Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("2 errors")));
+                .contains("Field error in object 'storePostDTO' on field 'name'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'storePostDTO' on field 'logo'")));
   }
 
   @Test
@@ -175,7 +178,10 @@ public class StoreControllerTest extends BaseControllerUnitTest {
             result.getResolvedException() instanceof MethodArgumentNotValidException))
         .andExpect(result -> assertTrue(
             Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("2 errors")));
+                .contains("Field error in object 'storePostDTO' on field 'name'")))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'storePostDTO' on field 'logo'")));
   }
 
   @Test
