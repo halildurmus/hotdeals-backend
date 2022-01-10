@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,7 +55,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories (returns empty array)")
   public void returnsEmptyArray() throws Exception {
-    when(service.findAll(isA(Pageable.class))).thenReturn(Page.empty());
+    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
 
     final RequestBuilder request = get("/categories");
     mvc.perform(request)
@@ -69,7 +69,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void returnsTwoCategories() throws Exception {
     final Page<Category> pagedCategories = new PageImpl<>(
         List.of(DummyCategories.category1, DummyCategories.category2));
-    when(service.findAll(isA(Pageable.class))).thenReturn(pagedCategories);
+    when(service.findAll(any(Pageable.class))).thenReturn(pagedCategories);
 
     final RequestBuilder request = get("/categories");
     mvc.perform(request)
@@ -118,7 +118,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void createsCategory() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.category3);
-    when(service.create(isA(Category.class))).thenReturn(DummyCategories.category3);
+    when(service.create(any(Category.class))).thenReturn(DummyCategories.category3);
 
     final RequestBuilder request = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
@@ -170,7 +170,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void updatesSpecificCategory() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.category2);
-    when(service.update(isA(Category.class))).thenReturn(DummyCategories.category2);
+    when(service.update(any(Category.class))).thenReturn(DummyCategories.category2);
     final String id = DummyCategories.categoryWithId.getId();
 
     final RequestBuilder request = put("/categories/" + id)

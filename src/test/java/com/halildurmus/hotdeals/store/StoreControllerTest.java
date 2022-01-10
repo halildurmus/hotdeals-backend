@@ -3,7 +3,7 @@ package com.halildurmus.hotdeals.store;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,7 +54,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /stores (returns empty array)")
   public void returnsEmptyArray() throws Exception {
-    when(service.findAll(isA(Pageable.class))).thenReturn(Page.empty());
+    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
 
     final RequestBuilder request = get("/stores");
     mvc.perform(request)
@@ -68,7 +68,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   public void returnsTwoStores() throws Exception {
     final Page<Store> pagedStores = new PageImpl<>(
         List.of(DummyStores.store1, DummyStores.store2));
-    when(service.findAll(isA(Pageable.class))).thenReturn(pagedStores);
+    when(service.findAll(any(Pageable.class))).thenReturn(pagedStores);
 
     final RequestBuilder request = get("/stores");
     mvc.perform(request)
@@ -115,7 +115,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /stores (success)")
   public void createsStore() throws Exception {
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store1);
-    when(service.create(isA(Store.class))).thenReturn(DummyStores.store1);
+    when(service.create(any(Store.class))).thenReturn(DummyStores.store1);
 
     final RequestBuilder request = post("/stores")
         .accept(MediaType.APPLICATION_JSON)
@@ -148,7 +148,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /stores/{id}")
   public void updatesSpecificStore() throws Exception {
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store2);
-    when(service.update(isA(Store.class))).thenReturn(DummyStores.store2);
+    when(service.update(any(Store.class))).thenReturn(DummyStores.store2);
     final String id = DummyStores.storeWithId.getId();
 
     final RequestBuilder request = put("/stores/" + id)

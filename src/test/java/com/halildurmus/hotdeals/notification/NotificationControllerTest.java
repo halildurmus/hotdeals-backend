@@ -1,7 +1,7 @@
 package com.halildurmus.hotdeals.notification;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,7 +37,7 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /notifications (success)")
   public void sendsNotification() throws Exception {
-    when(service.send(isA(Notification.class))).thenReturn(1);
+    when(service.send(any(Notification.class))).thenReturn(1);
 
     final RequestBuilder request = post("/notifications")
         .accept(MediaType.APPLICATION_JSON)
