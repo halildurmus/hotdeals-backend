@@ -67,29 +67,45 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories (returns 2 categories)")
   public void getCategoriesReturnsTwoCategories() throws Exception {
+    final Category category1 = DummyCategories.category1;
+    final Category category2 = DummyCategories.category2;
     final Page<Category> pagedCategories = new PageImpl<>(
-        List.of(DummyCategories.category1, DummyCategories.category2));
+        List.of(category1, category2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedCategories);
-
     final RequestBuilder request = get("/categories");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$[0].category").value(DummyCategories.category1.getCategory()))
-        .andExpect(jsonPath("$[1].category").value(DummyCategories.category2.getCategory()));
+        .andExpect(jsonPath("$[0].*", hasSize(6)))
+        .andExpect(jsonPath("$[0].id").value(category1.getId()))
+        .andExpect(jsonPath("$[0].names").value(equalTo(asParsedJson(category1.getNames()))))
+        .andExpect(jsonPath("$[0].parent").value(category1.getParent()))
+        .andExpect(jsonPath("$[0].category").value(category1.getCategory()))
+        .andExpect(jsonPath("$[0].iconFontFamily").value(category1.getIconFontFamily()))
+        .andExpect(jsonPath("$[0].iconLigature").value(category1.getIconLigature()))
+        .andExpect(jsonPath("$[1].*", hasSize(6)))
+        .andExpect(jsonPath("$[1].id").value(category2.getId()))
+        .andExpect(jsonPath("$[1].names").value(equalTo(asParsedJson(category2.getNames()))))
+        .andExpect(jsonPath("$[1].parent").value(category2.getParent()))
+        .andExpect(jsonPath("$[1].category").value(category2.getCategory()))
+        .andExpect(jsonPath("$[1].iconFontFamily").value(category2.getIconFontFamily()))
+        .andExpect(jsonPath("$[1].iconLigature").value(category2.getIconLigature()));
   }
 
   @Test
   @DisplayName("GET /categories/{id}")
   public void returnsGivenCategory() throws Exception {
-    final Category category = DummyCategories.categoryWithId;
+    final Category category = DummyCategories.category1;
     when(service.findById(category.getId())).thenReturn(Optional.of(category));
     final RequestBuilder request = get("/categories/" + category.getId());
 
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(6)))
+        .andExpect(jsonPath("$.id").value(category.getId()))
         .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(category.getNames()))))
         .andExpect(jsonPath("$.parent").value(category.getParent()))
         .andExpect(jsonPath("$.category").value(category.getCategory()))
@@ -100,7 +116,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories/{id} (category not found)")
   public void getCategoryThrowsCategoryNotFoundException() {
-    final Category category = DummyCategories.categoryWithId;
+    final Category category = DummyCategories.category1;
     when(service.findById(category.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/categories/" + category.getId());
 
@@ -116,9 +132,10 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /categories")
   public void createsCategory() throws Exception {
+    final Category category = DummyCategories.category1;
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        DummyCategories.category3);
-    when(service.create(any(Category.class))).thenReturn(DummyCategories.category3);
+        category);
+    when(service.create(any(Category.class))).thenReturn(category);
 
     final RequestBuilder request = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
@@ -128,11 +145,13 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
     mvc.perform(request)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(categoryPostDTO.getNames()))))
-        .andExpect(jsonPath("$.parent").value(categoryPostDTO.getParent()))
-        .andExpect(jsonPath("$.category").value(categoryPostDTO.getCategory()))
-        .andExpect(jsonPath("$.iconLigature").value(categoryPostDTO.getIconLigature()))
-        .andExpect(jsonPath("$.iconFontFamily").value(categoryPostDTO.getIconFontFamily()));
+        .andExpect(jsonPath("$.*", hasSize(6)))
+        .andExpect(jsonPath("$.id").value(category.getId()))
+        .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(category.getNames()))))
+        .andExpect(jsonPath("$.parent").value(category.getParent()))
+        .andExpect(jsonPath("$.category").value(category.getCategory()))
+        .andExpect(jsonPath("$.iconLigature").value(category.getIconLigature()))
+        .andExpect(jsonPath("$.iconFontFamily").value(category.getIconFontFamily()));
   }
 
   @Test
@@ -168,7 +187,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /categories (missing English translation)")
   public void postCategoryValidationFailsDueToMissingEnglishTranslation() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        DummyCategories.categoryWithoutEnglishTranslation);
+        DummyCategories.category1WithoutEnglishTranslation);
 
     final RequestBuilder request = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
@@ -183,29 +202,30 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /categories/{id}")
   public void updatesGivenCategory() throws Exception {
+    final Category category = DummyCategories.category1;
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        DummyCategories.category2);
-    when(service.update(any(Category.class))).thenReturn(DummyCategories.category2);
-    final String id = DummyCategories.categoryWithId.getId();
-
-    final RequestBuilder request = put("/categories/" + id)
+        category);
+    when(service.update(any(Category.class))).thenReturn(category);
+    final RequestBuilder request = put("/categories/" + category.getId())
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(categoryPostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(categoryPostDTO.getNames()))))
-        .andExpect(jsonPath("$.parent").value(categoryPostDTO.getParent()))
-        .andExpect(jsonPath("$.category").value(categoryPostDTO.getCategory()))
-        .andExpect(jsonPath("$.iconLigature").value(categoryPostDTO.getIconLigature()))
-        .andExpect(jsonPath("$.iconFontFamily").value(categoryPostDTO.getIconFontFamily()));
+        .andExpect(jsonPath("$.*", hasSize(6)))
+        .andExpect(jsonPath("$.id").value(category.getId()))
+        .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(category.getNames()))))
+        .andExpect(jsonPath("$.parent").value(category.getParent()))
+        .andExpect(jsonPath("$.category").value(category.getCategory()))
+        .andExpect(jsonPath("$.iconLigature").value(category.getIconLigature()))
+        .andExpect(jsonPath("$.iconFontFamily").value(category.getIconFontFamily()));
   }
 
   @Test
   @DisplayName("PUT /categories/{id} (empty body)")
   public void putCategoryValidationFails() throws Exception {
-    final String id = DummyCategories.categoryWithId.getId();
+    final String id = DummyCategories.category1.getId();
     final RequestBuilder request = put("/categories/" + id)
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
@@ -235,7 +255,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /categories/{id}")
   public void deletesGivenCategory() throws Exception {
-    final String id = DummyCategories.categoryWithId.getId();
+    final String id = DummyCategories.category1.getId();
     final RequestBuilder request = delete("/categories/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
   }
