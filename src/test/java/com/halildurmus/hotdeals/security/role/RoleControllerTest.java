@@ -30,7 +30,6 @@ public class RoleControllerTest extends BaseControllerUnitTest {
     final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
     params.add("role", "ROLE_SUPER");
-
     final RequestBuilder request = put("/roles").params(params);
     mvc.perform(request).andExpect(status().isOk());
   }
@@ -41,8 +40,8 @@ public class RoleControllerTest extends BaseControllerUnitTest {
     final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
     params.add("role", "INVALID_ROLE");
-
     final RequestBuilder request = put("/roles").params(params);
+
     mvc.perform(request).andExpect(status().isBadRequest())
         .andExpect(status().reason(
             equalTo("Invalid role! Supported roles => [ROLE_ADMIN, ROLE_SUPER, ROLE_MODERATOR]")));

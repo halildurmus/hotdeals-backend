@@ -38,7 +38,6 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /notifications")
   public void sendsNotification() throws Exception {
     when(service.send(any(Notification.class))).thenReturn(1);
-
     final RequestBuilder request = post("/notifications")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(DummyNotifications.notification1).getJson())
