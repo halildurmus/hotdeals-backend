@@ -55,8 +55,8 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /stores (returns empty array)")
   public void getStoresReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
-
     final RequestBuilder request = get("/stores");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
@@ -69,14 +69,18 @@ public class StoreControllerTest extends BaseControllerUnitTest {
     final Page<Store> pagedStores = new PageImpl<>(
         List.of(DummyStores.store1, DummyStores.store2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedStores);
-
     final RequestBuilder request = get("/stores");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(jsonPath("$[0].*", hasSize(3)))
+        .andExpect(jsonPath("$[0].id").value(DummyStores.store1.getId()))
         .andExpect(jsonPath("$[0].name").value(DummyStores.store1.getName()))
         .andExpect(jsonPath("$[0].logo").value(DummyStores.store1.getLogo()))
+        .andExpect(jsonPath("$[1].*", hasSize(3)))
+        .andExpect(jsonPath("$[1].id").value(DummyStores.store2.getId()))
         .andExpect(jsonPath("$[1].name").value(DummyStores.store2.getName()))
         .andExpect(jsonPath("$[1].logo").value(DummyStores.store2.getLogo()));
   }
@@ -84,13 +88,15 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /stores/{id}")
   public void returnsGivenStore() throws Exception {
-    final Store store = DummyStores.storeWithId;
+    final Store store = DummyStores.store1;
     when(service.findById(store.getId())).thenReturn(Optional.of(store));
-
     final RequestBuilder request = get("/stores/" + store.getId());
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(3)))
+        .andExpect(jsonPath("$.id").value(store.getId()))
         .andExpect(jsonPath("$.name").value(store.getName()))
         .andExpect(jsonPath("$.logo").value(store.getLogo()));
   }
@@ -98,7 +104,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /stores/{id} (store not found)")
   public void getStoreThrowsStoreNotFoundException() {
-    final Store store = DummyStores.storeWithId;
+    final Store store = DummyStores.store1;
     when(service.findById(store.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/stores/" + store.getId());
 
@@ -114,9 +120,9 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /stores")
   public void createsStore() throws Exception {
-    final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store1);
-    when(service.create(any(Store.class))).thenReturn(DummyStores.store1);
-
+    final Store store = DummyStores.store1;
+    final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(store);
+    when(service.create(any(Store.class))).thenReturn(store);
     final RequestBuilder request = post("/stores")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(storePostDTO).getJson())
@@ -124,8 +130,10 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request).andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.name").value(storePostDTO.getName()))
-        .andExpect(jsonPath("$.logo").value(storePostDTO.getLogo()));
+        .andExpect(jsonPath("$.*", hasSize(3)))
+        .andExpect(jsonPath("$.id").value(store.getId()))
+        .andExpect(jsonPath("$.name").value(store.getName()))
+        .andExpect(jsonPath("$.logo").value(store.getLogo()));
   }
 
   @Test
@@ -150,24 +158,25 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /stores/{id}")
   public void updatesGivenStore() throws Exception {
-    final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(DummyStores.store2);
-    when(service.update(any(Store.class))).thenReturn(DummyStores.store2);
-    final String id = DummyStores.storeWithId.getId();
-
-    final RequestBuilder request = put("/stores/" + id)
+    final Store store = DummyStores.store2;
+    final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(store);
+    when(service.update(any(Store.class))).thenReturn(store);
+    final RequestBuilder request = put("/stores/" + store.getId())
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(storePostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request).andExpect(status().isOk())
-        .andExpect(jsonPath("$.name").value(storePostDTO.getName()))
-        .andExpect(jsonPath("$.logo").value(storePostDTO.getLogo()));
+        .andExpect(jsonPath("$.*", hasSize(3)))
+        .andExpect(jsonPath("$.id").value(store.getId()))
+        .andExpect(jsonPath("$.name").value(store.getName()))
+        .andExpect(jsonPath("$.logo").value(store.getLogo()));
   }
 
   @Test
   @DisplayName("PUT /stores/{id} (empty body)")
   public void putStoreValidationFails() throws Exception {
-    final String id = DummyStores.storeWithId.getId();
+    final String id = DummyStores.store1.getId();
     final RequestBuilder request = put("/stores/" + id)
         .accept(MediaType.APPLICATION_JSON)
         .content("{}")
@@ -187,7 +196,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /stores/{id}")
   public void deletesGivenStore() throws Exception {
-    final String id = DummyStores.storeWithId.getId();
+    final String id = DummyStores.store1.getId();
     final RequestBuilder request = delete("/stores/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
   }
