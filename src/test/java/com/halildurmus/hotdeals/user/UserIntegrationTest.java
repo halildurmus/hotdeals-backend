@@ -42,7 +42,7 @@ public class UserIntegrationTest {
     final RequestBuilder requestBuilder = MockMvcRequestBuilders
         .post("/users")
         .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(DummyUsers.user4WithoutNickname).getJson())
+        .content(json.write(DummyUsers.user1).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())

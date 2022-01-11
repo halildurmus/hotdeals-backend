@@ -79,10 +79,9 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
     final UserPostDTO userPostDTO = mapStructMapper.userToUserPostDTO(
-        DummyUsers.user4WithoutNickname);
-    final User user = DummyUsers.user4;
+        DummyUsers.user1);
+    final User user = DummyUsers.user1;
     when(service.create(any(User.class))).thenReturn(user);
-
     final RequestBuilder request = post("/users")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(userPostDTO).getJson())
@@ -90,6 +89,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request).andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(5)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
@@ -124,17 +124,17 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void findsUserByEmail() throws Exception {
     final User user = DummyUsers.user1;
     when(service.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-
     final RequestBuilder request = get("/users/search/findByEmail?email=" + user.getEmail());
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(7)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$.nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$.blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$.blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(jsonPath("$.blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()));
   }
@@ -160,17 +160,17 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void findsUserByUid() throws Exception {
     final User user = DummyUsers.user1;
     when(service.findByUid(user.getUid())).thenReturn(Optional.of(user));
-
     final RequestBuilder request = get("/users/search/findByUid?uid=" + user.getUid());
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(7)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$.nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$.blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$.blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(jsonPath("$.blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()));
   }
@@ -196,20 +196,23 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void returnsAuthenticatedUser() throws Exception {
     final User user = DummyUsers.user1;
     when(securityService.getUser()).thenReturn(user);
-
     final RequestBuilder request = get("/users/me");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(10)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.email").value(user.getEmail()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$.nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$.blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$.blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(jsonPath("$.favorites").value(equalTo(asParsedJson(user.getFavorites()))))
+        .andExpect(jsonPath("$.blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
-        .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()));
+        .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()))
+        .andExpect(jsonPath("$.updatedAt").value(user.getUpdatedAt().toString()));
+
   }
 
   @Test
@@ -248,12 +251,12 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(7)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$.nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$.blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$.blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(jsonPath("$.blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()));
   }
@@ -281,12 +284,13 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(7)))
         .andExpect(jsonPath("$[0].id").value(user.getId()))
         .andExpect(jsonPath("$[0].uid").value(user.getUid()))
         .andExpect(jsonPath("$[0].avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$[0].nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$[0].blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$[0].blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(
+            jsonPath("$[0].blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$[0].fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$[0].createdAt").value(user.getCreatedAt().toString()));
   }
@@ -352,15 +356,17 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /users/me/deals (returns 1 deal)")
   public void getDealsReturnsOneDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1GetDto;
+    final Deal deal = DummyDeals.deal1;
     when(service.getDeals(any(Pageable.class))).thenReturn(List.of(deal));
-
     final RequestBuilder request = get("/users/me/deals");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(17)))
         .andExpect(jsonPath("$[0].id").value(deal.getId()))
+        .andExpect(jsonPath("$[0].postedBy").value(deal.getPostedBy().toString()))
         .andExpect(jsonPath("$[0].title").value(deal.getTitle()))
         .andExpect(jsonPath("$[0].description").value(deal.getDescription()))
         .andExpect(jsonPath("$[0].originalPrice").value(deal.getOriginalPrice()))
@@ -368,8 +374,11 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .andExpect(jsonPath("$[0].store").value(deal.getStore().toString()))
         .andExpect(jsonPath("$[0].category").value(deal.getCategory()))
         .andExpect(jsonPath("$[0].coverPhoto").value(deal.getCoverPhoto()))
+        .andExpect(jsonPath("$[0].photos", hasSize(deal.getPhotos().size())))
         .andExpect(jsonPath("$[0].dealUrl").value(deal.getDealUrl()))
         .andExpect(jsonPath("$[0].dealScore").value(deal.getDealScore()))
+        .andExpect(jsonPath("$[0].upvoters", hasSize(deal.getUpvoters().size())))
+        .andExpect(jsonPath("$[0].downvoters", hasSize(deal.getDownvoters().size())))
         .andExpect(jsonPath("$[0].views").value(deal.getViews()))
         .andExpect(jsonPath("$[0].status").value(deal.getStatus().toString()))
         .andExpect(jsonPath("$[0].createdAt").value(deal.getCreatedAt().toString()));
@@ -379,8 +388,8 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/me/favorites (returns empty array)")
   public void getFavoritesReturnsEmptyArray() throws Exception {
     when(service.getFavorites(any(Pageable.class))).thenReturn(List.of());
-
     final RequestBuilder request = get("/users/me/favorites");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
@@ -390,15 +399,17 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /users/me/favorites (returns 1 deal)")
   public void getFavoritesReturnsOneDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1GetDto;
+    final Deal deal = DummyDeals.deal1;
     when(service.getFavorites(any(Pageable.class))).thenReturn(List.of(deal));
-
     final RequestBuilder request = get("/users/me/favorites");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(17)))
         .andExpect(jsonPath("$[0].id").value(deal.getId()))
+        .andExpect(jsonPath("$[0].postedBy").value(deal.getPostedBy().toString()))
         .andExpect(jsonPath("$[0].title").value(deal.getTitle()))
         .andExpect(jsonPath("$[0].description").value(deal.getDescription()))
         .andExpect(jsonPath("$[0].originalPrice").value(deal.getOriginalPrice()))
@@ -406,8 +417,11 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .andExpect(jsonPath("$[0].store").value(deal.getStore().toString()))
         .andExpect(jsonPath("$[0].category").value(deal.getCategory()))
         .andExpect(jsonPath("$[0].coverPhoto").value(deal.getCoverPhoto()))
+        .andExpect(jsonPath("$[0].photos", hasSize(deal.getPhotos().size())))
         .andExpect(jsonPath("$[0].dealUrl").value(deal.getDealUrl()))
         .andExpect(jsonPath("$[0].dealScore").value(deal.getDealScore()))
+        .andExpect(jsonPath("$[0].upvoters", hasSize(deal.getUpvoters().size())))
+        .andExpect(jsonPath("$[0].downvoters", hasSize(deal.getDownvoters().size())))
         .andExpect(jsonPath("$[0].views").value(deal.getViews()))
         .andExpect(jsonPath("$[0].status").value(deal.getStatus().toString()))
         .andExpect(jsonPath("$[0].createdAt").value(deal.getCreatedAt().toString()));
@@ -416,7 +430,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /users/me/favorites/{id}")
   public void addsGivenDealToFavorites() throws Exception {
-    final String id = DummyDeals.deal1GetDto.getId();
+    final String id = DummyDeals.deal1.getId();
     final RequestBuilder request = put("/users/me/favorites/" + id);
     mvc.perform(request).andExpect(status().isOk());
   }
@@ -439,7 +453,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /users/me/favorites/{id}")
   public void deletesGivenDealFromFavorites() throws Exception {
-    final String id = DummyDeals.deal1GetDto.getId();
+    final String id = DummyDeals.deal1.getId();
     final RequestBuilder request = delete("/users/me/favorites/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
   }
@@ -462,9 +476,11 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /users/me/fcm-tokens")
   public void savesFCMToken() throws Exception {
+    final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().deviceId("425ha4123a")
+        .token("423623gasdfsa").build();
     final RequestBuilder request = put("/users/me/fcm-tokens/")
         .accept(MediaType.APPLICATION_JSON)
-        .content("{\"deviceId\": \"425ha4123a\", \"token\": \"423623gasdfsa\"}")
+        .content(objectMapper.writeValueAsString(fcmTokenParams))
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request).andExpect(status().isOk());
@@ -490,9 +506,10 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /users/me/fcm-tokens (missing deviceId)")
   public void putFCMTokenValidationFailsDueToMissingDeviceId() throws Exception {
+    final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token("423623gasdfsa").build();
     final RequestBuilder request = put("/users/me/fcm-tokens/")
         .accept(MediaType.APPLICATION_JSON)
-        .content("{\"token\": \"423623gasdfsa\"}")
+        .content(objectMapper.writeValueAsString(fcmTokenParams))
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
@@ -505,12 +522,11 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void deletesFCMToken() throws Exception {
     final User user = DummyUsers.user1;
     when(securityService.getUser()).thenReturn(user);
-
+    final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token("423623gasdfsa").build();
     final RequestBuilder request = delete("/users/me/fcm-tokens/")
         .accept(MediaType.APPLICATION_JSON)
-        .content("{\"token\": \"423623gasdfsa\"}")
+        .content(objectMapper.writeValueAsString(fcmTokenParams))
         .contentType(MediaType.APPLICATION_JSON);
-
     mvc.perform(request).andExpect(status().isNoContent());
   }
 
@@ -541,6 +557,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(5)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
@@ -587,12 +604,12 @@ public class UserControllerTest extends BaseControllerUnitTest {
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(7)))
         .andExpect(jsonPath("$.id").value(user.getId()))
         .andExpect(jsonPath("$.uid").value(user.getUid()))
         .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
         .andExpect(jsonPath("$.nickname").value(user.getNickname()))
-        .andExpect(jsonPath("$.blockedUsers", hasSize(1)))
-        .andExpect(jsonPath("$.blockedUsers[0]").value(user.getBlockedUsers().iterator().next()))
+        .andExpect(jsonPath("$.blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()));
   }
