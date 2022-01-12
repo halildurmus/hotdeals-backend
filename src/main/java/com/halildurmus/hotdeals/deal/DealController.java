@@ -15,16 +15,12 @@ import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.report.deal.DTO.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
-import com.halildurmus.hotdeals.util.EnumUtil;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,7 +226,6 @@ public class DealController {
     return commentService.getCommentCountByDealId(new ObjectId(id));
   }
 
-
   @PostMapping("/{id}/comments")
   @ResponseStatus(HttpStatus.CREATED)
   public CommentGetDTO postComment(@ObjectIdConstraint @PathVariable String id,
@@ -256,18 +251,12 @@ public class DealController {
 
   @PutMapping("/{id}/votes")
   public DealGetDTO voteDeal(@ObjectIdConstraint @PathVariable String id,
-      @Valid @NotNull @RequestBody Map<String, String> json) {
-    if (!json.containsKey("voteType")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "You need to include 'voteType' inside the request body!");
-    } else if (!EnumUtil.isInEnum(json.get("voteType"), DealVoteType.class)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid voteType! Supported voteTypes => " + Arrays.toString(DealVoteType.values()));
-    } else if (json.get("voteType").equals("UNVOTE")) {
+      @Valid @RequestBody DealVote dealVote) {
+    final DealVoteType voteType = dealVote.getVoteType();
+    if (voteType.equals(DealVoteType.UNVOTE)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "To unvote the deal you need to make a DELETE request!");
     }
-    final DealVoteType voteType = DealVoteType.valueOf(json.get("voteType"));
     final Deal deal = service.vote(id, voteType);
 
     return mapStructMapper.dealToDealGetDTO(deal);
