@@ -2,25 +2,36 @@ package com.halildurmus.hotdeals.user;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.halildurmus.hotdeals.BaseIntegrationTest;
+import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
+import com.halildurmus.hotdeals.report.user.UserReport;
+import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserIntegrationTest extends BaseIntegrationTest {
+
+  private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+
+  @MockBean
+  private SecurityService securityService;
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -36,11 +47,9 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("users");
   }
 
-  // TODO: Write test cases for validating mandatory fields.
-
   @Test
-  @DisplayName("POST /create")
-  public void shouldCreateUserThenReturnUser() throws Exception {
+  @DisplayName("POST /users")
+  public void createsUser() throws Exception {
     final User user = DummyUsers.user1;
     final RequestBuilder requestBuilder = post("/users")
         .accept(MediaType.APPLICATION_JSON)
@@ -98,6 +107,21 @@ public class UserIntegrationTest extends BaseIntegrationTest {
             jsonPath("$.content[0].fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.content[0].createdAt").isNotEmpty())
         .andExpect(jsonPath("$.content[0].updatedAt").isNotEmpty());
+  }
+
+  @Test
+  @DisplayName("POST /users/{id}/reports")
+  public void createsUserReport() throws Exception {
+    final User user1 = mongoTemplate.insert(DummyUsers.user1);
+    final User user2 = mongoTemplate.insert(DummyUsers.user2);
+    when(securityService.getUser()).thenReturn(user1);
+    final UserReport userReport = DummyUserReports.userReport1;
+    userReport.setReportedUser(user2);
+    final RequestBuilder requestBuilder = post("/users/" + user2.getId() + "/reports")
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(userReport))
+        .contentType(MediaType.APPLICATION_JSON);
+    mvc.perform(requestBuilder).andExpect(status().isCreated());
   }
 
 }

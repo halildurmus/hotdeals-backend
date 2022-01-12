@@ -35,7 +35,6 @@ class UserServiceImplTest {
     when(fakerUtil.generateNickname()).thenReturn("MrNobody123");
     when(userRepository.insert(any(User.class))).thenReturn(DummyUsers.user1);
     userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
-
     final User user = userService.create(DummyUsers.user1);
 
     assertNotNull(user);
@@ -43,13 +42,12 @@ class UserServiceImplTest {
   }
 
   @Test
-  public void createShouldCallInsertTwiceIfNicknameIsNotUnique() {
+  public void createCallsInsertTwiceIfNicknameIsAlreadyExists() {
     when(fakerUtil.generateNickname()).thenReturn("MrNobody123").thenReturn("MrNobody124");
-    when(userRepository.insert(any(User.class))).thenThrow(
-            new DuplicateKeyException("E11000 duplicate key error index: nickname"))
+    when(userRepository.insert(any(User.class)))
+        .thenThrow(new DuplicateKeyException("E11000 duplicate key error index: nickname"))
         .thenReturn(DummyUsers.user1);
     userService = new UserServiceImpl(dealRepository, userRepository, fakerUtil);
-
     final User user = userService.create(DummyUsers.user1);
 
     verify(userRepository, times(2)).insert(DummyUsers.user1);

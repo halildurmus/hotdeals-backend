@@ -2,12 +2,14 @@ package com.halildurmus.hotdeals.category;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
-import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
 import com.halildurmus.hotdeals.category.dummy.DummyCategories;
-import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,12 +19,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class CategoryIntegrationTest extends BaseIntegrationTest {
-
-  private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -31,78 +29,67 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
   private MockMvc mvc;
 
   @Autowired
-  private JacksonTester<CategoryPostDTO> json;
+  private JacksonTester<Category> json;
 
   @AfterEach
   void cleanUp() {
     mongoTemplate.dropCollection("categories");
   }
 
-  // TODO: Write test cases for validating fields.
-
   @Test
-  @DisplayName("POST /categories (success)")
-  public void shouldCreateCategory() throws Exception {
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        DummyCategories.category1);
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .post("/categories")
+  @DisplayName("POST /categories")
+  public void createsCategory() throws Exception {
+    final Category category = DummyCategories.category1;
+    final RequestBuilder requestBuilder = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(categoryPostDTO).getJson())
+        .content(json.write(category).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(
-            jsonPath("$.names").value(
-                equalTo(asParsedJson(DummyCategories.category1.getNames()))))
-        .andExpect(jsonPath("$.parent").value(DummyCategories.category1.getParent()))
-        .andExpect(jsonPath("$.category").value(DummyCategories.category1.getCategory()))
-        .andExpect(
-            jsonPath("$.iconLigature").value(DummyCategories.category1.getIconLigature()))
-        .andExpect(
-            jsonPath("$.iconFontFamily").value(
-                DummyCategories.category1.getIconFontFamily()));
+    mvc.perform(requestBuilder)
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.*", hasSize(6)))
+        .andExpect(jsonPath("$.id").isNotEmpty())
+        .andExpect(jsonPath("$.names").value(equalTo(asParsedJson(category.getNames()))))
+        .andExpect(jsonPath("$.parent").value(category.getParent()))
+        .andExpect(jsonPath("$.category").value(category.getCategory()))
+        .andExpect(jsonPath("$.iconLigature").value(category.getIconLigature()))
+        .andExpect(jsonPath("$.iconFontFamily").value(category.getIconFontFamily()));
   }
 
   @Test
   @DisplayName("GET /categories (returns empty)")
-  public void shouldReturnEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .get("/categories")
+  public void getCategoriesReturnsEmptyArray() throws Exception {
+    final RequestBuilder requestBuilder = get("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$._embedded.categories", hasSize(0)));
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(0)));
   }
 
   @Test
   @DisplayName("GET /categories (returns 1 category)")
-  public void shouldReturnOneCategoryInArray() throws Exception {
-    mongoTemplate.insert(DummyCategories.category1);
-
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .get("/categories")
+  public void getCategoriesReturnsOneCategory() throws Exception {
+    final Category category = DummyCategories.category1;
+    mongoTemplate.insert(category);
+    final RequestBuilder requestBuilder = get("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(
-            requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$._embedded.categories", hasSize(1)))
-        .andExpect(jsonPath("$._embedded.categories[0].names").value(
-            equalTo(asParsedJson(DummyCategories.category1.getNames()))))
-        .andExpect(jsonPath("$._embedded.categories[0].parent").value(
-            DummyCategories.category1.getParent()))
-        .andExpect(jsonPath("$._embedded.categories[0].category").value(
-            DummyCategories.category1.getCategory()))
-        .andExpect(jsonPath("$._embedded.categories[0].iconLigature").value(
-            DummyCategories.category1.getIconLigature()))
-        .andExpect(jsonPath("$._embedded.categories[0].iconFontFamily").value(
-            DummyCategories.category1.getIconFontFamily()));
+    mvc.perform(requestBuilder)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(6)))
+        .andExpect(jsonPath("$[0].id").isNotEmpty())
+        .andExpect(jsonPath("$[0].names").value(equalTo(asParsedJson(category.getNames()))))
+        .andExpect(jsonPath("$[0].parent").value(category.getParent()))
+        .andExpect(jsonPath("$[0].category").value(category.getCategory()))
+        .andExpect(jsonPath("$[0].iconLigature").value(category.getIconLigature()))
+        .andExpect(jsonPath("$[0].iconFontFamily").value(category.getIconFontFamily()));
   }
+
 }

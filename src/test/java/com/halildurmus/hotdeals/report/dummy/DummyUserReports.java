@@ -8,6 +8,7 @@ import java.util.EnumSet;
 public class DummyUserReports {
 
   public static UserReport userReport1 = UserReport.builder()
+      .reportedBy(DummyUsers.user2)
       .reportedUser(DummyUsers.user1)
       .reasons(EnumSet.of(UserReportReason.HARASSING, UserReportReason.OTHER))
       .message("Lorem dolor sit amet").build();

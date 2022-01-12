@@ -17,6 +17,7 @@ public class DummyDeals {
       .description("12TB WD External HDD\n$190").originalPrice(150.0).price(140.0)
       .store(new ObjectId("5fbe790ec6f0b32014074bb1")).category("/electronics")
       .coverPhoto("http://www.gravatar.com/avatar").dealUrl("https://www.amazon.com/item")
-      .upvoters(new HashSet<>(List.of())).downvoters(new HashSet<>(List.of())).build();
+      .upvoters(new HashSet<>(List.of())).downvoters(new HashSet<>(List.of()))
+      .createdAt(Instant.now()).updatedAt(Instant.now()).build();
 
 }

@@ -16,60 +16,60 @@ import org.springframework.test.context.ActiveProfiles;
 class UserRepositoryTest {
 
   @Autowired
-  private UserRepository userRepository;
+  private UserRepository repository;
 
   @AfterEach
   void cleanUp() {
-    this.userRepository.deleteAll();
+    this.repository.deleteAll();
   }
 
   @Test
-  void findByUidShouldReturnUser() {
-    this.userRepository.save(DummyUsers.user1);
-
-    final Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
+  void findByUidFindsUser() {
+    final User user1 = DummyUsers.user1;
+    this.repository.save(user1);
+    final Optional<User> user = repository.findByUid(user1.getUid());
 
     assertTrue(user.isPresent());
-    assertEquals(user.get().getUid(), DummyUsers.user1.getUid());
+    assertEquals(user.get().getUid(), user1.getUid());
   }
 
   @Test
-  void findByUidShouldNotReturnUserWhenUidIsInvalid() {
-    final Optional<User> user = userRepository.findByUid(DummyUsers.user1.getUid());
+  void findByUidCannotFindUserDueToNonexistentUid() {
+    final Optional<User> user = repository.findByUid(DummyUsers.user1.getUid());
 
     assertTrue(user.isEmpty());
   }
 
   @Test
-  void findByEmailShouldReturnUser() {
-    this.userRepository.save(DummyUsers.user2);
-
-    final Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
+  void findByEmailFindsUser() {
+    final User user1 = DummyUsers.user1;
+    this.repository.save(user1);
+    final Optional<User> user = repository.findByEmail(user1.getEmail());
 
     assertTrue(user.isPresent());
-    assertEquals(user.get().getEmail(), DummyUsers.user2.getEmail());
+    assertEquals(user.get().getEmail(), user1.getEmail());
   }
 
   @Test
-  void findByEmailShouldNotReturnUserWhenEmailIsInvalid() {
-    final Optional<User> user = userRepository.findByEmail(DummyUsers.user2.getEmail());
+  void findByEmailCannotFindUserDueToNonexistentEmail() {
+    final Optional<User> user = repository.findByEmail(DummyUsers.user1.getEmail());
 
     assertTrue(user.isEmpty());
   }
 
   @Test
-  void findByNicknameShouldReturnUser() {
-    this.userRepository.save(DummyUsers.user3);
-
-    final Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
+  void findByNicknameFindsUser() {
+    final User user1 = DummyUsers.user1;
+    this.repository.save(user1);
+    final Optional<User> user = repository.findByNickname(user1.getNickname());
 
     assertTrue(user.isPresent());
-    assertEquals(user.get().getNickname(), DummyUsers.user3.getNickname());
+    assertEquals(user.get().getNickname(), user1.getNickname());
   }
 
   @Test
-  void findByNicknameShouldNotReturnUserWhenNicknameIsInvalid() {
-    final Optional<User> user = userRepository.findByNickname(DummyUsers.user3.getNickname());
+  void findByNicknameCannotFindUserDueToNonexistentNickname() {
+    final Optional<User> user = repository.findByNickname(DummyUsers.user3.getNickname());
 
     assertTrue(user.isEmpty());
   }

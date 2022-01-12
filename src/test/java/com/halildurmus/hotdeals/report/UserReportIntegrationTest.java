@@ -1,41 +1,31 @@
 package com.halildurmus.hotdeals.report;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
 import com.halildurmus.hotdeals.report.user.UserReport;
-import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class UserReportIntegrationTest extends BaseIntegrationTest {
 
-  static User fakeUser = User.builder().id("607345b0eeeee1452898128b").build();
-
   @Autowired
-  CacheManager cacheManager;
-
-  @MockBean
-  SecurityService securityService;
+  private CacheManager cacheManager;
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -43,13 +33,11 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
   @Autowired
   private MockMvc mvc;
 
-  @Autowired
-  private JacksonTester<UserReport> json;
-
   @AfterEach
   void cleanUp() {
+    mongoTemplate.dropCollection("deals");
     mongoTemplate.dropCollection("reports");
-    System.out.println(cacheManager.getCacheNames());
+    mongoTemplate.dropCollection("users");
     for (String name : cacheManager.getCacheNames()) {
       Cache cache = cacheManager.getCache(name);
       if (cache != null) {
@@ -58,68 +46,44 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
     }
   }
 
-  // TODO: Write test cases for validating mandatory fields.
-
-  @Test
-  @DisplayName("POST /user-reports")
-  public void shouldCreateUserReportThenReturnUserReport() throws Exception {
-    Mockito.when(securityService.getUser()).thenReturn(fakeUser);
-
-    final User user = mongoTemplate.insert(DummyUsers.user1);
-    final UserReport userReport = DummyUserReports.userReport1;
-    userReport.setReportedUser(user);
-
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .post("/user-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(DummyUserReports.userReport1).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
-
-    mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(jsonPath("$.id").value(not(empty())))
-        .andExpect(jsonPath("$.reportedBy").value(fakeUser.getId()))
-        .andExpect(jsonPath("$.reportedUser").value(
-            DummyUserReports.userReport1.getReportedUser().toString()))
-        .andExpect(jsonPath("$.message").value(DummyUserReports.userReport1.getMessage()));
-  }
-
   @Test
   @DisplayName("GET /user-reports (returns empty)")
-  public void shouldReturnEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .get("/user-reports")
+  public void getUserReportsReturnsEmptyArray() throws Exception {
+    final RequestBuilder requestBuilder = get("/user-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.user-reports", hasSize(0)));
   }
 
   @Test
   @DisplayName("GET /user-reports (returns 1 user report)")
-  public void shouldReturnOneUserReportInArray() throws Exception {
-    Mockito.when(securityService.getUser()).thenReturn(fakeUser);
-
-    mongoTemplate.insert(DummyUserReports.userReport1);
-
-    final RequestBuilder requestBuilder = MockMvcRequestBuilders
-        .get("/user-reports")
+  public void getUserReportsReturnsOneUser() throws Exception {
+    final User user1 = mongoTemplate.insert(DummyUsers.user1);
+    final User user2 = mongoTemplate.insert(DummyUsers.user2);
+    final UserReport userReport = DummyUserReports.userReport1;
+    userReport.setReportedBy(user1);
+    userReport.setReportedUser(user2);
+    mongoTemplate.insert(userReport);
+    final RequestBuilder requestBuilder = get("/user-reports")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.user-reports", hasSize(1)))
-        .andExpect(jsonPath("$._embedded.user-reports[0].id").value(not(empty())))
-        .andExpect(jsonPath("$._embedded.user-reports[0].reportedBy").value(fakeUser.getId()))
-        .andExpect(jsonPath("$._embedded.user-reports[0].reportedUser").value(
-            DummyUserReports.userReport1.getReportedUser().toString()))
-        .andExpect(
-            jsonPath("$._embedded.user-reports[0].message").value(
-                DummyUserReports.userReport1.getMessage()));
+        .andExpect(jsonPath("$._embedded.user-reports[0].*", hasSize(8)))
+        .andExpect(jsonPath("$._embedded.user-reports[0].id").isNotEmpty())
+        .andExpect(jsonPath("$._embedded.user-reports[0].reportedBy.id").value(user1.getId()))
+        .andExpect(jsonPath("$._embedded.user-reports[0].reportedUser.id").value(user2.getId()))
+        .andExpect(jsonPath("$._embedded.user-reports[0].reasons", hasSize(2)))
+        .andExpect(jsonPath("$._embedded.user-reports[0].message").value(userReport.getMessage()))
+        .andExpect(jsonPath("$._embedded.user-reports[0].createdAt").isNotEmpty())
+        .andExpect(jsonPath("$._embedded.user-reports[0].updatedAt").isNotEmpty());
   }
+
 }
