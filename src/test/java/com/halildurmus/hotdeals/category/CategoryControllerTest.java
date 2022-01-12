@@ -188,7 +188,6 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void postCategoryValidationFailsDueToMissingEnglishTranslation() throws Exception {
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         DummyCategories.category1WithoutEnglishTranslation);
-
     final RequestBuilder request = post("/categories")
         .accept(MediaType.APPLICATION_JSON)
         .content(json.write(categoryPostDTO).getJson())
