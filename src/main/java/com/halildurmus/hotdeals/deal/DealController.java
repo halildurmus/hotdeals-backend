@@ -168,11 +168,6 @@ public class DealController {
         .sortBy(sortBy)
         .order(order)
         .build();
-    // If all search params except 'order' are null then return HTTP 400
-    if (searchParams.equals(DealSearchParams.builder().hideExpired(false).order("asc").build())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "You have to provide at least one parameter!");
-    }
 
     return esDealService.searchDeals(searchParams, pageable);
   }
