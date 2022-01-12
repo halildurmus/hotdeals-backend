@@ -265,8 +265,8 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/me/blocks (returns empty array)")
   public void getBlockedUsersReturnsEmptyArray() throws Exception {
     when(service.getBlockedUsers(any(Pageable.class))).thenReturn(List.of());
-
     final RequestBuilder request = get("/users/me/blocks");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
@@ -278,8 +278,8 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void getBlockedUsersReturnsOneUser() throws Exception {
     final User user = DummyUsers.user1;
     when(service.getBlockedUsers(any(Pageable.class))).thenReturn(List.of(user));
-
     final RequestBuilder request = get("/users/me/blocks");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
