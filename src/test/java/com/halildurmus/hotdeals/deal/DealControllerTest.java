@@ -84,6 +84,51 @@ public class DealControllerTest extends BaseControllerUnitTest {
   private EsDealService esDealService;
 
   @Test
+  @DisplayName("GET /deals (returns empty array)")
+  public void getDealsReturnsEmptyArray() throws Exception {
+    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
+    final RequestBuilder request = get("/deals");
+
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.content", hasSize(0)));
+  }
+
+  @Test
+  @DisplayName("GET /deals (returns 1 deal)")
+  public void getDealsReturnsOneDeal() throws Exception {
+    final Deal deal = DummyDeals.deal1;
+    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    when(service.findAll(any(Pageable.class))).thenReturn(pagedDeals);
+    final RequestBuilder request = get("/deals");
+
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.content", hasSize(1)))
+        .andExpect(jsonPath("$.content[0].*", hasSize(18)))
+        .andExpect(jsonPath("$.content[0].id").value(deal.getId()))
+        .andExpect(jsonPath("$.content[0].postedBy").value(deal.getPostedBy().toString()))
+        .andExpect(jsonPath("$.content[0].title").value(deal.getTitle()))
+        .andExpect(jsonPath("$.content[0].description").value(deal.getDescription()))
+        .andExpect(jsonPath("$.content[0].originalPrice").value(deal.getOriginalPrice()))
+        .andExpect(jsonPath("$.content[0].price").value(deal.getPrice()))
+        .andExpect(jsonPath("$.content[0].store").value(deal.getStore().toString()))
+        .andExpect(jsonPath("$.content[0].category").value(deal.getCategory()))
+        .andExpect(jsonPath("$.content[0].coverPhoto").value(deal.getCoverPhoto()))
+        .andExpect(jsonPath("$.content[0].photos", hasSize(deal.getPhotos().size())))
+        .andExpect(jsonPath("$.content[0].dealUrl").value(deal.getDealUrl()))
+        .andExpect(jsonPath("$.content[0].dealScore").value(deal.getDealScore()))
+        .andExpect(jsonPath("$.content[0].upvoters", hasSize(deal.getUpvoters().size())))
+        .andExpect(jsonPath("$.content[0].downvoters", hasSize(deal.getDownvoters().size())))
+        .andExpect(jsonPath("$.content[0].views").value(deal.getViews()))
+        .andExpect(jsonPath("$.content[0].status").value(deal.getStatus().toString()))
+        .andExpect(jsonPath("$.content[0].createdAt").value(deal.getCreatedAt().toString()))
+        .andExpect(jsonPath("$.content[0].updatedAt").value(deal.getUpdatedAt().toString()));
+  }
+
+  @Test
   @DisplayName("GET /deals/count/byPostedBy")
   public void returnsNumberOfDealsThatGivenUserPosted() throws Exception {
     final String id = DummyUsers.user1.getId();

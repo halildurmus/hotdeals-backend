@@ -58,6 +58,11 @@ public class DealServiceImpl implements DealService {
   private SecurityService securityService;
 
   @Override
+  public Page<Deal> findAll(Pageable pageable) {
+    return repository.findAll(pageable);
+  }
+
+  @Override
   public int countDealsByPostedBy(ObjectId postedBy) {
     return repository.countDealsByPostedBy(postedBy);
   }

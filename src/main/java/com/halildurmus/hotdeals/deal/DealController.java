@@ -64,6 +64,11 @@ public class DealController {
   @Autowired
   private EsDealService esDealService;
 
+  @GetMapping
+  public Page<Deal> getDeals(Pageable pageable) {
+    return service.findAll(pageable);
+  }
+
   @GetMapping("/count/byPostedBy")
   public int getCountDealsByPostedBy(@ObjectIdConstraint @RequestParam String postedBy) {
     return service.countDealsByPostedBy(new ObjectId(postedBy));
