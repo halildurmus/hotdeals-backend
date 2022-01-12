@@ -42,6 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -76,6 +78,46 @@ public class UserControllerTest extends BaseControllerUnitTest {
   private UserReportService userReportService;
 
   @Test
+  @DisplayName("GET /users (returns empty array)")
+  public void getUsersReturnsEmptyArray() throws Exception {
+    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
+    final RequestBuilder request = get("/users");
+    
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.content", hasSize(0)));
+  }
+
+  @Test
+  @DisplayName("GET /users (returns 1 user)")
+  public void getUsersReturnsOneUser() throws Exception {
+    final User user = DummyUsers.user1;
+    final Page<User> pagedUsers = new PageImpl<>(List.of(user));
+    when(service.findAll(any(Pageable.class))).thenReturn(pagedUsers);
+    final RequestBuilder request = get("/users");
+
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$.content", hasSize(1)))
+        .andExpect(jsonPath("$.content[0].*", hasSize(10)))
+        .andExpect(jsonPath("$.content[0].id").value(user.getId()))
+        .andExpect(jsonPath("$.content[0].uid").value(user.getUid()))
+        .andExpect(jsonPath("$.content[0].email").value(user.getEmail()))
+        .andExpect(jsonPath("$.content[0].avatar").value(user.getAvatar()))
+        .andExpect(jsonPath("$.content[0].nickname").value(user.getNickname()))
+        .andExpect(
+            jsonPath("$.content[0].favorites").value(equalTo(asParsedJson(user.getFavorites()))))
+        .andExpect(jsonPath("$.content[0].blockedUsers").value(
+            equalTo(asParsedJson(user.getBlockedUsers()))))
+        .andExpect(
+            jsonPath("$.content[0].fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
+        .andExpect(jsonPath("$.content[0].createdAt").value(user.getCreatedAt().toString()))
+        .andExpect(jsonPath("$.content[0].updatedAt").value(user.getUpdatedAt().toString()));
+  }
+
+  @Test
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
     final UserPostDTO userPostDTO = mapStructMapper.userToUserPostDTO(
@@ -87,7 +129,8 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .content(json.write(userPostDTO).getJson())
         .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(5)))
         .andExpect(jsonPath("$.id").value(user.getId()))

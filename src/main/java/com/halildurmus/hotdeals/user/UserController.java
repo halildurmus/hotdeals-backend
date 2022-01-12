@@ -20,6 +20,7 @@ import javax.validation.constraints.Email;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -55,6 +56,11 @@ public class UserController {
 
   @Autowired
   private UserReportService userReportService;
+
+  @GetMapping
+  public Page<User> getUsers(Pageable pageable) {
+    return service.findAll(pageable);
+  }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)

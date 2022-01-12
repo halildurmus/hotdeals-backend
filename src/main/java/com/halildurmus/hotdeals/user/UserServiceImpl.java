@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,11 @@ public class UserServiceImpl implements UserService {
     this.dealRepository = dealRepository;
     this.repository = userRepository;
     this.fakerUtil = fakerUtil;
+  }
+
+  @Override
+  public Page<User> findAll(Pageable pageable) {
+    return repository.findAll(pageable);
   }
 
   @Override
