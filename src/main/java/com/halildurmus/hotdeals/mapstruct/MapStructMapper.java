@@ -35,11 +35,17 @@ public interface MapStructMapper {
 
   CommentGetDTO commentToCommentGetDTO(Comment comment);
 
+  CommentPostDTO commentToCommentPostDTO(Comment comment);
+
   Deal dealPostDTOToDeal(DealPostDTO dealPostDTO);
 
   DealGetDTO dealToDealGetDTO(Deal deal);
 
+  DealPostDTO dealToDealPostDTO(Deal deal);
+
   DealReport dealReportPostDTOToDealReport(DealReportPostDTO dealReportPostDTO);
+
+  DealReportPostDTO dealReportToDealReportPostDTO(DealReport dealReport);
 
   Store storePostDTOStore(StorePostDTO storePostDTO);
 
