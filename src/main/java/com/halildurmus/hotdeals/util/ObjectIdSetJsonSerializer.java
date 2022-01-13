@@ -20,7 +20,7 @@ public class ObjectIdSetJsonSerializer extends JsonSerializer<Set<ObjectId>> {
       objectIds.forEach(objectId -> ids.add(objectId.toString()));
       jsonGenerator.writeObject(ids);
     } catch (IOException e) {
-      log.error("Object ID not serialized", e);
+      log.error("Failed to serialize Set<ObjectId>!", e);
     }
   }
 
