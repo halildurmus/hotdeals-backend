@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public AuthenticationEntryPoint restAuthenticationEntryPoint() {
     return (httpServletRequest, httpServletResponse, e) -> {
-      Map<String, Object> errorObject = new HashMap<>();
+      final Map<String, Object> errorObject = new HashMap<>();
       errorObject.put("message", "Unauthorized access of protected resource, invalid credentials");
       errorObject.put("error", HttpStatus.UNAUTHORIZED);
       errorObject.put("code", HttpStatus.UNAUTHORIZED.value());
@@ -52,11 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
+    final CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(securityProperties.getAllowedOrigins());
     configuration.setAllowedMethods(securityProperties.getAllowedMethods());
-
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
 
     return source;
