@@ -22,4 +22,5 @@ public class MongoConfig {
       LocalValidatorFactoryBean factory) {
     return new ValidatingMongoEventListener(factory);
   }
+  
 }

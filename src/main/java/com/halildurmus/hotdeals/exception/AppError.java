@@ -11,8 +11,7 @@ public class AppError {
   private final ErrorBlock error;
 
   public AppError(final String apiVersion, final String code, final String message,
-      final String domain,
-      final String reason, final String errorMessage) {
+      final String domain, final String reason, final String errorMessage) {
     this.apiVersion = apiVersion;
     this.error = new ErrorBlock(code, message, domain, reason, errorMessage);
   }
