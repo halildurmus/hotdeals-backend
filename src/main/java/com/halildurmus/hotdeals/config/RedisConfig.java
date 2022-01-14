@@ -7,11 +7,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class RedisConfig {
 
-//  @Bean
-//  public RedisCacheConfiguration cacheConfiguration() {
-//    return RedisCacheConfiguration.defaultCacheConfig()
-//        .disableCachingNullValues()
-//        .entryTtl(Duration.ofMinutes(10));
-//  }
-
 }
