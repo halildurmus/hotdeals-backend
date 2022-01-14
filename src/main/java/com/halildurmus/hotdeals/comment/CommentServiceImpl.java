@@ -16,6 +16,11 @@ public class CommentServiceImpl implements CommentService {
   private CommentRepository repository;
 
   @Override
+  public Page<Comment> getCommentsByDealId(ObjectId dealId, Pageable pageable) {
+    return repository.findByDealIdOrderByCreatedAt(dealId, pageable);
+  }
+
+  @Override
   public int getCommentCountByDealId(ObjectId dealId) {
     return repository.countCommentsByDealId(dealId);
   }
@@ -29,14 +34,9 @@ public class CommentServiceImpl implements CommentService {
   public void deleteDealComments(String dealId) {
     final Page<Comment> comments = repository.findByDealIdOrderByCreatedAt(new ObjectId(dealId),
         Pageable.unpaged());
-    final Iterable<String> commentIds = comments.getContent().stream().map(Comment::getId).collect(
-        Collectors.toList());
+    final Iterable<String> commentIds = comments.getContent().stream().map(Comment::getId)
+        .collect(Collectors.toList());
     repository.deleteAllByIdIn(commentIds);
-  }
-
-  @Override
-  public Page<Comment> getCommentsByDealId(ObjectId dealId, Pageable pageable) {
-    return repository.findByDealIdOrderByCreatedAt(dealId, pageable);
   }
 
   @Override

@@ -6,13 +6,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
 
+  Page<Comment> getCommentsByDealId(ObjectId dealId, Pageable pageable);
+
   int getCommentCountByDealId(ObjectId dealId);
 
   int getCommentCountByPostedById(ObjectId postedById);
 
   void deleteDealComments(String dealId);
-
-  Page<Comment> getCommentsByDealId(ObjectId dealId, Pageable pageable);
 
   Comment save(Comment comment);
 
