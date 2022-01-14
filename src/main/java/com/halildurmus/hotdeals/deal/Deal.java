@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -50,9 +51,11 @@ public class Deal implements Serializable {
 
   private int dealScore = 0;
 
+  @Default
   @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
   private HashSet<ObjectId> upvoters = new HashSet<>();
 
+  @Default
   @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
   private HashSet<ObjectId> downvoters = new HashSet<>();
 
@@ -81,6 +84,7 @@ public class Deal implements Serializable {
   @NotNull
   private String dealUrl;
 
+  @Default
   private DealStatus status = DealStatus.ACTIVE;
 
   private List<String> photos = new ArrayList<>();
