@@ -1,10 +1,11 @@
 package com.halildurmus.hotdeals.security.role;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseControllerUnitTest;
+import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Import(RoleController.class)
 public class RoleControllerTest extends BaseControllerUnitTest {
@@ -29,7 +31,7 @@ public class RoleControllerTest extends BaseControllerUnitTest {
   public void addsRole() throws Exception {
     final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
-    params.add("role", "ROLE_SUPER");
+    params.add("role", Role.ROLE_SUPER.name());
     final RequestBuilder request = put("/roles").params(params);
     mvc.perform(request).andExpect(status().isOk());
   }
@@ -42,9 +44,14 @@ public class RoleControllerTest extends BaseControllerUnitTest {
     params.add("role", "INVALID_ROLE");
     final RequestBuilder request = put("/roles").params(params);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(status().reason(
-            equalTo("Invalid role! Supported roles => [ROLE_ADMIN, ROLE_SUPER, ROLE_MODERATOR]")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(result -> assertTrue(
+            result.getResolvedException() instanceof MethodArgumentTypeMismatchException))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains(
+                    "Failed to convert value of type 'java.lang.String' to required type 'com.halildurmus.hotdeals.security.role.Role'")));
   }
 
   @Test

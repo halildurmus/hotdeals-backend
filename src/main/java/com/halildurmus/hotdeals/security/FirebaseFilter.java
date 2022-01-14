@@ -31,10 +31,10 @@ public class FirebaseFilter extends OncePerRequestFilter {
   private static final String headerName = "Authorization";
 
   @Autowired
-  private SecurityProperties securityProperties;
+  private RoleService roleService;
 
   @Autowired
-  private RoleService roleService;
+  private SecurityProperties securityProperties;
 
   @Autowired
   private UserRepository userRepository;
@@ -63,13 +63,13 @@ public class FirebaseFilter extends OncePerRequestFilter {
   }
 
   public List<GrantedAuthority> parseAuthorities(FirebaseToken token, String email) {
-    List<GrantedAuthority> authorities = new ArrayList<>();
+    final List<GrantedAuthority> authorities = new ArrayList<>();
     // Handle ROLE_SUPER
     if (securityProperties.getSuperAdmins() != null && securityProperties.getSuperAdmins()
         .contains(email)) {
       if (!token.getClaims().containsKey(Role.ROLE_SUPER.name())) {
         try {
-          roleService.add(token.getUid(), Role.ROLE_SUPER.name());
+          roleService.add(token.getUid(), Role.ROLE_SUPER);
         } catch (Exception e) {
           log.error("Failed to add ROLE_SUPER to the user", e);
         }
@@ -97,7 +97,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
     final User user = firebaseTokenToUser(decodedToken);
     logger.info("User: " + user);
     final List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
-    FirebaseAuthenticationToken authentication = new FirebaseAuthenticationToken(
+    final FirebaseAuthenticationToken authentication = new FirebaseAuthenticationToken(
         user,
         new Credentials(decodedToken, token), authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);

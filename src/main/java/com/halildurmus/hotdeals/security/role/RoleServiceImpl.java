@@ -19,11 +19,11 @@ public class RoleServiceImpl implements RoleService {
   private FirebaseAuth firebaseAuth;
 
   @Override
-  public void add(String uid, String role) {
+  public void add(String uid, Role role) {
     try {
       final UserRecord user = firebaseAuth.getUser(uid);
       final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
-      claims.putIfAbsent(role, true);
+      claims.putIfAbsent(role.name(), true);
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Firebase Auth Exception", e);
@@ -31,11 +31,11 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public void delete(String uid, String role) {
+  public void delete(String uid, Role role) {
     try {
       final UserRecord user = firebaseAuth.getUser(uid);
       final Map<String, Object> claims = new HashMap<>(user.getCustomClaims());
-      claims.remove(role);
+      claims.remove(role.name());
       firebaseAuth.setCustomUserClaims(uid, claims);
     } catch (FirebaseAuthException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Firebase Auth Exception", e);
