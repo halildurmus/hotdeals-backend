@@ -29,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public Category create(Category category) {
+    // If the category has a parent category, make sure it exists
     if (!category.getParent().equals("/")) {
       repository.findByCategory(category.getParent())
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,

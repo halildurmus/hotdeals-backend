@@ -73,6 +73,7 @@ public class StoreController {
   }
 
   private Store convertToEntity(String id, StorePostDTO storePostDTO) {
+    // Fetch the store from the db and set the missing properties from it
     final Store originalStore = service.findById(id).orElseThrow(StoreNotFoundException::new);
     final Store store = mapStructMapper.storePostDTOToStore(storePostDTO);
     store.setId(id);

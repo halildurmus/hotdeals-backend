@@ -22,6 +22,8 @@ class ReportEntityCallbacks implements BeforeSaveCallback<Report> {
     if (collection.equals("reports") && ObjectUtils.isEmpty(report.getReportedBy())) {
       final User user = securityService.getUser();
       report.setReportedBy(user);
+      // Since we're using @DocumentReference on the reportedBy property, we need to
+      // add the user's ObjectId instead of the User object to the document
       document.put("reportedBy", new ObjectId(user.getId()));
     }
 

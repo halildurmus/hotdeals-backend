@@ -273,6 +273,7 @@ public class DealController {
   }
 
   private Deal convertToEntity(String id, DealPostDTO dealPostDTO) {
+    // Fetch the deal from the db and set the missing properties from it
     final Deal originalDeal = service.findById(id).orElseThrow(DealNotFoundException::new);
     final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
     deal.setId(id);

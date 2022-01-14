@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public User create(User user) {
     boolean errorOccurred;
+    // Try until the generated nickname is unique
     do {
       try {
         final String nickname = fakerUtil.generateNickname();

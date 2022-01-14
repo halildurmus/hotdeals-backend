@@ -79,6 +79,7 @@ public class CategoryController {
   }
 
   private Category convertToEntity(String id, CategoryPostDTO categoryPostDTO) {
+    // Fetch the category from the db and set the missing properties from it
     final Category originalCategory = service.findById(id)
         .orElseThrow(CategoryNotFoundException::new);
     final Category category = mapStructMapper.categoryPostDTOToCategory(categoryPostDTO);

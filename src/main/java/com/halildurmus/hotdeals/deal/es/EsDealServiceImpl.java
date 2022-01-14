@@ -75,6 +75,7 @@ public class EsDealServiceImpl implements EsDealService {
     final SearchSourceBuilder searchSource = new SearchSourceBuilder();
     searchSource.from(0).size(5);
     searchSource.query(createAutocompleteQuery(query));
+    // We only need the title property from the response
     searchSource.fetchSource("title", null);
     request.setJsonEntity(searchSource.toString());
 
@@ -183,6 +184,7 @@ public class EsDealServiceImpl implements EsDealService {
   private BoolQueryBuilder createBoolQuery(Boolean hideExpired, String query) {
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
     if (hideExpired) {
+      // Filter out expired deals
       boolQuery.filter(createTermQuery());
     }
     boolQuery.must(createMultiMatchQuery(query));
