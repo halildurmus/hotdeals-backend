@@ -22,7 +22,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
       })
   <S extends Comment> S save(S entity);
 
-
   @Caching(evict = {
       @CacheEvict(value = "comments", allEntries = true),
       @CacheEvict(value = "comments:countCommentsByDealId", allEntries = true),
