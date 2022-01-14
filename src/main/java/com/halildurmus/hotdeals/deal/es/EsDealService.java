@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface EsDealService {
 
-  EsDeal save(EsDeal esDeal);
-
   Page<EsDeal> findAll(Pageable pageable);
 
   JsonNode getSuggestions(String query);
 
   JsonNode searchDeals(DealSearchParams searchParams, Pageable pageable);
+
+  EsDeal save(EsDeal esDeal);
 
 }

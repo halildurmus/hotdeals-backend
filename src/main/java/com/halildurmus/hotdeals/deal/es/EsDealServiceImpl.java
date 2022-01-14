@@ -45,6 +45,10 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class EsDealServiceImpl implements EsDealService {
 
+  private static final int MAX_SUGGESTION = 5;
+
+  private static final String SEARCH_DEALS_ENDPOINT = "/deal/_search";
+
   @Autowired
   private DealRepository dealRepository;
 
@@ -53,11 +57,6 @@ public class EsDealServiceImpl implements EsDealService {
 
   @Autowired
   private RestHighLevelClient client;
-
-  @Override
-  public EsDeal save(EsDeal esDeal) {
-    return repository.save(esDeal);
-  }
 
   @Override
   public Page<EsDeal> findAll(Pageable pageable) {
@@ -73,7 +72,7 @@ public class EsDealServiceImpl implements EsDealService {
   public JsonNode getSuggestions(String query) {
     final Request request = new Request("GET", "/deal/_search");
     final SearchSourceBuilder searchSource = new SearchSourceBuilder();
-    searchSource.from(0).size(5);
+    searchSource.size(MAX_SUGGESTION);
     searchSource.query(createAutocompleteQuery(query));
     // We only need the title property from the response
     searchSource.fetchSource("title", null);
@@ -192,7 +191,7 @@ public class EsDealServiceImpl implements EsDealService {
     return boolQuery;
   }
 
-  private BoolQueryBuilder createFilters(DealSearchParams searchParams, String exclude) {
+  private BoolQueryBuilder createFilters(DealSearchParams searchParams, String filterToBeExcluded) {
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
     if (searchParams.getCategories() == null && searchParams.getPrices() == null
         && searchParams.getStores() == null) {
@@ -200,13 +199,13 @@ public class EsDealServiceImpl implements EsDealService {
     }
 
     final List<QueryBuilder> filters = new ArrayList<>();
-    if (searchParams.getCategories() != null && !Objects.equals(exclude, "category")) {
+    if (searchParams.getCategories() != null && !Objects.equals(filterToBeExcluded, "category")) {
       filters.addAll(createCategoryFilters(searchParams.getCategories()));
     }
-    if (searchParams.getPrices() != null && !Objects.equals(exclude, "price")) {
+    if (searchParams.getPrices() != null && !Objects.equals(filterToBeExcluded, "price")) {
       filters.addAll(createPriceFilters(searchParams.getPrices()));
     }
-    if (searchParams.getStores() != null && !Objects.equals(exclude, "store")) {
+    if (searchParams.getStores() != null && !Objects.equals(filterToBeExcluded, "store")) {
       filters.addAll(createStoreFilters(searchParams.getStores()));
     }
 
@@ -318,7 +317,7 @@ public class EsDealServiceImpl implements EsDealService {
 
   private Request createSearchRequest(DealSearchParams searchParams,
       Pageable pageable) {
-    final Request request = new Request("GET", "/deal/_search");
+    final Request request = new Request("GET", SEARCH_DEALS_ENDPOINT);
     final SearchSourceBuilder searchSource = new SearchSourceBuilder();
     searchSource.from(pageable.getPageNumber()).size(pageable.getPageSize());
 
@@ -355,4 +354,7 @@ public class EsDealServiceImpl implements EsDealService {
     return jsonNode;
   }
 
-}
+  @Override
+  public EsDeal save(EsDeal esDeal) {
+    return repository.save(esDeal);
+  }
