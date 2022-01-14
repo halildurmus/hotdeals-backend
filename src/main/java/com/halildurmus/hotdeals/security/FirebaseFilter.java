@@ -84,18 +84,18 @@ public class FirebaseFilter extends OncePerRequestFilter {
 
   private void verifyToken(HttpServletRequest request) throws Exception {
     final String token = parseBearerToken(request);
-    logger.info("Bearer Token: " + token);
+    log.info("Bearer Token: " + token);
     FirebaseToken decodedToken;
     try {
       decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-      logger.info("Decoded Token: " + decodedToken);
+      log.info("Decoded Token: " + decodedToken);
     } catch (FirebaseAuthException e) {
-      logger.error("Firebase Exception: " + e.getLocalizedMessage());
+      log.error("Firebase Exception: " + e.getLocalizedMessage());
       throw e;
     }
 
     final User user = firebaseTokenToUser(decodedToken);
-    logger.info("User: " + user);
+    log.info("User: " + user);
     final List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
     final FirebaseAuthenticationToken authentication = new FirebaseAuthenticationToken(
         user,
