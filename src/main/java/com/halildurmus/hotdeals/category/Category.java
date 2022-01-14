@@ -3,7 +3,6 @@ package com.halildurmus.hotdeals.category;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,7 +31,7 @@ public class Category implements Serializable {
   private String id;
 
   @NotNull
-  private Map<String, String> names = new HashMap<>();
+  private Map<String, String> names;
 
   @NotBlank
   private String parent;
