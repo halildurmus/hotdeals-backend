@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
@@ -52,10 +53,13 @@ public class User implements Serializable {
   @NotBlank
   private String avatar;
 
+  @Default
   private HashSet<String> blockedUsers = new HashSet<>();
 
+  @Default
   private HashSet<String> favorites = new HashSet<>();
 
+  @Default
   private Map<String, String> fcmTokens = new HashMap<>();
 
   @CreatedDate
