@@ -8,6 +8,7 @@ import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,7 @@ public class Comment implements Serializable {
   @Id
   private String id;
 
+  @NotNull
   @Indexed
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private ObjectId dealId;
