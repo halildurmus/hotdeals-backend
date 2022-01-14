@@ -18,9 +18,6 @@ spring:
 #    host: localhost
 #    port: 6379
 security:
-  firebase-properties:
-    # SET YOUR FIREBASE AUTHENTICATION DATABASE URL
-    database-url: https://xxxxx-xxxx.firebaseapp.com
   allowed-origins:
     - http://localhost:3000
   allowed-methods:

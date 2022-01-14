@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class SecurityProperties {
 
-  private FirebaseProperties firebaseProperties;
   private List<String> allowedOrigins;
   private List<String> allowedMethods;
   private List<String> superAdmins;
