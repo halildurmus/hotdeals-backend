@@ -28,7 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class FirebaseFilter extends OncePerRequestFilter {
 
-  private static final String headerName = "Authorization";
+  private static final String HEADER_NAME = "Authorization";
 
   @Autowired
   private RoleService roleService;
@@ -43,7 +43,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) {
-    if (request.getHeader(headerName) != null) {
+    if (request.getHeader(HEADER_NAME) != null) {
       verifyToken(request);
     }
     filterChain.doFilter(request, response);
