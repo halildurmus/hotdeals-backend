@@ -47,7 +47,7 @@ public interface MapStructMapper {
 
   DealReportPostDTO dealReportToDealReportPostDTO(DealReport dealReport);
 
-  Store storePostDTOStore(StorePostDTO storePostDTO);
+  Store storePostDTOToStore(StorePostDTO storePostDTO);
 
   StoreGetDTO storeToStoreGetDTO(Store store);
 

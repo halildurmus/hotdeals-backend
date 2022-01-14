@@ -53,7 +53,7 @@ public class StoreController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public StoreGetDTO createStore(@Valid @RequestBody StorePostDTO storePostDTO) {
-    final Store store = service.create(mapStructMapper.storePostDTOStore(storePostDTO));
+    final Store store = service.create(mapStructMapper.storePostDTOToStore(storePostDTO));
 
     return mapStructMapper.storeToStoreGetDTO(store);
   }
@@ -61,8 +61,7 @@ public class StoreController {
   @PutMapping("/{id}")
   public StoreGetDTO updateStore(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody StorePostDTO storePostDTO) {
-    final Store store = mapStructMapper.storePostDTOStore(storePostDTO);
-    store.setId(id);
+    final Store store = convertToEntity(id, storePostDTO);
 
     return mapStructMapper.storeToStoreGetDTO(service.update(store));
   }
@@ -71,6 +70,15 @@ public class StoreController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteStore(@ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
+  }
+
+  private Store convertToEntity(String id, StorePostDTO storePostDTO) {
+    final Store originalStore = service.findById(id).orElseThrow(StoreNotFoundException::new);
+    final Store store = mapStructMapper.storePostDTOToStore(storePostDTO);
+    store.setId(id);
+    store.setCreatedAt(originalStore.getCreatedAt());
+
+    return store;
   }
 
 }
