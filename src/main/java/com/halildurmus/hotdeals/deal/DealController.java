@@ -203,8 +203,7 @@ public class DealController {
   @PutMapping("/{id}")
   public DealGetDTO updateDeal(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealPostDTO dealPostDTO) {
-    final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
-    deal.setId(id);
+    final Deal deal = convertToEntity(id, dealPostDTO);
 
     return mapStructMapper.dealToDealGetDTO(service.update(deal));
   }
@@ -236,11 +235,10 @@ public class DealController {
   public CommentGetDTO postComment(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
-    commentPostDTO.setDealId(new ObjectId(id));
-    final Comment comment = commentService.save(
-        mapStructMapper.commentPostDTOToComment(commentPostDTO));
+    final Comment comment = mapStructMapper.commentPostDTOToComment(commentPostDTO);
+    comment.setDealId(new ObjectId(id));
 
-    return mapStructMapper.commentToCommentGetDTO(comment);
+    return mapStructMapper.commentToCommentGetDTO(commentService.save(comment));
   }
 
   @PostMapping("/{id}/reports")
@@ -272,6 +270,21 @@ public class DealController {
     final Deal deal = service.vote(id, DealVoteType.UNVOTE);
 
     return mapStructMapper.dealToDealGetDTO(deal);
+  }
+
+  private Deal convertToEntity(String id, DealPostDTO dealPostDTO) {
+    final Deal originalDeal = service.findById(id).orElseThrow(DealNotFoundException::new);
+    final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
+    deal.setId(id);
+    deal.setPostedBy(originalDeal.getPostedBy());
+    deal.setDealScore(originalDeal.getDealScore());
+    deal.setUpvoters(originalDeal.getUpvoters());
+    deal.setDownvoters(originalDeal.getDownvoters());
+    deal.setStatus(originalDeal.getStatus());
+    deal.setViews(originalDeal.getViews());
+    deal.setCreatedAt(originalDeal.getCreatedAt());
+
+    return deal;
   }
 
 }
