@@ -116,8 +116,8 @@ public class DealController {
   private List<PriceRange> parsePricesParam(List<String> prices) {
     final List<PriceRange> priceRanges = new ArrayList<>();
     try {
-      for (String p : prices) {
-        final String[] arr = p.split(":");
+      for (String price : prices) {
+        final String[] arr = price.split(":");
         final double from = Double.parseDouble(arr[0]);
         Double to = null;
         if (!arr[1].equals("*")) {
