@@ -94,12 +94,12 @@ public class UserServiceImpl implements UserService {
   private UserPatchDTO applyPatchToUser(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
     final UserPatchDTO userPatchDTO = new UserPatchDTO();
-    // Converts the user to a JsonNode
+    // Convert the user to a JsonNode
     final JsonNode target = objectMapper.convertValue(userPatchDTO, JsonNode.class);
-    // Applies the patch to the user
+    // Apply the patch to the user
     final JsonNode patched = patch.apply(target);
 
-    // Converts the JsonNode to a UserPatchDTO instance
+    // Convert the JsonNode to a UserPatchDTO instance
     return objectMapper.treeToValue(patched, UserPatchDTO.class);
   }
 

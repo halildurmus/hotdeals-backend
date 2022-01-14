@@ -114,12 +114,12 @@ public class DealServiceImpl implements DealService {
   private DealPatchDTO applyPatchToDeal(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
     final DealPatchDTO dealPatchDTO = new DealPatchDTO();
-    // Converts the deal to a JsonNode
+    // Convert the deal to a JsonNode
     final JsonNode target = objectMapper.convertValue(dealPatchDTO, JsonNode.class);
-    // Applies the patch to the deal
+    // Apply the patch to the deal
     final JsonNode patched = patch.apply(target);
 
-    // Converts the JsonNode to a DealPatchDTO instance
+    // Convert the JsonNode to a DealPatchDTO instance
     return objectMapper.treeToValue(patched, DealPatchDTO.class);
   }
 

@@ -77,7 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "", e);
     }
 
-    // Removes invalid FCM tokens
+    // Remove invalid FCM tokens from the authenticated user
     for (int i = 0; i < batchResponse.getResponses().size(); i++) {
       final SendResponse sendResponse = batchResponse.getResponses().get(i);
       if (sendResponse.getException() != null) {
