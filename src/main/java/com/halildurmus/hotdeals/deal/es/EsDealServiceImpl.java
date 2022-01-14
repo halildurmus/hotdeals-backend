@@ -2,7 +2,6 @@ package com.halildurmus.hotdeals.deal.es;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.deal.DealSearchParams;
 import com.halildurmus.hotdeals.deal.PriceRange;
@@ -358,3 +357,5 @@ public class EsDealServiceImpl implements EsDealService {
   public EsDeal save(EsDeal esDeal) {
     return repository.save(esDeal);
   }
+
+}
