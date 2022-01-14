@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -160,6 +161,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   public void updatesGivenStore() throws Exception {
     final Store store = DummyStores.store2;
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(store);
+    when(service.findById(anyString())).thenReturn(Optional.of(store));
     when(service.update(any(Store.class))).thenReturn(store);
     final RequestBuilder request = put("/stores/" + store.getId())
         .accept(MediaType.APPLICATION_JSON)

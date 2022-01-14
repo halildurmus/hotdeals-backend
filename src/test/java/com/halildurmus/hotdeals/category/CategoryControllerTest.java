@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,8 +57,8 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /categories (returns empty array)")
   public void getCategoriesReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
-
     final RequestBuilder request = get("/categories");
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
@@ -204,6 +205,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
     final Category category = DummyCategories.category1;
     final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
         category);
+    when(service.findById(anyString())).thenReturn(Optional.of(category));
     when(service.update(any(Category.class))).thenReturn(category);
     final RequestBuilder request = put("/categories/" + category.getId())
         .accept(MediaType.APPLICATION_JSON)

@@ -608,6 +608,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void updatesGivenDeal() throws Exception {
     final Deal deal = DummyDeals.deal1;
     final DealPostDTO dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
+    when(service.findById(anyString())).thenReturn(Optional.of(deal));
     when(service.update(any(Deal.class))).thenReturn(deal);
     final RequestBuilder request = put("/deals/" + deal.getId())
         .accept(MediaType.APPLICATION_JSON)
