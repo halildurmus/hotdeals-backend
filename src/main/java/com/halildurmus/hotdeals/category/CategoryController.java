@@ -59,7 +59,7 @@ public class CategoryController {
           "The category name must have an English translation!");
     }
     final Category category = service.create(
-        mapStructMapper.categoryPostDTOCategory(categoryPostDTO));
+        mapStructMapper.categoryPostDTOToCategory(categoryPostDTO));
 
     return mapStructMapper.categoryToCategoryGetDTO(category);
   }
@@ -67,8 +67,7 @@ public class CategoryController {
   @PutMapping("/{id}")
   public CategoryGetDTO updateCategory(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
-    final Category category = mapStructMapper.categoryPostDTOCategory(categoryPostDTO);
-    category.setId(id);
+    final Category category = convertToEntity(id, categoryPostDTO);
 
     return mapStructMapper.categoryToCategoryGetDTO(service.update(category));
   }
@@ -77,6 +76,16 @@ public class CategoryController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteCategory(@ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
+  }
+
+  private Category convertToEntity(String id, CategoryPostDTO categoryPostDTO) {
+    final Category originalCategory = service.findById(id)
+        .orElseThrow(CategoryNotFoundException::new);
+    final Category category = mapStructMapper.categoryPostDTOToCategory(categoryPostDTO);
+    category.setId(id);
+    category.setCreatedAt(originalCategory.getCreatedAt());
+
+    return category;
   }
 
 }

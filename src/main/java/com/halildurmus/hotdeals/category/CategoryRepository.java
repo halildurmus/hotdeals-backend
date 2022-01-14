@@ -34,4 +34,5 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
   @Override
   @Cacheable("categories:findAll")
   Page<Category> findAll(Pageable pageable);
+
 }
