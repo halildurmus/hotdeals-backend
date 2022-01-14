@@ -46,8 +46,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Validated
 public class DealController {
 
-  private final List<String> supportedSortBys = List.of("createdAt", "price");
-  private final List<String> orderTypes = List.of("asc", "desc");
+  private static final List<String> SUPPORTED_SORT_BYS = List.of("createdAt", "price");
+  private static final List<String> ORDER_TYPES = List.of("asc", "desc");
 
   @Autowired
   private MapStructMapper mapStructMapper;
@@ -150,14 +150,14 @@ public class DealController {
       priceRanges = parsePricesParam(prices);
     }
 
-    if (sortBy != null && !supportedSortBys.contains(sortBy)) {
+    if (sortBy != null && !SUPPORTED_SORT_BYS.contains(sortBy)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid sortBy! Supported sortBy values => " + supportedSortBys);
+          "Invalid sortBy! Supported sortBy values => " + SUPPORTED_SORT_BYS);
     }
 
-    if (order != null && !orderTypes.contains(order)) {
+    if (order != null && !ORDER_TYPES.contains(order)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid order! Supported order values => " + orderTypes);
+          "Invalid order! Supported order values => " + ORDER_TYPES);
     }
 
     final DealSearchParams searchParams = DealSearchParams.builder()
