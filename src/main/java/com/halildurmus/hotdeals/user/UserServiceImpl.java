@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
         .removeIf(entry -> (token.equals(entry.getValue())));
     if (!isTokenExists) {
       throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "User does not have this token!");
+          "User does not have this token: " + token);
     }
     user.setFcmTokens(fcmTokens);
     repository.save(user);

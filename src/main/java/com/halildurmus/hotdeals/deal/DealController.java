@@ -124,12 +124,13 @@ public class DealController {
           to = Double.parseDouble(arr[1]);
         }
         if (to != null && (from < 0 || to < 0 || from > to)) {
-          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid prices!");
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              "Invalid PriceRange: " + from + ":" + to);
         }
         priceRanges.add(new PriceRange(from, to));
       }
     } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid prices!");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid prices parameter!");
     }
 
     return priceRanges;
