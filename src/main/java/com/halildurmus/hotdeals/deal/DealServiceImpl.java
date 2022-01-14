@@ -145,7 +145,6 @@ public class DealServiceImpl implements DealService {
   @Transactional
   @Override
   public Deal update(Deal deal) {
-    repository.findById(deal.getId()).orElseThrow(DealNotFoundException::new);
     final User user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
@@ -181,8 +180,7 @@ public class DealServiceImpl implements DealService {
   public Deal vote(String id, DealVoteType voteType) {
     final User user = securityService.getUser();
     final ObjectId userId = new ObjectId(user.getId());
-    final Deal deal = repository.findById(id)
-        .orElseThrow(DealNotFoundException::new);
+    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
 
     if (voteType.equals(DealVoteType.UP) && deal.getUpvoters().contains(userId)) {
       throw new ResponseStatusException(
