@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
 import com.halildurmus.hotdeals.report.user.UserReport;
@@ -28,7 +29,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserIntegrationTest extends BaseIntegrationTest {
 
-  private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+  private final ObjectMapper objectMapper = JsonMapper.builder()
+      .findAndAddModules()
+      .build();
 
   @MockBean
   private SecurityService securityService;
