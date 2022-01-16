@@ -6,6 +6,7 @@ import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import io.swagger.annotations.Api;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@Api(tags = "categories")
 @RestController
 @RequestMapping("/categories")
 @Validated
