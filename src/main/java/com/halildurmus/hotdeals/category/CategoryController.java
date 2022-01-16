@@ -4,6 +4,7 @@ import com.halildurmus.hotdeals.category.DTO.CategoryGetDTO;
 import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
 import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
+import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ public class CategoryController {
   }
 
   @GetMapping("/{id}")
+  @IsSuper
   public CategoryGetDTO getCategory(@ObjectIdConstraint @PathVariable String id) {
     final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
 
@@ -53,6 +55,7 @@ public class CategoryController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @IsSuper
   public CategoryGetDTO createCategory(@Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     if (!categoryPostDTO.getNames().containsKey("en")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -65,6 +68,7 @@ public class CategoryController {
   }
 
   @PutMapping("/{id}")
+  @IsSuper
   public CategoryGetDTO updateCategory(@ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     final Category category = convertToEntity(id, categoryPostDTO);
@@ -74,6 +78,7 @@ public class CategoryController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @IsSuper
   public void deleteCategory(@ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }
