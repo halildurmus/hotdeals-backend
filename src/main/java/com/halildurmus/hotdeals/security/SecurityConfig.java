@@ -28,6 +28,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+  private static final String[] ADMIN_GET_ENDPOINTS = {"/actuator/**", "/deals", "/deals/",
+      "/users", "/users/", "/users/search/findByEmail",};
+  private static final String[] ADMIN_POST_ENDPOINTS = {"/stores"};
+  private static final String[] ADMIN_PATCH_ENDPOINTS = {"/users/*"};
+  private static final String[] ADMIN_PUT_ENDPOINTS = {"/stores/*", "/users/*"};
+  private static final String[] ADMIN_DELETE_ENDPOINTS = {"/stores/*", "/users/*"};
+
   private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
       "/stores", "/users/*/comment-count"};
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
@@ -70,16 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    final String[] adminAntPatternsGET = {"/actuator/**", "/deals", "/deals/", "/users", "/users/",
-        "/users/search/findByEmail"};
-    final String[] adminAntPatternsPOST = {"/categories", "/stores"};
-    final String[] adminAntPatternsPATCH = {"/users/*"};
-    final String[] adminAntPatternsPUT = {"/categories/*", "/stores/*", "/users/*"};
-    final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/users/*"};
-    final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/stores",
-        "/users/*/comment-count"};
-    final String[] publicAntPatternsPOST = {"/users"};
-
     httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
         .formLogin().disable()
         .httpBasic().disable().exceptionHandling()
@@ -89,14 +86,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/users/me/**").authenticated()
         .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
         .access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, publicAntPatternsGET).permitAll()
-        .antMatchers(HttpMethod.GET, adminAntPatternsGET).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, "/deals/**", "/users/*").permitAll()
-        .antMatchers(HttpMethod.POST, publicAntPatternsPOST).permitAll()
-        .antMatchers(HttpMethod.POST, adminAntPatternsPOST).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, adminAntPatternsPUT).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, adminAntPatternsDELETE).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PATCH, adminAntPatternsPATCH).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.POST, ADMIN_POST_ENDPOINTS).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PUT, ADMIN_PUT_ENDPOINTS).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
