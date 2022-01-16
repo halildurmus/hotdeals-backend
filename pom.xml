@@ -88,10 +88,11 @@
       <groupId>org.mapstruct</groupId>
       <version>${org.mapstruct.version}</version>
     </dependency>
-    <dependency>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-      <groupId>org.springframework.boot</groupId>
-    </dependency>
+    <!-- TODO(halildurmus): Uncomment when https://github.com/springfox/springfox/issues/3955 is fixed -->
+    <!--    <dependency>-->
+    <!--      <artifactId>spring-boot-starter-actuator</artifactId>-->
+    <!--      <groupId>org.springframework.boot</groupId>-->
+    <!--    </dependency>-->
     <dependency>
       <artifactId>spring-boot-starter-cache</artifactId>
       <groupId>org.springframework.boot</groupId>
