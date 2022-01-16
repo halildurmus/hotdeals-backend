@@ -74,6 +74,16 @@
       <version>8.1.0</version>
     </dependency>
     <dependency>
+      <artifactId>springfox-boot-starter</artifactId>
+      <groupId>io.springfox</groupId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <groupId>io.springfox</groupId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
       <artifactId>mapstruct</artifactId>
       <groupId>org.mapstruct</groupId>
       <version>${org.mapstruct.version}</version>
