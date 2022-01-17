@@ -28,14 +28,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String[] ADMIN_GET_ENDPOINTS = {"/actuator/**", "/deals", "/deals/",
-      "/users", "/users/", "/users/search/findByEmail",};
-  private static final String[] ADMIN_PATCH_ENDPOINTS = {"/users/*"};
-  private static final String[] ADMIN_PUT_ENDPOINTS = {"/users/*"};
-  private static final String[] ADMIN_DELETE_ENDPOINTS = {"/users/*"};
-
+  private static final String[] ADMIN_GET_ENDPOINTS = {"/actuator/**"};
   private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
-      "/stores", "/users/*/comment-count"};
+      "/stores"};
+  // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
+  private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
   private static final String[] SWAGGER_ENDPOINTS = {"/swagger-resources/**", "/swagger-ui/**",
       "/v3/api-docs"};
@@ -81,14 +78,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers("/users/me/**").authenticated()
         .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
         .access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/deals/**", "/users/*").permitAll()
-        .antMatchers(HttpMethod.PUT, ADMIN_PUT_ENDPOINTS).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).access("hasRole('ROLE_SUPER')")
+        .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -97,9 +90,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) {
     web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**")
-        .antMatchers(PUBLIC_GET_ENDPOINTS)
+        .regexMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS_REGEX)
+        .antMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
         .antMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
-        .antMatchers(SWAGGER_ENDPOINTS);
+        .antMatchers(HttpMethod.GET, SWAGGER_ENDPOINTS);
   }
 
 }
