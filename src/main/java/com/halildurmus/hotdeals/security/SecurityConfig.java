@@ -30,10 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String[] ADMIN_GET_ENDPOINTS = {"/actuator/**", "/deals", "/deals/",
       "/users", "/users/", "/users/search/findByEmail",};
-  private static final String[] ADMIN_POST_ENDPOINTS = {"/stores"};
   private static final String[] ADMIN_PATCH_ENDPOINTS = {"/users/*"};
-  private static final String[] ADMIN_PUT_ENDPOINTS = {"/stores/*", "/users/*"};
-  private static final String[] ADMIN_DELETE_ENDPOINTS = {"/stores/*", "/users/*"};
+  private static final String[] ADMIN_PUT_ENDPOINTS = {"/users/*"};
+  private static final String[] ADMIN_DELETE_ENDPOINTS = {"/users/*"};
 
   private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
       "/stores", "/users/*/comment-count"};
@@ -82,13 +81,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .antMatchers("/users/me/**").authenticated()
         .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
         .access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.GET, "/deals/**", "/users/*").permitAll()
-        .antMatchers(HttpMethod.POST, ADMIN_POST_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PUT, ADMIN_PUT_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).access("hasRole('ROLE_SUPER')")
         .antMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).access("hasRole('ROLE_SUPER')")
@@ -99,7 +96,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(WebSecurity web) {
-    web.ignoring().antMatchers(PUBLIC_GET_ENDPOINTS)
+    web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**")
+        .antMatchers(PUBLIC_GET_ENDPOINTS)
         .antMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
         .antMatchers(SWAGGER_ENDPOINTS);
   }
