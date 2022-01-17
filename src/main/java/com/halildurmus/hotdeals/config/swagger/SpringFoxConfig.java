@@ -18,18 +18,16 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SpringFoxConfig {
 
+  private static final String GROUP_NAME = "hotdeals";
   private static final String BASE_PACKAGE = "com.halildurmus.hotdeals";
   private static final List<SecurityScheme> SECURITY_SCHEMES = List.of(
       new ApiKey("Bearer", "Authorization", "header"));
-  private static final Tag CATEGORIES_TAG =
-      new Tag("categories", "TODO: description");
-  private static final Tag DEALS_TAG = new Tag("deals", "TODO: description");
-  private static final Tag NOTIFICATIONS_TAG =
-      new Tag("notifications", "TODO: description");
-  private static final Tag ROLES_TAG =
-      new Tag("roles", "TODO: description");
-  private static final Tag STORES_TAG = new Tag("stores", "TODO: description");
-  private static final Tag USERS_TAG = new Tag("users", "TODO: description");
+  private static final Tag CATEGORIES_TAG = new Tag("categories", "");
+  private static final Tag DEALS_TAG = new Tag("deals", "");
+  private static final Tag NOTIFICATIONS_TAG = new Tag("notifications", "");
+  private static final Tag ROLES_TAG = new Tag("roles", "");
+  private static final Tag STORES_TAG = new Tag("stores", "");
+  private static final Tag USERS_TAG = new Tag("users", "");
 
   @Autowired
   private SwaggerProperties swaggerProperties;
@@ -37,6 +35,7 @@ public class SpringFoxConfig {
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.OAS_30)
+        .groupName(GROUP_NAME)
         .apiInfo(getApiInfo())
         .securitySchemes(SECURITY_SCHEMES)
         .tags(CATEGORIES_TAG, DEALS_TAG, NOTIFICATIONS_TAG, ROLES_TAG, STORES_TAG, USERS_TAG)
