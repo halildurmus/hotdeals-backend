@@ -7,6 +7,11 @@ import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -39,6 +44,7 @@ public class CategoryController {
   private CategoryService service;
 
   @GetMapping
+  @ApiOperation("Returns all categories")
   public List<CategoryGetDTO> getCategories(Pageable pageable) {
     final Page<Category> categories = service.findAll(pageable);
 
@@ -49,7 +55,16 @@ public class CategoryController {
 
   @GetMapping("/{id}")
   @IsSuper
-  public CategoryGetDTO getCategory(@ObjectIdConstraint @PathVariable String id) {
+  @ApiOperation(value = "Finds category by ID", authorizations = @Authorization("Bearer"))
+  @ApiResponses({
+      @ApiResponse(code = 400, message = "Invalid category ID"),
+      @ApiResponse(code = 401, message = "Unauthorized"),
+      @ApiResponse(code = 403, message = "Forbidden"),
+      @ApiResponse(code = 404, message = "Category not found")
+  })
+  public CategoryGetDTO getCategory(
+      @ApiParam("String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @ObjectIdConstraint @PathVariable String id) {
     final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
 
     return mapStructMapper.categoryToCategoryGetDTO(category);
@@ -58,6 +73,12 @@ public class CategoryController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @IsSuper
+  @ApiOperation(value = "Creates a category", authorizations = @Authorization("Bearer"))
+  @ApiResponses({
+      @ApiResponse(code = 400, message = "Bad Request"),
+      @ApiResponse(code = 401, message = "Unauthorized"),
+      @ApiResponse(code = 403, message = "Forbidden")
+  })
   public CategoryGetDTO createCategory(@Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     if (!categoryPostDTO.getNames().containsKey("en")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -71,7 +92,16 @@ public class CategoryController {
 
   @PutMapping("/{id}")
   @IsSuper
-  public CategoryGetDTO updateCategory(@ObjectIdConstraint @PathVariable String id,
+  @ApiOperation(value = "Updates an existing category", authorizations = @Authorization("Bearer"))
+  @ApiResponses({
+      @ApiResponse(code = 400, message = "Bad Request"),
+      @ApiResponse(code = 401, message = "Unauthorized"),
+      @ApiResponse(code = 403, message = "Forbidden"),
+      @ApiResponse(code = 404, message = "Category not found")
+  })
+  public CategoryGetDTO updateCategory(
+      @ApiParam("String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     final Category category = convertToEntity(id, categoryPostDTO);
 
@@ -81,7 +111,16 @@ public class CategoryController {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  public void deleteCategory(@ObjectIdConstraint @PathVariable String id) {
+  @ApiOperation(value = "Deletes an existing category", authorizations = @Authorization("Bearer"))
+  @ApiResponses({
+      @ApiResponse(code = 400, message = "Bad Request"),
+      @ApiResponse(code = 401, message = "Unauthorized"),
+      @ApiResponse(code = 403, message = "Forbidden"),
+      @ApiResponse(code = 404, message = "Category not found")
+  })
+  public void deleteCategory(
+      @ApiParam("String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }
 
