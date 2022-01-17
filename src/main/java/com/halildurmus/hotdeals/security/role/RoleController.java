@@ -26,7 +26,7 @@ public class RoleController {
 
   @PutMapping
   @IsSuper
-  @ApiOperation(value = "Adds the given role to the given user in the Firebase", authorizations = @Authorization("Bearer"))
+  @ApiOperation(value = "Adds a role to a user in the Firebase", authorizations = @Authorization("Bearer"))
   @ApiResponses({
       @ApiResponse(code = 400, message = "Bad Request"),
       @ApiResponse(code = 401, message = "Unauthorized"),
@@ -41,7 +41,7 @@ public class RoleController {
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  @ApiOperation(value = "Deletes the given role from the given user in the Firebase", authorizations = @Authorization("Bearer"))
+  @ApiOperation(value = "Deletes a role from a user in the Firebase", authorizations = @Authorization("Bearer"))
   @ApiResponses({
       @ApiResponse(code = 400, message = "Bad Request"),
       @ApiResponse(code = 401, message = "Unauthorized"),
