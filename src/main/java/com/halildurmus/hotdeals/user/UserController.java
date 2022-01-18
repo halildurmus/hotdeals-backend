@@ -119,7 +119,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserByUid(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Firebase User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @RequestParam String uid) {
     final User user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
