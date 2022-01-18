@@ -14,20 +14,23 @@ import com.halildurmus.hotdeals.user.DTO.UserBasicDTO;
 import com.halildurmus.hotdeals.user.DTO.UserExtendedDTO;
 import com.halildurmus.hotdeals.user.DTO.UserPostDTO;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.types.ObjectId;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -44,7 +47,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@Api(tags = "users")
+@Tag(name = "users")
 @RestController
 @RequestMapping("/users")
 @Validated
@@ -67,19 +70,23 @@ public class UserController {
 
   @GetMapping
   @IsSuper
-  @ApiOperation(value = "Returns all users", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Returns all users", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
-  public Page<User> getUsers(Pageable pageable) {
-    return service.findAll(pageable);
+  public List<User> getUsers(@ParameterObject Pageable pageable) {
+    return service.findAll(pageable).getContent();
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation("Creates a user")
-  @ApiResponses(@ApiResponse(code = 400, message = "Bad Request"))
+  @Operation(summary = "Creates a user")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "The user created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserBasicDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  })
   public UserBasicDTO createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
     final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
 
@@ -88,29 +95,31 @@ public class UserController {
 
   @GetMapping("/search/findByEmail")
   @IsSuper
-  @ApiOperation(value = "Finds user by email", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Finds user by email", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid email format"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserExtendedDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid email format", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserByEmail(
-      @ApiParam("User's email address") @RequestParam @Email String email) {
+      @Parameter(description = "User's email address") @RequestParam @Email String email) {
     final User user = service.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
     return mapStructMapper.userToUserExtendedDTO(user);
   }
 
   @GetMapping("/search/findByUid")
-  @ApiOperation(value = "Finds user by uid", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Finds user by uid", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid uid"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserExtendedDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid uid", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserByUid(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @RequestParam String uid) {
     final User user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
@@ -118,26 +127,33 @@ public class UserController {
   }
 
   @GetMapping("/me")
-  @ApiOperation(value = "Returns the authenticated user", authorizations = @Authorization("Bearer"))
-  @ApiResponses(@ApiResponse(code = 401, message = "Unauthorized"))
+  @Operation(summary = "Returns the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
   public User getAuthenticatedUser() {
     return securityService.getUser();
   }
 
   @PatchMapping(value = "/me", consumes = "application/json-patch+json")
-  @ApiOperation(value = "Updates the authenticated user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Updates the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserExtendedDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public UserExtendedDTO patchUser(@RequestBody JsonPatch patch) {
     return mapStructMapper.userToUserExtendedDTO(service.patchUser(patch));
   }
 
   @GetMapping("/me/blocks")
-  @ApiOperation(value = "Returns the users blocked by the authenticated user", authorizations = @Authorization("Bearer"))
-  @ApiResponses(@ApiResponse(code = 401, message = "Unauthorized"))
-  public List<UserExtendedDTO> getBlockedUsers(Pageable pageable) {
+  @Operation(summary = "Returns the users blocked by the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserExtendedDTO.class)))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
+  public List<UserExtendedDTO> getBlockedUsers(@ParameterObject Pageable pageable) {
     final List<User> blockedUsers = service.getBlockedUsers(pageable);
 
     return blockedUsers.stream().map(mapStructMapper::userToUserExtendedDTO)
@@ -145,84 +161,95 @@ public class UserController {
   }
 
   @PutMapping("/me/blocks/{id}")
-  @ApiOperation(value = "Blocks a user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Blocks a user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 304, message = "You've already blocked this user before"),
-      @ApiResponse(code = 400, message = "Invalid user ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "304", description = "You've already blocked this user before", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void blockUser(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     service.block(id);
   }
 
   @DeleteMapping("/me/blocks/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Unblocks a user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Unblocks a user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 304, message = "You've already unblocked this user before"),
-      @ApiResponse(code = 400, message = "Invalid user ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "204", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "304", description = "You've already unblocked this user before", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void unblockUser(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     service.unblock(id);
   }
 
   @GetMapping("/me/deals")
-  @ApiOperation(value = "Returns the deals posted by the authenticated user", authorizations = @Authorization("Bearer"))
-  @ApiResponses(@ApiResponse(code = 401, message = "Unauthorized"))
-  public List<DealGetDTO> getDeals(Pageable pageable) {
+  @Operation(summary = "Returns the deals posted by the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
+  public List<DealGetDTO> getDeals(@ParameterObject Pageable pageable) {
     return service.getDeals(pageable).stream().map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
   }
 
   @GetMapping("/me/favorites")
-  @ApiOperation(value = "Returns the deals favorited by the authenticated user", authorizations = @Authorization("Bearer"))
-  @ApiResponses(@ApiResponse(code = 401, message = "Unauthorized"))
-  public List<DealGetDTO> getFavorites(Pageable pageable) {
+  @Operation(summary = "Returns the deals favorited by the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
+  public List<DealGetDTO> getFavorites(@ParameterObject Pageable pageable) {
     return service.getFavorites(pageable).stream().map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
   }
 
   @PutMapping("/me/favorites/{dealId}")
-  @ApiOperation(value = "Favorites a deal", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Favorites a deal", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 304, message = "You've already favorited this deal before"),
-      @ApiResponse(code = 400, message = "Invalid deal ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "Deal not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "304", description = "You've already favorited this deal before", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
   })
   public void favoriteDeal(
-      @ApiParam("String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String dealId) {
     service.favoriteDeal(dealId);
   }
 
   @DeleteMapping("/me/favorites/{dealId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Unfavorites a deal", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Unfavorites a deal", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 304, message = "You've already unfavorited this deal before"),
-      @ApiResponse(code = 400, message = "Invalid deal ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "Deal not found")
+      @ApiResponse(responseCode = "204", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "304", description = "You've already unfavorited this deal before", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
   })
   public void unfavoriteDeal(
-      @ApiParam("String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
   }
 
   @PutMapping("/me/fcm-tokens")
-  @ApiOperation(value = "Adds a FCM token to the authenticated user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Adds a FCM token to the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public void addFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     if (ObjectUtils.isEmpty(fcmTokenParams.getDeviceId())) {
@@ -234,10 +261,11 @@ public class UserController {
 
   @DeleteMapping("/me/fcm-tokens")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ApiOperation(value = "Deletes a FCM token from the authenticated user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Deletes a FCM token from the authenticated user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized")
+      @ApiResponse(responseCode = "204", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public void deleteFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
     final User user = securityService.getUser();
@@ -245,13 +273,14 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  @ApiOperation("Finds user by ID")
+  @Operation(summary = "Finds user by ID")
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid user ID"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserBasicDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserBasicDTO getUser(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
@@ -259,22 +288,26 @@ public class UserController {
   }
 
   @GetMapping("/{id}/comment-count")
-  @ApiOperation("Returns the number of comments posted by a user")
-  @ApiResponses(@ApiResponse(code = 400, message = "Invalid user ID"))
+  @Operation(summary = "Returns the number of comments posted by a user")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content)
+  })
   public int getUsersCommentCount(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     return commentService.getCommentCountByPostedById(new ObjectId(id));
   }
 
   @GetMapping("/{id}/extended")
-  @ApiOperation("Finds user by ID (Displays additional information about the user)")
+  @Operation(summary = "Finds user by ID (Displays additional information about the user)")
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid user ID"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserExtendedDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserExtended(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
@@ -283,14 +316,15 @@ public class UserController {
 
   @PostMapping("/{id}/reports")
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Reports a user", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Reports a user", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid user ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 404, message = "User not found")
+      @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void createUserReport(
-      @ApiParam("String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);

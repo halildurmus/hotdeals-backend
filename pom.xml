@@ -74,25 +74,19 @@
       <version>8.1.0</version>
     </dependency>
     <dependency>
-      <artifactId>springfox-boot-starter</artifactId>
-      <groupId>io.springfox</groupId>
-      <version>3.0.0</version>
-    </dependency>
-    <dependency>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <groupId>io.springfox</groupId>
-      <version>3.0.0</version>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <groupId>org.springdoc</groupId>
+      <version>1.6.4</version>
     </dependency>
     <dependency>
       <artifactId>mapstruct</artifactId>
       <groupId>org.mapstruct</groupId>
       <version>${org.mapstruct.version}</version>
     </dependency>
-    <!-- TODO(halildurmus): Uncomment when https://github.com/springfox/springfox/issues/3955 is fixed -->
-    <!--    <dependency>-->
-    <!--      <artifactId>spring-boot-starter-actuator</artifactId>-->
-    <!--      <groupId>org.springframework.boot</groupId>-->
-    <!--    </dependency>-->
+    <dependency>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
     <dependency>
       <artifactId>spring-boot-starter-cache</artifactId>
       <groupId>org.springframework.boot</groupId>

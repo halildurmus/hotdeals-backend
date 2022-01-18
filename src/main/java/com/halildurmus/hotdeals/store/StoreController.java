@@ -6,15 +6,19 @@ import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.store.DTO.StoreGetDTO;
 import com.halildurmus.hotdeals.store.DTO.StorePostDTO;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "stores")
+@Tag(name = "stores")
 @RestController
 @RequestMapping("/stores")
 @Validated
@@ -43,8 +47,9 @@ public class StoreController {
   private StoreService service;
 
   @GetMapping
-  @ApiOperation("Returns all stores")
-  public List<StoreGetDTO> getStores(Pageable pageable) {
+  @Operation(summary = "Returns all stores")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StoreGetDTO.class)))))
+  public List<StoreGetDTO> getStores(@ParameterObject Pageable pageable) {
     final Page<Store> stores = service.findAll(pageable);
 
     return stores.getContent().stream()
@@ -54,15 +59,16 @@ public class StoreController {
 
   @GetMapping("/{id}")
   @IsSuper
-  @ApiOperation(value = "Finds store by ID", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Finds store by ID", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Invalid store ID"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden"),
-      @ApiResponse(code = 404, message = "Store not found")
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid store ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO getStore(
-      @ApiParam("String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     final Store store = service.findById(id).orElseThrow(StoreNotFoundException::new);
 
@@ -72,11 +78,12 @@ public class StoreController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @IsSuper
-  @ApiOperation(value = "Creates a store", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Creates a store", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden")
+      @ApiResponse(responseCode = "201", description = "The store created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public StoreGetDTO createStore(@Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = service.create(mapStructMapper.storePostDTOToStore(storePostDTO));
@@ -86,15 +93,16 @@ public class StoreController {
 
   @PutMapping("/{id}")
   @IsSuper
-  @ApiOperation(value = "Updates an existing store", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Updates an existing store", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden"),
-      @ApiResponse(code = 404, message = "Store not found")
+      @ApiResponse(responseCode = "200", description = "The store successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO updateStore(
-      @ApiParam("String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id, @Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = convertToEntity(id, storePostDTO);
 
@@ -104,15 +112,16 @@ public class StoreController {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  @ApiOperation(value = "Deletes an existing store", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Deletes an existing store", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden"),
-      @ApiResponse(code = 404, message = "Store not found")
+      @ApiResponse(responseCode = "204", description = "The store successfully deleted", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public void deleteStore(
-      @ApiParam("String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
       @ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }

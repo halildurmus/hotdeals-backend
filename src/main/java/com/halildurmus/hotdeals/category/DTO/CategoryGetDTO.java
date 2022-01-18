@@ -1,32 +1,31 @@
 package com.halildurmus.hotdeals.category.DTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 
-@ApiModel("CategoryGetDTO")
+@Schema(name = "CategoryGetDTO")
 @Data
 @Builder
 public class CategoryGetDTO {
 
-  @ApiModelProperty(value = "Category id", position = 1, example = "5fbe790ec6f0b32014074bb1")
+  @Schema(description = "Category ID", example = "5fbe790ec6f0b32014074bb1")
   private final String id;
 
-  @ApiModelProperty(value = "Category names", position = 2, example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
+  @Schema(description = "Category names", example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
   private final Map<String, String> names;
 
-  @ApiModelProperty(value = "Parent category path", position = 3, example = "/")
+  @Schema(description = "Parent category path", example = "/")
   private final String parent;
 
-  @ApiModelProperty(value = "Category path", position = 4, example = "/computers")
+  @Schema(description = "Category path", example = "/computers")
   private final String category;
 
-  @ApiModelProperty(value = "Category icon ligature", position = 5, example = "computer")
+  @Schema(description = "Category icon ligature", example = "computer")
   private final String iconLigature;
 
-  @ApiModelProperty(value = "Category icon font family", position = 6, example = "MaterialIcons")
+  @Schema(description = "Category icon font family", example = "MaterialIcons")
   private final String iconFontFamily;
 
 }

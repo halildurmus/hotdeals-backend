@@ -1,11 +1,12 @@
 package com.halildurmus.hotdeals.security.role;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "roles")
+@Tag(name = "roles")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
@@ -26,30 +28,34 @@ public class RoleController {
 
   @PutMapping
   @IsSuper
-  @ApiOperation(value = "Adds a role to a user in the Firebase", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Adds a role to a user in the Firebase")
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden")
+      @ApiResponse(responseCode = "200", description = "The role successfully added", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public void addRole(
-      @ApiParam("String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
-      @RequestParam @NotBlank String uid, @ApiParam("User role") @RequestParam Role role) {
+      @Parameter(description = "String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
+      @RequestParam @NotBlank String uid,
+      @Parameter(description = "User role") @RequestParam Role role) {
     service.add(uid, role);
   }
 
   @DeleteMapping
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  @ApiOperation(value = "Deletes a role from a user in the Firebase", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Deletes a role from a user in the Firebase")
   @ApiResponses({
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized"),
-      @ApiResponse(code = 403, message = "Forbidden")
+      @ApiResponse(responseCode = "204", description = "The role successfully deleted", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public void deleteRole(
-      @ApiParam("String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
-      @RequestParam @NotBlank String uid, @ApiParam("User role") @RequestParam Role role) {
+      @Parameter(description = "String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
+      @RequestParam @NotBlank String uid,
+      @Parameter(description = "User role") @RequestParam Role role) {
     service.delete(uid, role);
   }
 

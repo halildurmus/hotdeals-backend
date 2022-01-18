@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.util.Collections;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Hidden
 @RestController
 @RequestMapping("/error")
 public class CustomErrorController extends AbstractErrorController {

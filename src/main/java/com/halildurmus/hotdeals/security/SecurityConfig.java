@@ -34,8 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
   private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
-  private static final String[] SWAGGER_ENDPOINTS = {"/swagger-resources/**", "/swagger-ui/**",
-      "/v3/api-docs"};
+  private static final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**", "/v3/api-docs/**"};
 
   @Autowired
   private ObjectMapper objectMapper;

@@ -1,12 +1,12 @@
 package com.halildurmus.hotdeals.notification;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.Example;
-import io.swagger.annotations.ExampleProperty;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@Api(tags = "notifications")
+@Tag(name = "notifications")
 @RestController
 @RequestMapping("/notifications")
 @Validated
@@ -30,11 +30,11 @@ public class NotificationController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @ApiOperation(value = "Sends a push notification using FCM(Firebase Cloud Messaging)", notes = "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required", authorizations = @Authorization("Bearer"))
+  @Operation(summary = "Sends a push notification using FCM", description = "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(code = 201, message = "Push notification sent", examples = @Example(@ExampleProperty("1"))),
-      @ApiResponse(code = 400, message = "Bad Request"),
-      @ApiResponse(code = 401, message = "Unauthorized")
+      @ApiResponse(responseCode = "201", description = "Push notification sent", content = @Content(schema = @Schema(type = "integer", defaultValue = "1"))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public Integer sendNotification(@Valid @RequestBody Notification notification) {
     if (ObjectUtils.isEmpty(notification.getTitle()) && ObjectUtils.isEmpty(

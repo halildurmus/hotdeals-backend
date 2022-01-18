@@ -1,18 +1,17 @@
 package com.halildurmus.hotdeals.report.DTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@ApiModel("ReportDTO")
+@Schema(name = "ReportDTO")
 @Data
 @SuperBuilder
 @NoArgsConstructor
 public class ReportDTO {
 
-  @ApiModelProperty(value = "Report message", position = 1, example = "The user is harassing me")
+  @Schema(description = "Report message", example = "The user is harassing me")
   private String message;
 
 }

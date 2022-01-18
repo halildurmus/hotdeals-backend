@@ -82,7 +82,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void getUsersReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
     final RequestBuilder request = get("/users");
-    
+
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))

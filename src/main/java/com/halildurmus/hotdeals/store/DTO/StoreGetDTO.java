@@ -1,22 +1,21 @@
 package com.halildurmus.hotdeals.store.DTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-@ApiModel("StoreGetDTO")
+@Schema(name = "StoreGetDTO")
 @Data
 @Builder
 public class StoreGetDTO {
 
-  @ApiModelProperty(value = "Store id", position = 1, example = "5fbe790ec6f0b32014074bb1")
+  @Schema(description = "Store id", example = "5fbe790ec6f0b32014074bb1")
   private final String id;
 
-  @ApiModelProperty(value = "Store name", position = 2, example = "Amazon")
+  @Schema(description = "Store name", example = "Amazon")
   private final String name;
 
-  @ApiModelProperty(value = "Store logo URL", position = 3, example = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png")
+  @Schema(description = "Store logo URL", example = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png")
   private final String logo;
 
 }

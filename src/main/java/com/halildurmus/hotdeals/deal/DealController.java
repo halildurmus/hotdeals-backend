@@ -65,8 +65,8 @@ public class DealController {
   private EsDealService esDealService;
 
   @GetMapping
-  public Page<Deal> getDeals(Pageable pageable) {
-    return service.findAll(pageable);
+  public List<Deal> getDeals(Pageable pageable) {
+    return service.findAll(pageable).getContent();
   }
 
   @GetMapping("/count/byPostedBy")
