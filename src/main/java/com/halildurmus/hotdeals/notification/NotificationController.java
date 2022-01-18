@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @Tag(name = "notifications")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/notifications")
 @Validated
@@ -30,7 +31,7 @@ public class NotificationController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Sends a push notification using FCM", description = "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required", security = @SecurityRequirement(name = "bearerAuth"))
+  @Operation(summary = "Sends a push notification using FCM", description = "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required")
   @ApiResponses({
       @ApiResponse(responseCode = "201", description = "Push notification sent", content = @Content(schema = @Schema(type = "integer", defaultValue = "1"))),
       @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
