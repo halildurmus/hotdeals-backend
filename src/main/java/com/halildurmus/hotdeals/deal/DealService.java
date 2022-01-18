@@ -1,6 +1,7 @@
 package com.halildurmus.hotdeals.deal;
 
 import com.github.fge.jsonpatch.JsonPatch;
+import com.halildurmus.hotdeals.security.role.IsSuper;
 import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface DealService {
 
+  @IsSuper
   Page<Deal> findAll(Pageable pageable);
 
   int countDealsByPostedBy(ObjectId postedBy);
