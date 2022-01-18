@@ -28,9 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String[] ADMIN_GET_ENDPOINTS = {"/actuator/**"};
   private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
-      "/stores"};
+      "/deals/**", "/stores"};
   // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
   private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
@@ -77,10 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
+        .antMatchers("/actuator/**", "/comments/**", "/deal-reports/**", "/user-reports/**")
         .access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/deals/**").permitAll()
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -88,7 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(WebSecurity web) {
-    web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**")
+    web.ignoring()
+        .antMatchers(HttpMethod.OPTIONS, "/**")
         .regexMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS_REGEX)
         .antMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
         .antMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
