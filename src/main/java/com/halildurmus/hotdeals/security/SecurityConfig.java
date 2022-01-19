@@ -29,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
-      "/deals/**", "/stores"};
+      "/deals/**", "/error", "/stores"};
   // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
   private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
