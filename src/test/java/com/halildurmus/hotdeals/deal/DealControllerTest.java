@@ -156,11 +156,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("GET /deals/count/byStore")
+  @DisplayName("GET /deals/count/byStoreId")
   public void returnsNumberOfDealsThatGivenStoreHas() throws Exception {
     final String id = DummyStores.store1.getId();
     when(service.countDealsByStore(new ObjectId(id))).thenReturn(4);
-    final RequestBuilder request = get("/deals/count/byStore?storeId=" + id);
+    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -168,10 +168,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("GET /deals/count/byStore (invalid id)")
+  @DisplayName("GET /deals/count/byStoreId (invalid id)")
   public void getDealsCountByStoreThrowsConstraintViolationException() {
     final String id = "23478fsf234";
-    final RequestBuilder request = get("/deals/count/byStore?storeId=" + id);
+    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
     assertThrows(ConstraintViolationException.class, () -> {
       try {

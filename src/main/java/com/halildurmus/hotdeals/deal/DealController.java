@@ -15,7 +15,18 @@ import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.report.deal.DTO.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
+import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +34,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import org.bson.types.ObjectId;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +53,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@Tag(name = "deals")
 @RestController
 @RequestMapping("/deals")
 @Validated
@@ -65,22 +78,51 @@ public class DealController {
   private EsDealService esDealService;
 
   @GetMapping
-  public List<Deal> getDeals(Pageable pageable) {
+  @IsSuper
+  @Operation(summary = "Returns all deals", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Deal.class)))),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
+  })
+  public List<Deal> getDeals(@ParameterObject Pageable pageable) {
     return service.findAll(pageable).getContent();
   }
 
   @GetMapping("/count/byPostedBy")
-  public int getCountDealsByPostedBy(@ObjectIdConstraint @RequestParam String postedBy) {
+  @Operation(summary = "Returns the number of deals posted by a user")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))),
+      @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content)
+  })
+  public int getCountDealsByPostedBy(
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @RequestParam String postedBy) {
     return service.countDealsByPostedBy(new ObjectId(postedBy));
   }
 
-  @GetMapping("/count/byStore")
-  public int getCountDealsByStore(@ObjectIdConstraint @RequestParam String storeId) {
+  @GetMapping("/count/byStoreId")
+  @Operation(summary = "Returns the number of deals a store has")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))),
+      @ApiResponse(responseCode = "400", description = "Invalid store ID", content = @Content)
+  })
+  public int getCountDealsByStoreId(
+      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @RequestParam String storeId) {
     return service.countDealsByStore(new ObjectId(storeId));
   }
 
   @GetMapping("/search/byCategory")
-  public List<DealGetDTO> getDealsByCategory(@RequestParam String category, Pageable pageable) {
+  @Operation(summary = "Finds deals by category")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  })
+  public List<DealGetDTO> getDealsByCategory(
+      @Parameter(description = "The category path", example = "/computers")
+      @RequestParam String category,
+      @ParameterObject Pageable pageable) {
     final Page<Deal> deals = service.getDealsByCategory(category, pageable);
 
     return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
@@ -88,8 +130,15 @@ public class DealController {
   }
 
   @GetMapping("/search/byStoreId")
-  public List<DealGetDTO> getDealsByStoreId(@ObjectIdConstraint @RequestParam String storeId,
-      Pageable pageable) {
+  @Operation(summary = "Finds deals by store ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))),
+      @ApiResponse(responseCode = "400", description = "Invalid store ID", content = @Content)
+  })
+  public List<DealGetDTO> getDealsByStoreId(
+      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @RequestParam String storeId,
+      @ParameterObject Pageable pageable) {
     final Page<Deal> deals = service.getDealsByStoreId(new ObjectId(storeId), pageable);
 
     return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
@@ -97,7 +146,9 @@ public class DealController {
   }
 
   @GetMapping("/search/latestActive")
-  public List<DealGetDTO> getLatestActiveDeals(Pageable pageable) {
+  @Operation(summary = "Returns deals sorted by post date")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))))
+  public List<DealGetDTO> getLatestActiveDeals(@ParameterObject Pageable pageable) {
     final Page<Deal> deals = service.getLatestActiveDeals(pageable);
 
     return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
@@ -105,7 +156,9 @@ public class DealController {
   }
 
   @GetMapping("/search/mostLikedActive")
-  public List<DealGetDTO> getMostLikedActiveDeals(Pageable pageable) {
+  @Operation(summary = "Returns deals sorted by deal score")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))))
+  public List<DealGetDTO> getMostLikedActiveDeals(@ParameterObject Pageable pageable) {
     final Page<Deal> deals = service.getMostLikedActiveDeals(pageable);
 
     return deals.getContent().stream().map(mapStructMapper::dealToDealGetDTO)
@@ -137,15 +190,31 @@ public class DealController {
   }
 
   @GetMapping("/searches")
+  @Operation(summary = "Returns search results for given query and filters")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = JsonNode.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+  })
   public JsonNode searchDeals(
+      @Parameter(description = "Search query", example = "iphone")
       @RequestParam(value = "query") String query,
+      @Parameter(description = "Category paths", example = "[\"/computers\", \"/electronics\"]")
       @RequestParam(value = "categories", required = false) List<String> categories,
+      @Parameter(description = "Price ranges", examples = {
+          @ExampleObject(name = "20:50", description = "Lists deals between $20 and $50"),
+          @ExampleObject(name = "1500:*", description = "Lists deals with a price of at least $1500")})
       @RequestParam(value = "prices", required = false) List<String> prices,
+      @Parameter(description = "Store IDs", example = "[\"5fbe790ec6f0b32014074bb2\", \"5fbe790ec6f0b32014074bb3\"]")
       @RequestParam(value = "stores", required = false) List<String> stores,
+      @Parameter(description = "Whether to hide expired deals")
       @RequestParam(value = "hideExpired", required = false, defaultValue = "false") Boolean hideExpired,
+      @Parameter(description = "Sort results by", examples = {
+          @ExampleObject(name = "createdAt", description = "Sorts results by deal post date"),
+          @ExampleObject(name = "price", description = "Sorts results by deal price")})
       @RequestParam(value = "sortBy", required = false) String sortBy,
+      @Parameter(description = "Order results by")
       @RequestParam(value = "order", required = false, defaultValue = "asc") String order,
-      Pageable pageable) {
+      @ParameterObject Pageable pageable) {
     List<PriceRange> priceRanges = null;
     if (prices != null) {
       priceRanges = parsePricesParam(prices);
@@ -175,13 +244,35 @@ public class DealController {
   }
 
   @GetMapping("/suggestions")
-  public JsonNode getSuggestions(@NotBlank @Size(min = 3, max = 100)
-  @RequestParam(value = "query") String query) {
-    return esDealService.getSuggestions(query);
+  @Operation(summary = "Returns search suggestions for a query")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SearchSuggestion.class)))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+  })
+  public List<SearchSuggestion> getSuggestions(
+      @Parameter(description = "Search query", example = "iph")
+      @NotBlank @Size(min = 3, max = 100) @RequestParam String query) {
+    final JsonNode suggestions = esDealService.getSuggestions(query);
+    final List<SearchSuggestion> searchSuggestions = new ArrayList<>();
+    suggestions.elements().forEachRemaining(element -> searchSuggestions.add(
+        SearchSuggestion.builder()
+            .id(element.get("_id").asText())
+            .title(element.get("_source").get("title").asText())
+            .build()));
+
+    return searchSuggestions;
   }
 
   @GetMapping("/{id}")
-  public DealGetDTO getDeal(@ObjectIdConstraint @PathVariable String id) {
+  @Operation(summary = "Finds a deal by ID")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public DealGetDTO getDeal(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
 
     return mapStructMapper.dealToDealGetDTO(deal);
@@ -189,6 +280,12 @@ public class DealController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Creates a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "The deal created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
   public DealGetDTO createDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = service.create(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
 
@@ -196,13 +293,33 @@ public class DealController {
   }
 
   @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
-  public DealGetDTO patchDeal(@ObjectIdConstraint @PathVariable String id,
+  @Operation(summary = "Updates a deal's status", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "The deal successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "You can only update your own deal", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public DealGetDTO patchDeal(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
       @RequestBody JsonPatch patch) {
     return mapStructMapper.dealToDealGetDTO(service.patch(id, patch));
   }
 
   @PutMapping("/{id}")
-  public DealGetDTO updateDeal(@ObjectIdConstraint @PathVariable String id,
+  @Operation(summary = "Updates a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "The deal successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "You can only update your own deal", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public DealGetDTO updateDeal(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = convertToEntity(id, dealPostDTO);
 
@@ -211,12 +328,30 @@ public class DealController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteDeal(@ObjectIdConstraint @PathVariable String id) {
+  @Operation(summary = "Deletes a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "The deal successfully deleted", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "403", description = "You can only remove your own deal", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public void deleteDeal(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }
 
   @GetMapping("/{id}/comments")
-  public CommentsDTO getComments(@ObjectIdConstraint @PathVariable String id, Pageable pageable) {
+  @Operation(summary = "Returns the comments posted to a deal")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentsDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+  })
+  public CommentsDTO getComments(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
+      @ParameterObject Pageable pageable) {
     final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id),
         pageable);
     final List<CommentGetDTO> commentGetDTOs = comments.getContent().stream()
@@ -227,13 +362,29 @@ public class DealController {
   }
 
   @GetMapping("/{id}/comment-count")
-  public int getCommentCount(@ObjectIdConstraint @PathVariable String id) {
+  @Operation(summary = "Returns the number of comments that a deal has")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content)
+  })
+  public int getCommentCount(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id) {
     return commentService.getCommentCountByDealId(new ObjectId(id));
   }
 
   @PostMapping("/{id}/comments")
   @ResponseStatus(HttpStatus.CREATED)
-  public CommentGetDTO postComment(@ObjectIdConstraint @PathVariable String id,
+  @Operation(summary = "Adds a comment to a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public CommentGetDTO postComment(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
     final Comment comment = mapStructMapper.commentPostDTOToComment(commentPostDTO);
@@ -244,7 +395,16 @@ public class DealController {
 
   @PostMapping("/{id}/reports")
   @ResponseStatus(HttpStatus.CREATED)
-  public void createDealReport(@ObjectIdConstraint @PathVariable String id,
+  @Operation(summary = "Reports a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public void createDealReport(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealReportPostDTO dealReportPostDTO) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
     final DealReport dealReport = mapStructMapper.dealReportPostDTOToDealReport(
@@ -254,7 +414,17 @@ public class DealController {
   }
 
   @PutMapping("/{id}/votes")
-  public DealGetDTO voteDeal(@ObjectIdConstraint @PathVariable String id,
+  @Operation(summary = "Casts vote to a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "304", description = "You've already upvoted/downvoted this deal before", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public DealGetDTO voteDeal(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody DealVote dealVote) {
     final DealVoteType voteType = dealVote.getVoteType();
     if (voteType.equals(DealVoteType.UNVOTE)) {
@@ -267,7 +437,16 @@ public class DealController {
   }
 
   @DeleteMapping("/{id}/votes")
-  public DealGetDTO deleteVote(@ObjectIdConstraint @PathVariable String id) {
+  @Operation(summary = "Deletes the vote from a deal", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DealGetDTO.class))),
+      @ApiResponse(responseCode = "400", description = "Invalid deal ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
+  })
+  public DealGetDTO deleteVote(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @ObjectIdConstraint @PathVariable String id) {
     final Deal deal = service.vote(id, DealVoteType.UNVOTE);
 
     return mapStructMapper.dealToDealGetDTO(deal);
