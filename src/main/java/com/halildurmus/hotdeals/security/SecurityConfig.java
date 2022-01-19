@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,6 +27,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+  private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
+      "/deals/**", "/error", "/stores"};
+  // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
+  private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
+  private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
+  private static final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**", "/v3/api-docs/**"};
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -63,36 +71,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    final String[] adminAntPatternsGET = {"/actuator/**", "/deals", "/deals/", "/users", "/users/",
-        "/users/search/findByEmail"};
-    final String[] adminAntPatternsPOST = {"/categories", "/stores"};
-    final String[] adminAntPatternsPATCH = {"/users/*"};
-    final String[] adminAntPatternsPUT = {"/categories/*", "/stores/*", "/users/*"};
-    final String[] adminAntPatternsDELETE = {"/categories/*", "/stores/*", "/users/*"};
-    final String[] publicAntPatternsGET = {"/actuator/health", "/categories", "/stores",
-        "/users/*/comment-count"};
-    final String[] publicAntPatternsPOST = {"/users"};
-
     httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
         .formLogin().disable()
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-        .antMatchers("/users/me/**").authenticated()
-        .antMatchers("/comments/**", "/deal-reports/**", "/user-reports/**")
-        .access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, publicAntPatternsGET).permitAll()
-        .antMatchers(HttpMethod.GET, adminAntPatternsGET).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.GET, "/deals/**", "/users/*").permitAll()
-        .antMatchers(HttpMethod.POST, publicAntPatternsPOST).permitAll()
-        .antMatchers(HttpMethod.POST, adminAntPatternsPOST).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PUT, adminAntPatternsPUT).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.DELETE, adminAntPatternsDELETE).access("hasRole('ROLE_SUPER')")
-        .antMatchers(HttpMethod.PATCH, adminAntPatternsPATCH).access("hasRole('ROLE_SUPER')")
+        .antMatchers("/actuator/**", "/comments/**", "/deal-reports/**", "/user-reports/**")
+        .access("hasRole('SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+  }
+
+  @Override
+  public void configure(WebSecurity web) {
+    web.ignoring()
+        .antMatchers(HttpMethod.OPTIONS, "/**")
+        .regexMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS_REGEX)
+        .antMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
+        .antMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
+        .antMatchers(HttpMethod.GET, SWAGGER_ENDPOINTS);
   }
 
 }

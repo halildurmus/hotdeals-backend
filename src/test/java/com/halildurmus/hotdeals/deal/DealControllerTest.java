@@ -92,7 +92,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.content", hasSize(0)));
+        .andExpect(jsonPath("$", hasSize(0)));
   }
 
   @Test
@@ -106,26 +106,26 @@ public class DealControllerTest extends BaseControllerUnitTest {
     mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.content", hasSize(1)))
-        .andExpect(jsonPath("$.content[0].*", hasSize(18)))
-        .andExpect(jsonPath("$.content[0].id").value(deal.getId()))
-        .andExpect(jsonPath("$.content[0].postedBy").value(deal.getPostedBy().toString()))
-        .andExpect(jsonPath("$.content[0].title").value(deal.getTitle()))
-        .andExpect(jsonPath("$.content[0].description").value(deal.getDescription()))
-        .andExpect(jsonPath("$.content[0].originalPrice").value(deal.getOriginalPrice()))
-        .andExpect(jsonPath("$.content[0].price").value(deal.getPrice()))
-        .andExpect(jsonPath("$.content[0].store").value(deal.getStore().toString()))
-        .andExpect(jsonPath("$.content[0].category").value(deal.getCategory()))
-        .andExpect(jsonPath("$.content[0].coverPhoto").value(deal.getCoverPhoto()))
-        .andExpect(jsonPath("$.content[0].photos", hasSize(deal.getPhotos().size())))
-        .andExpect(jsonPath("$.content[0].dealUrl").value(deal.getDealUrl()))
-        .andExpect(jsonPath("$.content[0].dealScore").value(deal.getDealScore()))
-        .andExpect(jsonPath("$.content[0].upvoters", hasSize(deal.getUpvoters().size())))
-        .andExpect(jsonPath("$.content[0].downvoters", hasSize(deal.getDownvoters().size())))
-        .andExpect(jsonPath("$.content[0].views").value(deal.getViews()))
-        .andExpect(jsonPath("$.content[0].status").value(deal.getStatus().toString()))
-        .andExpect(jsonPath("$.content[0].createdAt").value(deal.getCreatedAt().toString()))
-        .andExpect(jsonPath("$.content[0].updatedAt").value(deal.getUpdatedAt().toString()));
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(18)))
+        .andExpect(jsonPath("$[0].id").value(deal.getId()))
+        .andExpect(jsonPath("$[0].postedBy").value(deal.getPostedBy().toString()))
+        .andExpect(jsonPath("$[0].title").value(deal.getTitle()))
+        .andExpect(jsonPath("$[0].description").value(deal.getDescription()))
+        .andExpect(jsonPath("$[0].originalPrice").value(deal.getOriginalPrice()))
+        .andExpect(jsonPath("$[0].price").value(deal.getPrice()))
+        .andExpect(jsonPath("$[0].store").value(deal.getStore().toString()))
+        .andExpect(jsonPath("$[0].category").value(deal.getCategory()))
+        .andExpect(jsonPath("$[0].coverPhoto").value(deal.getCoverPhoto()))
+        .andExpect(jsonPath("$[0].photos", hasSize(deal.getPhotos().size())))
+        .andExpect(jsonPath("$[0].dealUrl").value(deal.getDealUrl()))
+        .andExpect(jsonPath("$[0].dealScore").value(deal.getDealScore()))
+        .andExpect(jsonPath("$[0].upvoters", hasSize(deal.getUpvoters().size())))
+        .andExpect(jsonPath("$[0].downvoters", hasSize(deal.getDownvoters().size())))
+        .andExpect(jsonPath("$[0].views").value(deal.getViews()))
+        .andExpect(jsonPath("$[0].status").value(deal.getStatus().toString()))
+        .andExpect(jsonPath("$[0].createdAt").value(deal.getCreatedAt().toString()))
+        .andExpect(jsonPath("$[0].updatedAt").value(deal.getUpdatedAt().toString()));
   }
 
   @Test
@@ -156,11 +156,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("GET /deals/count/byStore")
+  @DisplayName("GET /deals/count/byStoreId")
   public void returnsNumberOfDealsThatGivenStoreHas() throws Exception {
     final String id = DummyStores.store1.getId();
     when(service.countDealsByStore(new ObjectId(id))).thenReturn(4);
-    final RequestBuilder request = get("/deals/count/byStore?storeId=" + id);
+    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -168,10 +168,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
-  @DisplayName("GET /deals/count/byStore (invalid id)")
+  @DisplayName("GET /deals/count/byStoreId (invalid id)")
   public void getDealsCountByStoreThrowsConstraintViolationException() {
     final String id = "23478fsf234";
-    final RequestBuilder request = get("/deals/count/byStore?storeId=" + id);
+    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
     assertThrows(ConstraintViolationException.class, () -> {
       try {

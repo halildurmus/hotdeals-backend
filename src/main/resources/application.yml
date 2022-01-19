@@ -31,3 +31,20 @@ security:
   super-admins:
     - admin1@gmail.com
     - admin2@gmail.com
+
+springdoc:
+  packages-to-scan: com.halildurmus.hotdeals
+  swagger-ui:
+    layout: BaseLayout
+    operationsSorter: method
+    path: /swagger-ui
+    tags-sorter: alpha
+
+swagger:
+  contact:
+    name: "Halil Ibrahim Durmus"
+    email: "halildurmus97@gmail.com"
+    url: "https://github.com/halildurmus"
+  description: "hotdeals REST API Documentation"
+  title: "hotdeals API"
+  version: "1.0.0"

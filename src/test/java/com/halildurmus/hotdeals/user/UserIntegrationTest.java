@@ -80,7 +80,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.content", hasSize(0)));
+        .andExpect(jsonPath("$", hasSize(0)));
   }
 
   @Test
@@ -95,21 +95,19 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
-        .andExpect(jsonPath("$.content", hasSize(1)))
-        .andExpect(jsonPath("$.content[0].*", hasSize(10)))
-        .andExpect(jsonPath("$.content[0].id").isNotEmpty())
-        .andExpect(jsonPath("$.content[0].uid").value(user.getUid()))
-        .andExpect(jsonPath("$.content[0].email").value(user.getEmail()))
-        .andExpect(jsonPath("$.content[0].avatar").value(user.getAvatar()))
-        .andExpect(jsonPath("$.content[0].nickname").value(user.getNickname()))
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(10)))
+        .andExpect(jsonPath("$[0].id").isNotEmpty())
+        .andExpect(jsonPath("$[0].uid").value(user.getUid()))
+        .andExpect(jsonPath("$[0].email").value(user.getEmail()))
+        .andExpect(jsonPath("$[0].avatar").value(user.getAvatar()))
+        .andExpect(jsonPath("$[0].nickname").value(user.getNickname()))
+        .andExpect(jsonPath("$[0].favorites").value(equalTo(asParsedJson(user.getFavorites()))))
         .andExpect(
-            jsonPath("$.content[0].favorites").value(equalTo(asParsedJson(user.getFavorites()))))
-        .andExpect(jsonPath("$.content[0].blockedUsers").value(
-            equalTo(asParsedJson(user.getBlockedUsers()))))
-        .andExpect(
-            jsonPath("$.content[0].fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
-        .andExpect(jsonPath("$.content[0].createdAt").isNotEmpty())
-        .andExpect(jsonPath("$.content[0].updatedAt").isNotEmpty());
+            jsonPath("$[0].blockedUsers").value(equalTo(asParsedJson(user.getBlockedUsers()))))
+        .andExpect(jsonPath("$[0].fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
+        .andExpect(jsonPath("$[0].createdAt").isNotEmpty())
+        .andExpect(jsonPath("$[0].updatedAt").isNotEmpty());
   }
 
   @Test

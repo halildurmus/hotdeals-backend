@@ -2,6 +2,7 @@ package com.halildurmus.hotdeals.user;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.security.role.IsSuper;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -9,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
+  @IsSuper
   Page<User> findAll(Pageable pageable);
 
+  @IsSuper
   Optional<User> findByEmail(String email);
 
   Optional<User> findById(String id);
