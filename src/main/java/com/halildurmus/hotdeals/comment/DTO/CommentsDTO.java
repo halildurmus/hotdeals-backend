@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
-@Schema(name = "CommentsDTO")
 @Data
 @Builder
 public class CommentsDTO {

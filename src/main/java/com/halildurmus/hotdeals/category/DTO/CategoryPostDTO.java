@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-@Schema(name = "CategoryPostDTO")
 @Data
 @Builder
 public class CategoryPostDTO {

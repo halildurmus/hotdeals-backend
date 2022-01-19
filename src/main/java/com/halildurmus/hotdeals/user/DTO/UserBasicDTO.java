@@ -5,7 +5,6 @@ import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 
-@Schema(name = "UserBasicDTO")
 @Data
 @Builder
 public class UserBasicDTO {

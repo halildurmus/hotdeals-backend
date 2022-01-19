@@ -7,7 +7,6 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 
-@Schema(name = "UserExtendedDTO")
 @Data
 @Builder
 public class UserExtendedDTO {

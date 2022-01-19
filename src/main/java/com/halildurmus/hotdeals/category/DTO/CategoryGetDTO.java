@@ -5,7 +5,6 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 
-@Schema(name = "CategoryGetDTO")
 @Data
 @Builder
 public class CategoryGetDTO {

@@ -23,7 +23,6 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Schema(name = "User")
 @Document(collection = "users")
 @TypeAlias("user")
 @Data

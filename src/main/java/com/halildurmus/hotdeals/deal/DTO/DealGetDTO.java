@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
-@Schema(name = "DealGetDTO")
 @Data
 @Builder
 public class DealGetDTO {

@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 
-@Schema(name = "CommentGetDTO")
 @Data
 @Builder
 public class CommentGetDTO {

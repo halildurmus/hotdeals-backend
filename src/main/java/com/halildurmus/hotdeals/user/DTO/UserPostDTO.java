@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
-@Schema(name = "UserPostDTO")
 @Data
 @Builder
 public class UserPostDTO {

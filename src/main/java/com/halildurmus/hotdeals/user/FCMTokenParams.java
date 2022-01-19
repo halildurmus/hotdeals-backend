@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Schema(name = "FCMTokenParams")
 @Data
 @Builder
 @AllArgsConstructor
