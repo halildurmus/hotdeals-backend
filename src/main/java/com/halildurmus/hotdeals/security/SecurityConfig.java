@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
         .antMatchers("/actuator/**", "/comments/**", "/deal-reports/**", "/user-reports/**")
-        .access("hasRole('ROLE_SUPER')")
+        .access("hasRole('SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
