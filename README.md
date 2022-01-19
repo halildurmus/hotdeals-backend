@@ -32,7 +32,7 @@
 
 ## Documentation
 
-**TODO**
+The API documentation can be found **[here](https://hotdeals-backend.herokuapp.com/swagger-ui)**.
 
 ## Getting Started
 
