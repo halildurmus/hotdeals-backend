@@ -64,19 +64,19 @@ public class FirebaseFilter extends OncePerRequestFilter {
 
   public List<GrantedAuthority> parseAuthorities(FirebaseToken token, String email) {
     final List<GrantedAuthority> authorities = new ArrayList<>();
-    // Handle ROLE_SUPER
+    // Handle ROLE_SUPER authority
     if (securityProperties.getSuperAdmins() != null && securityProperties.getSuperAdmins()
         .contains(email)) {
       if (!token.getClaims().containsKey(Role.ROLE_SUPER.name())) {
         try {
           roleService.add(token.getUid(), Role.ROLE_SUPER);
         } catch (Exception e) {
-          log.error("Failed to add ROLE_SUPER to the user", e);
+          log.error("Failed to add ROLE_SUPER authority to the user", e);
         }
       }
       authorities.add(new SimpleGrantedAuthority(Role.ROLE_SUPER.name()));
     }
-    // Handle other roles
+    // Handle other authorities
     token.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
 
     return authorities;
