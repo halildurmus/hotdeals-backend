@@ -68,7 +68,7 @@ public class StoreController {
       @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO getStore(
-      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     final Store store = service.findById(id).orElseThrow(StoreNotFoundException::new);
 
@@ -102,7 +102,7 @@ public class StoreController {
       @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO updateStore(
-      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id, @Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = convertToEntity(id, storePostDTO);
 
@@ -121,7 +121,7 @@ public class StoreController {
       @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public void deleteStore(
-      @Parameter(description = "String representation of the Store ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }

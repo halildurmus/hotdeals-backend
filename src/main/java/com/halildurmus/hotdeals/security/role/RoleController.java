@@ -36,7 +36,7 @@ public class RoleController {
       @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public void addRole(
-      @Parameter(description = "String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
+      @Parameter(description = "String representation of the Firebase User ID", example = "ndj2KkbGwIUbfIUH2BT6700AQ832")
       @RequestParam @NotBlank String uid,
       @Parameter(description = "User role") @RequestParam Role role) {
     service.add(uid, role);
@@ -53,7 +53,7 @@ public class RoleController {
       @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public void deleteRole(
-      @Parameter(description = "String representation of the Firebase User ID. e.g. 'ndj2KkbGwIUbfIUH2BT6700AQ832'")
+      @Parameter(description = "String representation of the Firebase User ID", example = "ndj2KkbGwIUbfIUH2BT6700AQ832")
       @RequestParam @NotBlank String uid,
       @Parameter(description = "User role") @RequestParam Role role) {
     service.delete(uid, role);

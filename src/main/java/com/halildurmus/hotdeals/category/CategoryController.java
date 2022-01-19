@@ -69,7 +69,7 @@ public class CategoryController {
       @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public CategoryGetDTO getCategory(
-      @Parameter(description = "String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
 
@@ -108,7 +108,7 @@ public class CategoryController {
       @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public CategoryGetDTO updateCategory(
-      @Parameter(description = "String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     final Category category = convertToEntity(id, categoryPostDTO);
@@ -128,7 +128,7 @@ public class CategoryController {
       @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public void deleteCategory(
-      @Parameter(description = "String representation of the Category ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     service.delete(id);
   }

@@ -119,7 +119,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserByUid(
-      @Parameter(description = "String representation of the Firebase User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Firebase User ID", example = "5fbe790ec6f0b32014074bb1")
       @RequestParam String uid) {
     final User user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
 
@@ -170,7 +170,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void blockUser(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     service.block(id);
   }
@@ -186,7 +186,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void unblockUser(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     service.unblock(id);
   }
@@ -223,7 +223,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
   })
   public void favoriteDeal(
-      @Parameter(description = "String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String dealId) {
     service.favoriteDeal(dealId);
   }
@@ -239,7 +239,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "Deal not found", content = @Content)
   })
   public void unfavoriteDeal(
-      @Parameter(description = "String representation of the Deal ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
   }
@@ -280,7 +280,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserBasicDTO getUser(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
@@ -294,7 +294,7 @@ public class UserController {
       @ApiResponse(responseCode = "400", description = "Invalid user ID", content = @Content)
   })
   public int getUsersCommentCount(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     return commentService.getCommentCountByPostedById(new ObjectId(id));
   }
@@ -307,7 +307,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public UserExtendedDTO getUserExtended(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
@@ -324,7 +324,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
   })
   public void createUserReport(
-      @Parameter(description = "String representation of the User ID. e.g. '5fbe790ec6f0b32014074bb1'")
+      @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
       @ObjectIdConstraint @PathVariable String id,
       @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
