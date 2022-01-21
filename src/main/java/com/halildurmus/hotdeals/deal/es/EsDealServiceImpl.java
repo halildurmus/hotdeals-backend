@@ -288,7 +288,7 @@ public class EsDealServiceImpl implements EsDealService {
     final FilterAggregationBuilder priceAgg = new FilterAggregationBuilder(
         "aggPrice", createFilters(searchParams, "price"));
     final RangeAggregationBuilder facetValues = new RangeAggregationBuilder("values");
-    facetValues.field("numberFacets.facetValue").keyed(false).addRange(0, 0).addRange(0.01, 5)
+    facetValues.field("numberFacets.facetValue").keyed(false).addRange(0, 1).addRange(1, 5)
         .addRange(5, 10).addRange(10, 20).addRange(20, 50).addRange(50, 100).addRange(100, 250)
         .addRange(250, 500).addRange(500, 1000).addRange(1000, 1500).addRange(1500, 2000)
         .addUnboundedFrom(2000);
