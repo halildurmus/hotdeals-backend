@@ -200,7 +200,7 @@ public class DealController {
       @RequestParam(value = "query") String query,
       @Parameter(description = "Category paths", example = "[\"/computers\", \"/electronics\"]")
       @RequestParam(value = "categories", required = false) List<String> categories,
-      @Parameter(description = "Price ranges", examples = {
+      @Parameter(description = "Price ranges formatted as <b>&lt;from&gt;:&lt;to&gt;</b><br /><b>&lt;to&gt;</b> value may also receive an <b>asterisk(*)</b> symbol meaning there is <b>no upper limit</b> in the given price range.", examples = {
           @ExampleObject(name = "20:50", description = "Lists deals between $20 and $50"),
           @ExampleObject(name = "1500:*", description = "Lists deals with a price of at least $1500")})
       @RequestParam(value = "prices", required = false) List<String> prices,
