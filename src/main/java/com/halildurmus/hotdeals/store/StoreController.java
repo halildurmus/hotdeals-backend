@@ -5,7 +5,7 @@ import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.store.DTO.StoreGetDTO;
 import com.halildurmus.hotdeals.store.DTO.StorePostDTO;
-import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import com.halildurmus.hotdeals.util.IsObjectId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -69,7 +69,7 @@ public class StoreController {
   })
   public StoreGetDTO getStore(
       @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final Store store = service.findById(id).orElseThrow(StoreNotFoundException::new);
 
     return mapStructMapper.storeToStoreGetDTO(store);
@@ -103,7 +103,7 @@ public class StoreController {
   })
   public StoreGetDTO updateStore(
       @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id, @Valid @RequestBody StorePostDTO storePostDTO) {
+      @IsObjectId @PathVariable String id, @Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = convertToEntity(id, storePostDTO);
 
     return mapStructMapper.storeToStoreGetDTO(service.update(store));
@@ -122,7 +122,7 @@ public class StoreController {
   })
   public void deleteStore(
       @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     service.delete(id);
   }
 

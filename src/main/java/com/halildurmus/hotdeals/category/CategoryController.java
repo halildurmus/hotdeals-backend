@@ -5,7 +5,7 @@ import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
 import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.role.IsSuper;
-import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import com.halildurmus.hotdeals.util.IsObjectId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -70,7 +70,7 @@ public class CategoryController {
   })
   public CategoryGetDTO getCategory(
       @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
 
     return mapStructMapper.categoryToCategoryGetDTO(category);
@@ -109,7 +109,7 @@ public class CategoryController {
   })
   public CategoryGetDTO updateCategory(
       @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     final Category category = convertToEntity(id, categoryPostDTO);
 
@@ -129,7 +129,7 @@ public class CategoryController {
   })
   public void deleteCategory(
       @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     service.delete(id);
   }
 

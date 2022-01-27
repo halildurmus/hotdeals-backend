@@ -13,7 +13,7 @@ import com.halildurmus.hotdeals.security.role.IsSuper;
 import com.halildurmus.hotdeals.user.DTO.UserBasicDTO;
 import com.halildurmus.hotdeals.user.DTO.UserExtendedDTO;
 import com.halildurmus.hotdeals.user.DTO.UserPostDTO;
-import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import com.halildurmus.hotdeals.util.IsObjectId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -171,7 +171,7 @@ public class UserController {
   })
   public void blockUser(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     service.block(id);
   }
 
@@ -187,7 +187,7 @@ public class UserController {
   })
   public void unblockUser(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     service.unblock(id);
   }
 
@@ -224,7 +224,7 @@ public class UserController {
   })
   public void favoriteDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String dealId) {
+      @IsObjectId @PathVariable String dealId) {
     service.favoriteDeal(dealId);
   }
 
@@ -240,7 +240,7 @@ public class UserController {
   })
   public void unfavoriteDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String dealId) {
+      @IsObjectId @PathVariable String dealId) {
     service.unfavoriteDeal(dealId);
   }
 
@@ -281,7 +281,7 @@ public class UserController {
   })
   public UserBasicDTO getUser(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
     return mapStructMapper.userToUserBasicDTO(user);
@@ -295,7 +295,7 @@ public class UserController {
   })
   public int getUsersCommentCount(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     return commentService.getCommentCountByPostedById(new ObjectId(id));
   }
 
@@ -308,7 +308,7 @@ public class UserController {
   })
   public UserExtendedDTO getUserExtended(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
 
     return mapStructMapper.userToUserExtendedDTO(user);
@@ -325,7 +325,7 @@ public class UserController {
   })
   public void createUserReport(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
     final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
     final UserReport userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);

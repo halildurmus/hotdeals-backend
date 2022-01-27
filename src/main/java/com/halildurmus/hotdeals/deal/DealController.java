@@ -16,7 +16,7 @@ import com.halildurmus.hotdeals.report.deal.DTO.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
 import com.halildurmus.hotdeals.security.role.IsSuper;
-import com.halildurmus.hotdeals.util.ObjectIdConstraint;
+import com.halildurmus.hotdeals.util.IsObjectId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -97,7 +97,7 @@ public class DealController {
   })
   public int getCountDealsByPostedBy(
       @Parameter(description = "String representation of the User ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @RequestParam String postedBy) {
+      @IsObjectId @RequestParam String postedBy) {
     return service.countDealsByPostedBy(new ObjectId(postedBy));
   }
 
@@ -109,7 +109,7 @@ public class DealController {
   })
   public int getCountDealsByStoreId(
       @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @RequestParam String storeId) {
+      @IsObjectId @RequestParam String storeId) {
     return service.countDealsByStore(new ObjectId(storeId));
   }
 
@@ -137,7 +137,7 @@ public class DealController {
   })
   public List<DealGetDTO> getDealsByStoreId(
       @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @RequestParam String storeId,
+      @IsObjectId @RequestParam String storeId,
       @ParameterObject Pageable pageable) {
     final Page<Deal> deals = service.getDealsByStoreId(new ObjectId(storeId), pageable);
 
@@ -272,7 +272,7 @@ public class DealController {
   })
   public DealGetDTO getDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
 
     return mapStructMapper.dealToDealGetDTO(deal);
@@ -303,7 +303,7 @@ public class DealController {
   })
   public DealGetDTO patchDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @RequestBody JsonPatch patch) {
     return mapStructMapper.dealToDealGetDTO(service.patch(id, patch));
   }
@@ -319,7 +319,7 @@ public class DealController {
   })
   public DealGetDTO updateDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody DealPostDTO dealPostDTO) {
     final Deal deal = convertToEntity(id, dealPostDTO);
 
@@ -338,7 +338,7 @@ public class DealController {
   })
   public void deleteDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     service.delete(id);
   }
 
@@ -350,7 +350,7 @@ public class DealController {
   })
   public CommentsDTO getComments(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @ParameterObject Pageable pageable) {
     final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id),
         pageable);
@@ -369,7 +369,7 @@ public class DealController {
   })
   public int getCommentCount(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     return commentService.getCommentCountByDealId(new ObjectId(id));
   }
 
@@ -384,7 +384,7 @@ public class DealController {
   })
   public CommentGetDTO postComment(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
     final Comment comment = mapStructMapper.commentPostDTOToComment(commentPostDTO);
@@ -404,7 +404,7 @@ public class DealController {
   })
   public void createDealReport(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody DealReportPostDTO dealReportPostDTO) {
     final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
     final DealReport dealReport = mapStructMapper.dealReportPostDTOToDealReport(
@@ -424,7 +424,7 @@ public class DealController {
   })
   public DealGetDTO voteDeal(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id,
+      @IsObjectId @PathVariable String id,
       @Valid @RequestBody DealVote dealVote) {
     final DealVoteType voteType = dealVote.getVoteType();
     if (voteType.equals(DealVoteType.UNVOTE)) {
@@ -446,7 +446,7 @@ public class DealController {
   })
   public DealGetDTO deleteVote(
       @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
-      @ObjectIdConstraint @PathVariable String id) {
+      @IsObjectId @PathVariable String id) {
     final Deal deal = service.vote(id, DealVoteType.UNVOTE);
 
     return mapStructMapper.dealToDealGetDTO(deal);

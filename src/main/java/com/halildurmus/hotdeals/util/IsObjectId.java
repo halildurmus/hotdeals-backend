@@ -9,12 +9,15 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Validates if annotated field or parameter is {@code ObjectId}
+ */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ObjectIdValidator.class)
 @NotNull
 @Documented
-public @interface ObjectIdConstraint {
+public @interface IsObjectId {
 
   String message() default "Invalid ObjectId";
 

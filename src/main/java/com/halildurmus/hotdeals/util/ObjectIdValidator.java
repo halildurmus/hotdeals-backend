@@ -4,10 +4,10 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.bson.types.ObjectId;
 
-public class ObjectIdValidator implements ConstraintValidator<ObjectIdConstraint, String> {
+public class ObjectIdValidator implements ConstraintValidator<IsObjectId, String> {
 
   @Override
-  public void initialize(ObjectIdConstraint objectId) {
+  public void initialize(IsObjectId objectId) {
   }
 
   @Override
