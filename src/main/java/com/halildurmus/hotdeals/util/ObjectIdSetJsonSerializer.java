@@ -16,7 +16,7 @@ public class ObjectIdSetJsonSerializer extends JsonSerializer<Set<ObjectId>> {
   public void serialize(Set<ObjectId> objectIds, JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider) {
     try {
-      Set<String> ids = new HashSet<>();
+      final Set<String> ids = new HashSet<>();
       objectIds.forEach(objectId -> ids.add(objectId.toString()));
       jsonGenerator.writeObject(ids);
     } catch (IOException e) {
