@@ -12,12 +12,12 @@
             <path>
               <artifactId>mapstruct-processor</artifactId>
               <groupId>org.mapstruct</groupId>
-              <version>${org.mapstruct.version}</version>
+              <version>${mapstruct.version}</version>
             </path>
             <path>
               <artifactId>lombok</artifactId>
               <groupId>org.projectlombok</groupId>
-              <version>${org.projectlombok.version}</version>
+              <version>${lombok.version}</version>
             </path>
             <path>
               <artifactId>lombok-mapstruct-binding</artifactId>
@@ -75,12 +75,12 @@
     <dependency>
       <artifactId>springdoc-openapi-ui</artifactId>
       <groupId>org.springdoc</groupId>
-      <version>1.6.5</version>
+      <version>1.6.6</version>
     </dependency>
     <dependency>
       <artifactId>mapstruct</artifactId>
       <groupId>org.mapstruct</groupId>
-      <version>${org.mapstruct.version}</version>
+      <version>${mapstruct.version}</version>
     </dependency>
     <dependency>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -152,7 +152,7 @@
       <artifactId>lombok</artifactId>
       <groupId>org.projectlombok</groupId>
       <optional>true</optional>
-      <version>${org.projectlombok.version}</version>
+      <version>${lombok.version}</version>
     </dependency>
     <dependency>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -248,14 +248,14 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <groupId>org.springframework.boot</groupId>
     <relativePath/>
-    <version>2.6.2</version> <!-- lookup parent from repository -->
+    <version>2.6.3</version> <!-- lookup parent from repository -->
   </parent>
 
   <properties>
     <java.version>11</java.version>
     <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-    <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-    <org.projectlombok.version>1.18.22</org.projectlombok.version>
+    <lombok.version>1.18.22</lombok.version>
+    <mapstruct.version>1.4.2.Final</mapstruct.version>
     <testcontainers.version>1.16.3</testcontainers.version>
   </properties>
 
