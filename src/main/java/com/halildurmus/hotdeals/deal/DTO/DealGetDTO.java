@@ -27,14 +27,14 @@ public class DealGetDTO {
   @JsonSerialize(using = ObjectIdJsonSerializer.class)
   private final ObjectId store;
 
-  @Schema(description = "Deal score", example = "3")
+  @Schema(description = "Deal score", example = "1")
   private final int dealScore;
 
-  @Schema(description = "Deal upvoters", example = "[5fbe790ec6f0b32014074bb1,5fbe790ec6f0b32014074bb2]")
+  @Schema(description = "Deal upvoters", example = "5fbe790ec6f0b32014074bb1, 5fbe790ec6f0b32014074bb2")
   @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
   private final HashSet<ObjectId> upvoters;
 
-  @Schema(description = "Deal downvoters", example = "[5fbe790ec6f0b32014074bb3]")
+  @Schema(description = "Deal downvoters", example = "5fbe790ec6f0b32014074bb3")
   @JsonSerialize(using = ObjectIdSetJsonSerializer.class)
   private final HashSet<ObjectId> downvoters;
 
@@ -59,7 +59,7 @@ public class DealGetDTO {
   @Schema(description = "Deal URL", example = "https://www.amazon.com/HP-24mh-FHD-Monitor-Built/dp/B08BF4CZSV/")
   private final String dealUrl;
 
-  @Schema(description = "Deal photo URLs", example = "[https://www.gravatar.com/avatar]")
+  @Schema(description = "Deal photo URLs", example = "https://www.gravatar.com/avatar")
   private final List<String> photos;
 
   @Schema(description = "Deal views", example = "10")

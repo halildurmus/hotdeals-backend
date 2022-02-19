@@ -20,6 +20,8 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @NoArgsConstructor
 public class DealReport extends Report {
 
+  private static final long serialVersionUID = 1234567L;
+
   @DocumentReference
   private Deal reportedDeal;
 

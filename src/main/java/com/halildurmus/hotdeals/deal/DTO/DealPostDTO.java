@@ -56,7 +56,7 @@ public class DealPostDTO {
   @NotNull
   private final String dealUrl;
 
-  @Schema(description = "Deal photo URLs", example = "[https://www.gravatar.com/avatar]")
+  @Schema(description = "Deal photo URLs", example = "https://www.gravatar.com/avatar")
   private final List<String> photos;
 
 }

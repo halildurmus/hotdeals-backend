@@ -198,13 +198,13 @@ public class DealController {
   public JsonNode searchDeals(
       @Parameter(description = "Search query", example = "iphone")
       @RequestParam(value = "query") String query,
-      @Parameter(description = "Category paths", example = "[\"/computers\", \"/electronics\"]")
+      @Parameter(description = "Category paths", example = "/computers, /electronics")
       @RequestParam(value = "categories", required = false) List<String> categories,
       @Parameter(description = "Price ranges formatted as <b>&lt;from&gt;:&lt;to&gt;</b><br /><b>&lt;to&gt;</b> value may also receive an <b>asterisk(*)</b> symbol meaning there is <b>no upper limit</b> in the given price range.", examples = {
           @ExampleObject(name = "20:50", description = "Lists deals between $20 and $50"),
           @ExampleObject(name = "1500:*", description = "Lists deals with a price of at least $1500")})
       @RequestParam(value = "prices", required = false) List<String> prices,
-      @Parameter(description = "Store IDs", example = "[\"5fbe790ec6f0b32014074bb2\", \"5fbe790ec6f0b32014074bb3\"]")
+      @Parameter(description = "Store IDs", example = "5fbe790ec6f0b32014074bb2, 5fbe790ec6f0b32014074bb3")
       @RequestParam(value = "stores", required = false) List<String> stores,
       @Parameter(description = "Whether to hide expired deals")
       @RequestParam(value = "hideExpired", required = false, defaultValue = "false") Boolean hideExpired,

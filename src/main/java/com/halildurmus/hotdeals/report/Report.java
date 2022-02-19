@@ -2,23 +2,23 @@ package com.halildurmus.hotdeals.report;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.halildurmus.hotdeals.audit.DateAudit;
 import com.halildurmus.hotdeals.user.User;
 import java.io.Serializable;
-import java.time.Instant;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Document(collection = "reports")
+@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public abstract class Report implements Serializable {
+public abstract class Report extends DateAudit implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
 
@@ -30,14 +30,5 @@ public abstract class Report implements Serializable {
   private User reportedBy;
 
   private String message;
-
-  @CreatedDate
-  // See https://github.com/spring-projects/spring-data-rest/issues/1565
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant createdAt;
-
-  @LastModifiedDate
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant updatedAt;
 
 }

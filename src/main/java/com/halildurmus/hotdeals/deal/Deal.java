@@ -3,11 +3,10 @@ package com.halildurmus.hotdeals.deal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.halildurmus.hotdeals.audit.DateAudit;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import com.halildurmus.hotdeals.util.ObjectIdSetJsonSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.io.Serializable;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,26 +15,26 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.URL;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "deals")
 @TypeAlias("deal")
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Deal implements Serializable {
+public class Deal extends DateAudit {
 
   private static final long serialVersionUID = 1234567L;
 
@@ -100,19 +99,10 @@ public class Deal implements Serializable {
   @Default
   private DealStatus status = DealStatus.ACTIVE;
 
-  @Schema(description = "Deal photo URLs", example = "[https://www.gravatar.com/avatar]")
+  @Schema(description = "Deal photo URLs", example = "https://www.gravatar.com/avatar")
   private List<String> photos = new ArrayList<>();
 
   @Schema(description = "Deal views", example = "10")
   private int views = 0;
-
-  @CreatedDate
-  // See https://github.com/spring-projects/spring-data-rest/issues/1565
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant createdAt;
-
-  @LastModifiedDate
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant updatedAt;
 
 }

@@ -1,29 +1,27 @@
 package com.halildurmus.hotdeals.category;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.time.Instant;
+import com.halildurmus.hotdeals.audit.DateAudit;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "categories")
 @TypeAlias("category")
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category implements Serializable {
+public class Category extends DateAudit {
 
   private static final long serialVersionUID = 1234567L;
 
@@ -45,14 +43,5 @@ public class Category implements Serializable {
 
   @NotBlank
   private String iconFontFamily;
-
-  @CreatedDate
-  // See https://github.com/spring-projects/spring-data-rest/issues/1565
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant createdAt;
-
-  @LastModifiedDate
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Instant updatedAt;
 
 }

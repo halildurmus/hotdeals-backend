@@ -23,7 +23,7 @@ public class UserExtendedDTO {
   @Schema(description = "User nickname", example = "MrNobody123")
   private final String nickname;
 
-  @Schema(description = "Blocked users", example = "[5fbe790ec6f0b32014074bb2]")
+  @Schema(description = "Blocked users", example = "5fbe790ec6f0b32014074bb2")
   private final HashSet<String> blockedUsers;
 
   @Schema(description = "FCM tokens", example = "{\"29ba634d38ac6a1a\": \"dOMvrfckR9-5R_A43nuFMo:APA91bEVh2JQ8i-l1406C68mExotHQCGWeRc0cuLZTDH9t5vXXWIPZ-6HDaOtn1PLipsqWbpNWVcpDxkcIWwHNR60_mtaRo5kyuf0cs5Fxa6iGLpoqV93rpWIisa9_acGbOZwfIass0B\"}")
