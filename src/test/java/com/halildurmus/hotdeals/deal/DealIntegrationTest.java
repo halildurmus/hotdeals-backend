@@ -28,6 +28,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -93,6 +94,7 @@ public class DealIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /deals (returns empty)")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsEmptyArray() throws Exception {
     final RequestBuilder requestBuilder = get("/deals")
         .accept(MediaType.APPLICATION_JSON)
@@ -106,6 +108,7 @@ public class DealIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /deals (returns 1 deal)")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsOneDeal() throws Exception {
     final User user = mongoTemplate.insert(DummyUsers.user3);
     when(securityService.getUser()).thenReturn(user);

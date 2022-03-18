@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -37,6 +38,7 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("POST /stores")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void createsStore() throws Exception {
     final Store store = DummyStores.store1;
     final RequestBuilder requestBuilder = post("/stores")
@@ -68,6 +70,7 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /stores (returns 1 store)")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void getStoresReturnsOneStore() throws Exception {
     final Store store = DummyStores.store1;
     mongoTemplate.insert(store);

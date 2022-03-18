@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -38,6 +39,7 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("POST /categories")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void createsCategory() throws Exception {
     final Category category = DummyCategories.category1;
     final RequestBuilder requestBuilder = post("/categories")
@@ -59,6 +61,7 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /categories (returns empty)")
+  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
   public void getCategoriesReturnsEmptyArray() throws Exception {
     final RequestBuilder requestBuilder = get("/categories")
         .accept(MediaType.APPLICATION_JSON)
