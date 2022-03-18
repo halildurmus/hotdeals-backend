@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.deal.DTO;
+package com.halildurmus.hotdeals.deal.dto;
 
 import com.halildurmus.hotdeals.deal.DealStatus;
 import io.swagger.v3.oas.annotations.media.Schema;

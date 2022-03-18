@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.user.DTO;
+package com.halildurmus.hotdeals.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Optional;

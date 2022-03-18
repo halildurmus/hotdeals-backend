@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.comment.CommentService;
-import com.halildurmus.hotdeals.deal.DTO.DealPatchDTO;
+import com.halildurmus.hotdeals.deal.dto.DealPatchDTO;
 import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;

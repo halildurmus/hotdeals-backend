@@ -1,6 +1,6 @@
-package com.halildurmus.hotdeals.report.user.DTO;
+package com.halildurmus.hotdeals.report.user.dto;
 
-import com.halildurmus.hotdeals.report.DTO.ReportDTO;
+import com.halildurmus.hotdeals.report.dto.ReportDTO;
 import com.halildurmus.hotdeals.report.user.UserReportReason;
 import java.util.EnumSet;
 import javax.validation.constraints.NotEmpty;

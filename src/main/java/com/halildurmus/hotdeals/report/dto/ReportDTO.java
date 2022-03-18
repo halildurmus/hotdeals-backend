@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.report.DTO;
+package com.halildurmus.hotdeals.report.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

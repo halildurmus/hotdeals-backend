@@ -1,4 +1,4 @@
-package com.halildurmus.hotdeals.comment.DTO;
+package com.halildurmus.hotdeals.comment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;

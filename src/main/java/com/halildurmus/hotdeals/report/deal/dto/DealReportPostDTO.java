@@ -1,7 +1,7 @@
-package com.halildurmus.hotdeals.report.deal.DTO;
+package com.halildurmus.hotdeals.report.deal.dto;
 
-import com.halildurmus.hotdeals.report.DTO.ReportDTO;
 import com.halildurmus.hotdeals.report.deal.DealReportReason;
+import com.halildurmus.hotdeals.report.dto.ReportDTO;
 import java.util.EnumSet;
 import javax.validation.constraints.NotEmpty;
 import lombok.Data;

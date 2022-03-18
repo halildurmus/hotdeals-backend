@@ -1,7 +1,7 @@
 package com.halildurmus.hotdeals.category;
 
-import com.halildurmus.hotdeals.category.DTO.CategoryGetDTO;
-import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
+import com.halildurmus.hotdeals.category.dto.CategoryGetDTO;
+import com.halildurmus.hotdeals.category.dto.CategoryPostDTO;
 import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
 import com.halildurmus.hotdeals.security.role.IsSuper;

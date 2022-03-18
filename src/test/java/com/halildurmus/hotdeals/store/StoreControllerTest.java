@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.halildurmus.hotdeals.BaseControllerUnitTest;
 import com.halildurmus.hotdeals.exception.StoreNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
-import com.halildurmus.hotdeals.store.DTO.StorePostDTO;
+import com.halildurmus.hotdeals.store.dto.StorePostDTO;
 import com.halildurmus.hotdeals.store.dummy.DummyStores;
 import java.util.List;
 import java.util.Objects;

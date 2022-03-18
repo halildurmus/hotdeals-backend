@@ -1,7 +1,7 @@
-package com.halildurmus.hotdeals.comment.DTO;
+package com.halildurmus.hotdeals.comment.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.halildurmus.hotdeals.user.DTO.UserBasicDTO;
+import com.halildurmus.hotdeals.user.dto.UserBasicDTO;
 import com.halildurmus.hotdeals.util.ObjectIdJsonSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;

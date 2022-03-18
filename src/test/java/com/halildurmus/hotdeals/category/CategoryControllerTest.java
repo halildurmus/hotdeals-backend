@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseControllerUnitTest;
-import com.halildurmus.hotdeals.category.DTO.CategoryPostDTO;
+import com.halildurmus.hotdeals.category.dto.CategoryPostDTO;
 import com.halildurmus.hotdeals.category.dummy.DummyCategories;
 import com.halildurmus.hotdeals.exception.CategoryNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
