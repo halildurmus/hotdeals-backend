@@ -13,6 +13,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -29,6 +30,21 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
   @Value("${api-version}")
   private String currentApiVersion;
+
+  @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+  public ResponseEntity<AppError> handleAuthCredentialsNotFound(
+      AuthenticationCredentialsNotFoundException e) {
+    final AppError error = new AppError(
+        currentApiVersion,
+        Integer.toString(HttpStatus.UNAUTHORIZED.value()),
+        "Unauthorized access of protected resource, invalid credentials",
+        "auth-exceptions",
+        "",
+        "Unauthorized access of protected resource, invalid credentials"
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+  }
 
   @ExceptionHandler(CategoryNotFoundException.class)
   public ResponseEntity<AppError> handleCategoryNotFound(CategoryNotFoundException e) {
