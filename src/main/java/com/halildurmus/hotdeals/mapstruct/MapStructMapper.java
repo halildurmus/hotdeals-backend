@@ -9,6 +9,8 @@ import com.halildurmus.hotdeals.comment.dto.CommentPostDTO;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.dto.DealGetDTO;
 import com.halildurmus.hotdeals.deal.dto.DealPostDTO;
+import com.halildurmus.hotdeals.report.comment.CommentReport;
+import com.halildurmus.hotdeals.report.comment.dto.CommentReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.user.UserReport;
@@ -36,6 +38,10 @@ public interface MapStructMapper {
   CommentGetDTO commentToCommentGetDTO(Comment comment);
 
   CommentPostDTO commentToCommentPostDTO(Comment comment);
+
+  CommentReport commentReportPostDTOToCommentReport(CommentReportPostDTO commentReportPostDTO);
+
+  CommentReportPostDTO commentReportToCommentReportPostDTO(CommentReport commentReport);
 
   Deal dealPostDTOToDeal(DealPostDTO dealPostDTO);
 

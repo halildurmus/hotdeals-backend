@@ -30,9 +30,13 @@ import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
-import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
+import com.halildurmus.hotdeals.report.comment.CommentReport;
+import com.halildurmus.hotdeals.report.comment.CommentReportService;
+import com.halildurmus.hotdeals.report.comment.dto.CommentReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
+import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
+import com.halildurmus.hotdeals.report.dummy.DummyCommentReports;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.store.dummy.DummyStores;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
@@ -73,6 +77,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
   @MockBean
   private CommentService commentService;
+
+  @MockBean
+  private CommentReportService commentReportService;
 
   @MockBean
   private DealReportService dealReportService;
@@ -827,8 +834,65 @@ public class DealControllerTest extends BaseControllerUnitTest {
   }
 
   @Test
+  @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports ")
+  public void createsCommentReport() throws Exception {
+    final String dealId = DummyDeals.deal1.getId();
+    final String commentId = DummyComments.comment1.getId();
+    final CommentReport commentReport = DummyCommentReports.commentReport1;
+    final CommentReportPostDTO commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(
+        commentReport);
+    when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
+    when(commentService.findById(anyString())).thenReturn(Optional.of(DummyComments.comment1));
+    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(commentReportPostDTO))
+        .contentType(MediaType.APPLICATION_JSON);
+    mvc.perform(request).andExpect(status().isCreated());
+  }
+
+  @Test
+  @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports (invalid comment id)")
+  public void postCommentReportThrowsConstraintViolationException() throws JsonProcessingException {
+    final String dealId = DummyDeals.deal1.getId();
+    final String commentId = "23478fsf234";
+    final CommentReport commentReport = DummyCommentReports.commentReport1;
+    final CommentReportPostDTO commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(
+        commentReport);
+    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(commentReportPostDTO))
+        .contentType(MediaType.APPLICATION_JSON);
+
+    assertThrows(ConstraintViolationException.class, () -> {
+      try {
+        mvc.perform(request);
+      } catch (NestedServletException e) {
+        throw e.getCause();
+      }
+    });
+  }
+
+  @Test
+  @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports (empty body)")
+  public void postCommentReportValidationFailsDueToEmptyBody() throws Exception {
+    final String dealId = DummyDeals.deal1.getId();
+    final String commentId = DummyComments.comment1.getId();
+    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+        .accept(MediaType.APPLICATION_JSON)
+        .content("{}")
+        .contentType(MediaType.APPLICATION_JSON);
+
+    mvc.perform(request).andExpect(status().isBadRequest())
+        .andExpect(result -> assertTrue(
+            result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(result -> assertTrue(
+            Objects.requireNonNull(result.getResolvedException()).getMessage()
+                .contains("Field error in object 'commentReportPostDTO' on field 'reasons'")));
+  }
+
+  @Test
   @DisplayName("POST /deals/{id}/reports")
-  public void createsReport() throws Exception {
+  public void createsDealReport() throws Exception {
     final String id = DummyDeals.deal1.getId();
     final DealReport dealReport = DummyDealReports.dealReport1;
     final DealReportPostDTO dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(
@@ -843,7 +907,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("POST /deals/{id}/reports (invalid id)")
-  public void postReportThrowsConstraintViolationException() throws JsonProcessingException {
+  public void postDealReportThrowsConstraintViolationException() throws JsonProcessingException {
     final String id = "23478fsf234";
     final DealReport dealReport = DummyDealReports.dealReport1;
     final DealReportPostDTO dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(
@@ -864,7 +928,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
   @Test
   @DisplayName("POST /deals/{id}/reports (empty body)")
-  public void postReportValidationFailsDueToEmptyBody() throws Exception {
+  public void postDealReportValidationFailsDueToEmptyBody() throws Exception {
     final String id = DummyDeals.deal1.getId();
     final RequestBuilder request = post("/deals/" + id + "/reports")
         .accept(MediaType.APPLICATION_JSON)

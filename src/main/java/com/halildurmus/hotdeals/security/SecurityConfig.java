@@ -76,7 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic().disable().exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
         .and().authorizeRequests()
-        .antMatchers("/actuator/**", "/comments/**", "/deal-reports/**", "/user-reports/**")
+        .antMatchers("/actuator/**", "/comment-reports/**", "/deal-reports/**",
+            "/user-reports/**")
         .access("hasRole('SUPER')")
         .anyRequest().authenticated().and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)

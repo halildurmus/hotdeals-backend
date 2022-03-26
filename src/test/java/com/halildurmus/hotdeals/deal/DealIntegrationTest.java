@@ -14,7 +14,9 @@ import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
+import com.halildurmus.hotdeals.report.comment.CommentReport;
 import com.halildurmus.hotdeals.report.deal.DealReport;
+import com.halildurmus.hotdeals.report.dummy.DummyCommentReports;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.User;
@@ -164,6 +166,25 @@ public class DealIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$.postedBy.id").value(user.getId()))
         .andExpect(jsonPath("$.message").value(comment.getMessage()))
         .andExpect(jsonPath("$.createdAt").isNotEmpty());
+  }
+
+  @Test
+  @DisplayName("POST /deals/{id}/comments/{commentId}/reports")
+  public void shouldCreateCommentReportThenReturnCommentReport() throws Exception {
+    final User user = mongoTemplate.insert(DummyUsers.user1);
+    when(securityService.getUser()).thenReturn(user);
+    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
+    final Comment dummyComment = DummyComments.comment1;
+    dummyComment.setPostedBy(user);
+    dummyComment.setDealId(new ObjectId(deal.getId()));
+    final Comment comment = mongoTemplate.insert(dummyComment);
+    final CommentReport commentReport = DummyCommentReports.commentReport1;
+    final RequestBuilder requestBuilder = post(
+        "/deals/" + deal.getId() + "/comments/" + comment.getId() + "/reports")
+        .accept(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(commentReport))
+        .contentType(MediaType.APPLICATION_JSON);
+    mvc.perform(requestBuilder).andExpect(status().isCreated());
   }
 
   @Test

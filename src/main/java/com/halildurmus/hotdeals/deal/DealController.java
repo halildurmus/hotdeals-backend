@@ -10,8 +10,12 @@ import com.halildurmus.hotdeals.comment.dto.CommentsDTO;
 import com.halildurmus.hotdeals.deal.dto.DealGetDTO;
 import com.halildurmus.hotdeals.deal.dto.DealPostDTO;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
+import com.halildurmus.hotdeals.exception.CommentNotFoundException;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
+import com.halildurmus.hotdeals.report.comment.CommentReport;
+import com.halildurmus.hotdeals.report.comment.CommentReportService;
+import com.halildurmus.hotdeals.report.comment.dto.CommentReportPostDTO;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
 import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
@@ -67,6 +71,9 @@ public class DealController {
 
   @Autowired
   private CommentService commentService;
+
+  @Autowired
+  private CommentReportService commentReportService;
 
   @Autowired
   private DealReportService dealReportService;
@@ -391,6 +398,30 @@ public class DealController {
     comment.setDealId(new ObjectId(id));
 
     return mapStructMapper.commentToCommentGetDTO(commentService.save(comment));
+  }
+
+  @PostMapping("/{id}/comments/{commentId}/reports")
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Reports a deal comment", security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Successful operation", content = @Content),
+      @ApiResponse(responseCode = "400", description = "Invalid deal or comment ID", content = @Content),
+      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+      @ApiResponse(responseCode = "404", description = "Deal or comment not found", content = @Content)
+  })
+  public void createCommentReport(
+      @Parameter(description = "String representation of the Deal ID", example = "5fbe790ec6f0b32014074bb1")
+      @IsObjectId @PathVariable String id,
+      @Parameter(description = "String representation of the Comment ID", example = "5fbe790ec6f0b32014074bb2")
+      @IsObjectId @PathVariable String commentId,
+      @Valid @RequestBody CommentReportPostDTO commentReportPostDTO) {
+    service.findById(id).orElseThrow(DealNotFoundException::new);
+    final Comment comment = commentService.findById(commentId)
+        .orElseThrow(CommentNotFoundException::new);
+    final CommentReport commentReport = mapStructMapper.commentReportPostDTOToCommentReport(
+        commentReportPostDTO);
+    commentReport.setReportedComment(comment);
+    commentReportService.save(commentReport);
   }
 
   @PostMapping("/{id}/reports")

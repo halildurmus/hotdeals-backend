@@ -3,6 +3,7 @@ package com.halildurmus.hotdeals.config;
 import com.halildurmus.hotdeals.category.Category;
 import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.deal.Deal;
+import com.halildurmus.hotdeals.report.comment.CommentReport;
 import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.store.Store;
@@ -16,8 +17,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 class RepositoryConfig implements RepositoryRestConfigurer {
 
   private final Class<?>[] exposedClasses = {
-      Category.class, Comment.class, Deal.class, DealReport.class, Store.class, User.class,
-      UserReport.class
+      Category.class, Comment.class, CommentReport.class, Deal.class, DealReport.class, Store.class,
+      User.class, UserReport.class
   };
 
   @Override
