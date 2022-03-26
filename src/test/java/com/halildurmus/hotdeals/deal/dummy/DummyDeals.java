@@ -9,7 +9,8 @@ import org.bson.types.ObjectId;
 
 public class DummyDeals {
 
-  public static Deal deal1 = Deal.builder().id("5fbe720ec6f0b32014074bb0")
+  public static Deal deal1 = Deal.builder()
+      .id("5fbe720ec6f0b32014074bb0")
       .postedBy(new ObjectId("5fbe790ec6f0b32014074bb3"))
       .dealScore(0).views(0).status(DealStatus.ACTIVE).createdAt(Instant.now())
       .title("12TB WD My Book Desktop External HDD")
