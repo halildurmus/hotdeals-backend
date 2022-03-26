@@ -44,6 +44,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(CommentNotFoundException.class)
+  public ResponseEntity<AppError> handleCommentNotFound(CommentNotFoundException e) {
+    final AppError error = new AppError(
+        currentApiVersion,
+        Integer.toString(HttpStatus.NOT_FOUND.value()),
+        e.getMessage(),
+        "comment-exceptions",
+        "",
+        e.getMessage()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+  }
+
   @ExceptionHandler(DealNotFoundException.class)
   public ResponseEntity<AppError> handleDealNotFound(DealNotFoundException e) {
     final AppError error = new AppError(
