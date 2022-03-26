@@ -1,5 +1,6 @@
 package com.halildurmus.hotdeals.comment;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -14,6 +15,11 @@ public class CommentServiceImpl implements CommentService {
 
   @Autowired
   private CommentRepository repository;
+
+  @Override
+  public Optional<Comment> findById(String id) {
+    return repository.findById(id);
+  }
 
   @Override
   public Page<Comment> getCommentsByDealId(ObjectId dealId, Pageable pageable) {
