@@ -6,7 +6,7 @@ db.categories.insertMany([
     names: {en: 'Computers', tr: 'Bilgisayar'},
     parent: '/',
     category: '/computers',
-    iconLigature: 'computer',
+    iconLigature: 'computer_baseline',
     iconFontFamily: 'MaterialIcons',
     _class: 'category'
   },
@@ -14,7 +14,7 @@ db.categories.insertMany([
     names: {en: 'Electronics', tr: 'Elektronik '},
     parent: '/',
     category: '/electronics',
-    iconLigature: 'devices',
+    iconLigature: 'devices_baseline',
     iconFontFamily: 'MaterialIcons',
     _class: 'category'
   },
@@ -22,7 +22,7 @@ db.categories.insertMany([
     names: {en: 'Video Cards', tr: 'Ekran Kartı'},
     parent: '/computers',
     category: '/computers/video-cards',
-    iconLigature: 'memory',
+    iconLigature: 'memory_baseline',
     iconFontFamily: 'MaterialIcons',
     _class: 'category'
   },
