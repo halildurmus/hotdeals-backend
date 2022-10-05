@@ -88,6 +88,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(DuplicateNicknameException.class)
+  public ResponseEntity<AppError> handleDuplicateNickname(DuplicateNicknameException e) {
+    final AppError error = new AppError(
+        currentApiVersion,
+        Integer.toString(HttpStatus.BAD_REQUEST.value()),
+        e.getMessage(),
+        "user-exceptions",
+        "",
+        e.getMessage()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(StoreNotFoundException.class)
   public ResponseEntity<AppError> handleStoreNotFound(StoreNotFoundException e) {
     final AppError error = new AppError(

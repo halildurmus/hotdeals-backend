@@ -9,6 +9,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
+import com.halildurmus.hotdeals.exception.DuplicateNicknameException;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.dto.UserPatchDTO;
@@ -114,6 +115,8 @@ public class UserServiceImpl implements UserService {
         user.setNickname(patchedUser.getNickname().get());
       }
       repository.save(user);
+    } catch (DuplicateKeyException e) {
+      throw new DuplicateNicknameException();
     } catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
     }
