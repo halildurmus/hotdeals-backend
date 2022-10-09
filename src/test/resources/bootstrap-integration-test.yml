@@ -2,11 +2,15 @@ embedded:
   containers:
     enabled: true
   elasticsearch:
-    dockerImage: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    dockerImage: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
     enabled: true
+    env:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      xpack.security.enabled: "false"
     reuseContainer: true
   mongodb:
-    dockerImage: mongo:4.4
+    dockerImage: mongo:latest
     enabled: true
     reuseContainer: true
 security:
