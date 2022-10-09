@@ -23,41 +23,40 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-  @Autowired
-  private FirebaseMessaging firebaseMessaging;
+  @Autowired private FirebaseMessaging firebaseMessaging;
 
-  @Autowired
-  private SecurityService securityService;
+  @Autowired private SecurityService securityService;
 
-  @Autowired
-  private UserService userService;
+  @Autowired private UserService userService;
 
   private MulticastMessage createMulticastMessage(Notification notification) {
     final User user = securityService.getUser();
     final Map<String, String> data = notification.getData();
     data.put("actor", user.getId());
 
-    final com.google.firebase.messaging.Notification firebaseNotification = com.google.firebase.messaging.Notification
-        .builder()
-        .setTitle(notification.getTitle())
-        .setBody(notification.getBody())
-        .build();
+    final com.google.firebase.messaging.Notification firebaseNotification =
+        com.google.firebase.messaging.Notification.builder()
+            .setTitle(notification.getTitle())
+            .setBody(notification.getBody())
+            .build();
 
-    final AndroidNotification androidNotification = AndroidNotification
-        .builder()
-        .setImage(notification.getImage())
-        .setTitle(notification.getTitle())
-        .setBody(notification.getBody())
-        .setTitleLocalizationKey(notification.getTitleLocKey())
-        .addAllTitleLocalizationArgs(notification.getTitleLocArgs())
-        .setBodyLocalizationKey(notification.getBodyLocKey())
-        .addAllBodyLocalizationArgs(notification.getBodyLocArgs())
-        .setPriority(AndroidNotification.Priority.MAX)
-        .build();
+    final AndroidNotification androidNotification =
+        AndroidNotification.builder()
+            .setImage(notification.getImage())
+            .setTitle(notification.getTitle())
+            .setBody(notification.getBody())
+            .setTitleLocalizationKey(notification.getTitleLocKey())
+            .addAllTitleLocalizationArgs(notification.getTitleLocArgs())
+            .setBodyLocalizationKey(notification.getBodyLocKey())
+            .addAllBodyLocalizationArgs(notification.getBodyLocArgs())
+            .setPriority(AndroidNotification.Priority.MAX)
+            .build();
 
-    final AndroidConfig androidConfig = AndroidConfig.builder()
-        .setNotification(androidNotification)
-        .setPriority(Priority.HIGH).build();
+    final AndroidConfig androidConfig =
+        AndroidConfig.builder()
+            .setNotification(androidNotification)
+            .setPriority(Priority.HIGH)
+            .build();
 
     return MulticastMessage.builder()
         .setNotification(firebaseNotification)
@@ -94,5 +93,4 @@ public class NotificationServiceImpl implements NotificationService {
 
     return batchResponse.getSuccessCount();
   }
-
 }

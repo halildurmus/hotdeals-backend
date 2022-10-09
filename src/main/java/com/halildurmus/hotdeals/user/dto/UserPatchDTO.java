@@ -21,5 +21,4 @@ public class UserPatchDTO {
   @NotBlank
   @Size(min = 5, max = 25)
   private Optional<String> nickname;
-
 }

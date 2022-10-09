@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserReportServiceImpl implements UserReportService {
 
-  @Autowired
-  private UserReportRepository repository;
+  @Autowired private UserReportRepository repository;
 
   @Override
   public UserReport save(UserReport userReport) {

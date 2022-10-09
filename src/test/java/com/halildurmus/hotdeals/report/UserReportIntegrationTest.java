@@ -24,14 +24,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserReportIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired
-  private CacheManager cacheManager;
+  @Autowired private CacheManager cacheManager;
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
   @AfterEach
   void cleanUp() {
@@ -49,9 +46,10 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /user-reports (returns empty)")
   public void getUserReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/user-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/user-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -68,9 +66,10 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
     userReport.setReportedBy(user1);
     userReport.setReportedUser(user2);
     mongoTemplate.insert(userReport);
-    final RequestBuilder requestBuilder = get("/user-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/user-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -85,5 +84,4 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$._embedded.user-reports[0].createdAt").isNotEmpty())
         .andExpect(jsonPath("$._embedded.user-reports[0].updatedAt").isNotEmpty());
   }
-
 }

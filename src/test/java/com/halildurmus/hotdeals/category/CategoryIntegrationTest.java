@@ -23,14 +23,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class CategoryIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @Autowired
-  private JacksonTester<Category> json;
+  @Autowired private JacksonTester<Category> json;
 
   @AfterEach
   void cleanUp() {
@@ -39,13 +36,16 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("POST /categories")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void createsCategory() throws Exception {
     final Category category = DummyCategories.category1;
-    final RequestBuilder requestBuilder = post("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(category).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(category).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isCreated())
@@ -61,11 +61,14 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /categories (returns empty)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getCategoriesReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -78,9 +81,10 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
   public void getCategoriesReturnsOneCategory() throws Exception {
     final Category category = DummyCategories.category1;
     mongoTemplate.insert(category);
-    final RequestBuilder requestBuilder = get("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -94,5 +98,4 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$[0].iconLigature").value(category.getIconLigature()))
         .andExpect(jsonPath("$[0].iconFontFamily").value(category.getIconFontFamily()));
   }
-
 }

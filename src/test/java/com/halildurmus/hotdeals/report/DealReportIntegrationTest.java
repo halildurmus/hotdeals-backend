@@ -26,14 +26,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class DealReportIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired
-  private CacheManager cacheManager;
+  @Autowired private CacheManager cacheManager;
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
   @AfterEach
   void cleanUp() {
@@ -51,9 +48,10 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns empty)")
   public void getDealReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/deal-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/deal-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -70,9 +68,10 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
     dealReport.setReportedDeal(deal);
     dealReport.setReportedBy(user);
     mongoTemplate.insert(dealReport);
-    final RequestBuilder requestBuilder = get("/deal-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/deal-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -87,5 +86,4 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$._embedded.deal-reports[0].createdAt").isNotEmpty())
         .andExpect(jsonPath("$._embedded.deal-reports[0].updatedAt").isNotEmpty());
   }
-
 }

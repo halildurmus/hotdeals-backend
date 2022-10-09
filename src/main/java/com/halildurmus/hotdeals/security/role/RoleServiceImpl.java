@@ -15,8 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 public class RoleServiceImpl implements RoleService {
 
-  @Autowired
-  private FirebaseAuth firebaseAuth;
+  @Autowired private FirebaseAuth firebaseAuth;
 
   @Override
   public void add(String uid, Role role) {
@@ -41,5 +40,4 @@ public class RoleServiceImpl implements RoleService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Firebase Auth Exception", e);
     }
   }
-
 }

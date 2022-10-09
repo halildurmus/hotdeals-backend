@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 class CommentEntityCallbacks implements BeforeSaveCallback<Comment> {
 
-  @Autowired
-  private SecurityService securityService;
+  @Autowired private SecurityService securityService;
 
   @Override
   public Comment onBeforeSave(Comment comment, Document document, String collection) {
@@ -29,5 +28,4 @@ class CommentEntityCallbacks implements BeforeSaveCallback<Comment> {
 
     return comment;
   }
-
 }

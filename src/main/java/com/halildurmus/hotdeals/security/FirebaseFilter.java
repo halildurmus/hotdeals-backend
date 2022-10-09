@@ -30,19 +30,16 @@ public class FirebaseFilter extends OncePerRequestFilter {
 
   private static final String HEADER_NAME = "Authorization";
 
-  @Autowired
-  private RoleService roleService;
+  @Autowired private RoleService roleService;
 
-  @Autowired
-  private SecurityProperties securityProperties;
+  @Autowired private SecurityProperties securityProperties;
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
   @SneakyThrows
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) {
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
     if (request.getHeader(HEADER_NAME) != null) {
       verifyToken(request);
     }
@@ -65,8 +62,8 @@ public class FirebaseFilter extends OncePerRequestFilter {
   public List<GrantedAuthority> parseAuthorities(FirebaseToken token, String email) {
     final List<GrantedAuthority> authorities = new ArrayList<>();
     // Handle ROLE_SUPER authority
-    if (securityProperties.getSuperAdmins() != null && securityProperties.getSuperAdmins()
-        .contains(email)) {
+    if (securityProperties.getSuperAdmins() != null
+        && securityProperties.getSuperAdmins().contains(email)) {
       if (!token.getClaims().containsKey(Role.ROLE_SUPER.name())) {
         try {
           roleService.add(token.getUid(), Role.ROLE_SUPER);
@@ -97,10 +94,8 @@ public class FirebaseFilter extends OncePerRequestFilter {
     final User user = firebaseTokenToUser(decodedToken);
     log.info("User: " + user);
     final List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
-    final FirebaseAuthenticationToken authentication = new FirebaseAuthenticationToken(
-        user,
-        new Credentials(decodedToken, token), authorities);
+    final FirebaseAuthenticationToken authentication =
+        new FirebaseAuthenticationToken(user, new Credentials(decodedToken, token), authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }
-
 }

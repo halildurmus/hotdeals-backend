@@ -15,14 +15,14 @@ class AppErrorAttributes extends DefaultErrorAttributes {
   }
 
   @Override
-  public Map<String, Object> getErrorAttributes(final WebRequest webRequest,
-      final ErrorAttributeOptions options) {
-    final Map<String, Object> defaultErrorAttributes = super.getErrorAttributes(webRequest,
-        ErrorAttributeOptions.defaults().including(Include.MESSAGE));
-    final AppError superHeroAppError = AppError.fromDefaultAttributeMap(currentApiVersion,
-        defaultErrorAttributes);
+  public Map<String, Object> getErrorAttributes(
+      final WebRequest webRequest, final ErrorAttributeOptions options) {
+    final Map<String, Object> defaultErrorAttributes =
+        super.getErrorAttributes(
+            webRequest, ErrorAttributeOptions.defaults().including(Include.MESSAGE));
+    final AppError superHeroAppError =
+        AppError.fromDefaultAttributeMap(currentApiVersion, defaultErrorAttributes);
 
     return superHeroAppError.toAttributeMap();
   }
-
 }

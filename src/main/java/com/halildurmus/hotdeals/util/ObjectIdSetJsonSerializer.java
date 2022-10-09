@@ -13,8 +13,8 @@ import org.bson.types.ObjectId;
 public class ObjectIdSetJsonSerializer extends JsonSerializer<Set<ObjectId>> {
 
   @Override
-  public void serialize(Set<ObjectId> objectIds, JsonGenerator jsonGenerator,
-      SerializerProvider serializerProvider) {
+  public void serialize(
+      Set<ObjectId> objectIds, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
     try {
       final Set<String> ids = new HashSet<>();
       objectIds.forEach(objectId -> ids.add(objectId.toString()));
@@ -23,5 +23,4 @@ public class ObjectIdSetJsonSerializer extends JsonSerializer<Set<ObjectId>> {
       log.error("Failed to serialize Set<ObjectId>!", e);
     }
   }
-
 }

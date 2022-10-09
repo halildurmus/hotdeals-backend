@@ -24,10 +24,9 @@ public class CustomErrorController extends AbstractErrorController {
   @RequestMapping
   public ResponseEntity<Object> error(HttpServletRequest request) {
     final HttpStatus status = this.getStatus(request);
-    final Map<String, Object> body = this.getErrorAttributes(request,
-        ErrorAttributeOptions.defaults());
+    final Map<String, Object> body =
+        this.getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
     return ResponseEntity.status(status).body(body);
   }
-
 }

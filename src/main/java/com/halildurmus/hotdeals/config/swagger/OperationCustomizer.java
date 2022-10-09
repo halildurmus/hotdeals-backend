@@ -12,16 +12,17 @@ import org.springframework.web.method.HandlerMethod;
 public class OperationCustomizer implements org.springdoc.core.customizers.OperationCustomizer {
 
   @Override
-  public io.swagger.v3.oas.models.Operation customize(io.swagger.v3.oas.models.Operation operation,
-      HandlerMethod handlerMethod) {
+  public io.swagger.v3.oas.models.Operation customize(
+      io.swagger.v3.oas.models.Operation operation, HandlerMethod handlerMethod) {
     final StringBuilder sb = new StringBuilder();
     // Check if the operation requires specific authorization
-    final Optional<IsSuper> isSuperAnnotation = Optional.ofNullable(
-        handlerMethod.getMethodAnnotation(IsSuper.class));
+    final Optional<IsSuper> isSuperAnnotation =
+        Optional.ofNullable(handlerMethod.getMethodAnnotation(IsSuper.class));
     isSuperAnnotation.ifPresent(
-        isSuper -> sb.append("<b>Access Privileges</b>: ")
-            .append("Available for users with <em><b>ROLE_SUPER</b></em> authority.")
-            .append("<br /><br />"));
+        isSuper ->
+            sb.append("<b>Access Privileges</b>: ")
+                .append("Available for users with <em><b>ROLE_SUPER</b></em> authority.")
+                .append("<br /><br />"));
     if (!ObjectUtils.isEmpty(operation.getDescription())) {
       sb.append(operation.getDescription());
     }
@@ -32,5 +33,4 @@ public class OperationCustomizer implements org.springdoc.core.customizers.Opera
 
     return operation;
   }
-
 }

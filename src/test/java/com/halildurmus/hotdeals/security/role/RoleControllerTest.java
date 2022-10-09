@@ -20,11 +20,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @Import(RoleController.class)
 public class RoleControllerTest extends BaseControllerUnitTest {
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private RoleService service;
+  @MockBean private RoleService service;
 
   @Test
   @DisplayName("PUT /roles (success)")
@@ -46,12 +44,17 @@ public class RoleControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentTypeMismatchException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains(
-                    "Failed to convert value of type 'java.lang.String' to required type 'com.halildurmus.hotdeals.security.role.Role'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentTypeMismatchException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Failed to convert value of type 'java.lang.String' to required type 'com.halildurmus.hotdeals.security.role.Role'")));
   }
 
   @Test
@@ -60,5 +63,4 @@ public class RoleControllerTest extends BaseControllerUnitTest {
     final RequestBuilder request = put("/roles");
     mvc.perform(request).andExpect(status().isBadRequest());
   }
-
 }

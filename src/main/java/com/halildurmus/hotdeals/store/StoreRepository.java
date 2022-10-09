@@ -18,14 +18,14 @@ public interface StoreRepository extends MongoRepository<Store, String> {
   <S extends Store> S save(S entity);
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "stores", key = "#id"),
-      @CacheEvict(value = "stores:findAll", allEntries = true)
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "stores", key = "#id"),
+        @CacheEvict(value = "stores:findAll", allEntries = true)
+      })
   void deleteById(String id);
 
   @Override
   @Cacheable("stores:findAll")
   Page<Store> findAll(Pageable pageable);
-
 }

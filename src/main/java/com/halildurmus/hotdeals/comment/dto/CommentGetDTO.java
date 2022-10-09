@@ -28,5 +28,4 @@ public class CommentGetDTO {
 
   @Schema(description = "Comment createdAt", example = "2021-06-30T16:36:59.713Z")
   private final Instant createdAt;
-
 }

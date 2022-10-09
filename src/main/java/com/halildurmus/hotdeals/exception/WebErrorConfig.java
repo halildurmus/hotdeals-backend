@@ -15,5 +15,4 @@ public class WebErrorConfig {
   public ErrorAttributes errorAttributes() {
     return new AppErrorAttributes(currentApiVersion);
   }
-
 }

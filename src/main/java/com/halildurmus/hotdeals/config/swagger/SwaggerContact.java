@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 class SwaggerContact {
 
   private String email;
-  private String name;
-  private String url;
 
+  private String name;
+
+  private String url;
 }

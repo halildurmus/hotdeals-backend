@@ -15,5 +15,4 @@ public class StringFacet {
   @NotNull
   @Field(type = FieldType.Keyword)
   private final String facetValue;
-
 }

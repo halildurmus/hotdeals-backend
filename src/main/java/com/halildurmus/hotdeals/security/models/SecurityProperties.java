@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class SecurityProperties {
 
   private List<String> allowedOrigins;
-  private List<String> allowedMethods;
-  private List<String> superAdmins;
 
+  private List<String> allowedMethods;
+
+  private List<String> superAdmins;
 }

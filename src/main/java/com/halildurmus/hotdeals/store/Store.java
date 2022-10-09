@@ -24,14 +24,9 @@ public class Store extends DateAudit {
 
   private static final long serialVersionUID = 1234567L;
 
-  @Id
-  private String id;
+  @Id private String id;
 
-  @NotBlank
-  private String name;
+  @NotBlank private String name;
 
-  @URL
-  @NotNull
-  private String logo;
-
+  @URL @NotNull private String logo;
 }

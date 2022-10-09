@@ -15,7 +15,5 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class UserReportPostDTO extends ReportDTO {
 
-  @NotEmpty
-  private EnumSet<UserReportReason> reasons;
-
+  @NotEmpty private EnumSet<UserReportReason> reasons;
 }

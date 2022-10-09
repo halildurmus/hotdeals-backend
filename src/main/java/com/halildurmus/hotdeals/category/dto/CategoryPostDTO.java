@@ -11,7 +11,9 @@ import lombok.Data;
 @Builder
 public class CategoryPostDTO {
 
-  @Schema(description = "Category names", example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
+  @Schema(
+      description = "Category names",
+      example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
   @NotNull
   private final Map<String, String> names;
 
@@ -30,5 +32,4 @@ public class CategoryPostDTO {
   @Schema(description = "Category icon font family", example = "MaterialIcons")
   @NotBlank
   private final String iconFontFamily;
-
 }

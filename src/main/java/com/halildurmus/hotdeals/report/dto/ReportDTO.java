@@ -12,5 +12,4 @@ public class ReportDTO {
 
   @Schema(description = "Report message", example = "The user is harassing me")
   private String message;
-
 }

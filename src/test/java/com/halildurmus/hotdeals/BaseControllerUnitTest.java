@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
-@WebMvcTest(
-    useDefaultFilters = false,
-    excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(useDefaultFilters = false, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @AutoConfigureJsonTesters
 public abstract class BaseControllerUnitTest {
 
@@ -18,5 +16,4 @@ public abstract class BaseControllerUnitTest {
     final String json = new ObjectMapper().writeValueAsString(object);
     return JsonPath.read(json, "$");
   }
-
 }

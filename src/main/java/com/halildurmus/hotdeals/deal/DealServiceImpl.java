@@ -43,19 +43,17 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class DealServiceImpl implements DealService {
 
-  private final ObjectMapper objectMapper = JsonMapper.builder()
-      .findAndAddModules()
-      .build();
-  @Autowired
-  private CommentService commentService;
-  @Autowired
-  private DealRepository repository;
-  @Autowired
-  private EsDealRepository esDealRepository;
-  @Autowired
-  private MongoTemplate mongoTemplate;
-  @Autowired
-  private SecurityService securityService;
+  private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
+
+  @Autowired private CommentService commentService;
+
+  @Autowired private DealRepository repository;
+
+  @Autowired private EsDealRepository esDealRepository;
+
+  @Autowired private MongoTemplate mongoTemplate;
+
+  @Autowired private SecurityService securityService;
 
   @Override
   public Page<Deal> findAll(Pageable pageable) {
@@ -196,29 +194,40 @@ public class DealServiceImpl implements DealService {
 
     if (voteType.equals(DealVoteType.UNVOTE)) {
       // Remove the userId from the upvoters array if it exists
-      update.set("upvoters").toValue(filter("upvoters").as("id")
-          .by(valueOf("id").notEqualToValue(userId)));
+      update
+          .set("upvoters")
+          .toValue(filter("upvoters").as("id").by(valueOf("id").notEqualToValue(userId)));
       // Remove the userId from the downvoters array if it exists
-      update.set("downvoters").toValue(filter("downvoters").as("id")
-          .by(valueOf("id").notEqualToValue(userId)));
+      update
+          .set("downvoters")
+          .toValue(filter("downvoters").as("id").by(valueOf("id").notEqualToValue(userId)));
     } else {
       final String fieldName1 = voteType.equals(DealVoteType.UP) ? "upvoters" : "downvoters";
       final String fieldName2 = voteType.equals(DealVoteType.UP) ? "downvoters" : "upvoters";
       // If the voteType is DealVoteType.UP, add the userId to the upvoters array,
-      // if the voteType is DealVoteType.DOWN then add the userId to the downvoters array
-      update.set(fieldName1).toValue(ConcatArrays.arrayOf(fieldName1)
-          .concat(ConcatArrays.arrayOf(new ArrayList<>(List.of(userId)))));
-      // If the voteType is DealVoteType.UP, remove the userId from the downvoters array,
-      // if the voteType is DealVoteType.DOWN then remove the userId from the upvoters array
-      update.set(fieldName2).toValue(filter(fieldName2).as("id")
-          .by(valueOf("id").notEqualToValue(userId)));
+      // if the voteType is DealVoteType.DOWN then add the userId to the downvoters
+      // array
+      update
+          .set(fieldName1)
+          .toValue(
+              ConcatArrays.arrayOf(fieldName1)
+                  .concat(ConcatArrays.arrayOf(new ArrayList<>(List.of(userId)))));
+      // If the voteType is DealVoteType.UP, remove the userId from the downvoters
+      // array,
+      // if the voteType is DealVoteType.DOWN then remove the userId from the
+      // upvoters array
+      update
+          .set(fieldName2)
+          .toValue(filter(fieldName2).as("id").by(valueOf("id").notEqualToValue(userId)));
     }
     // Subtract the size of the downvoters array from the size of the upvoters array
     // and assign the result to dealScore property
-    update.set("dealScore").toValue(Subtract.valueOf(Size.lengthOfArray("upvoters"))
-        .subtract(Size.lengthOfArray("downvoters")));
+    update
+        .set("dealScore")
+        .toValue(
+            Subtract.valueOf(Size.lengthOfArray("upvoters"))
+                .subtract(Size.lengthOfArray("downvoters")));
 
     return mongoTemplate.findAndModify(query, update, options, Deal.class);
   }
-
 }

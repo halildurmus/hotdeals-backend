@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-  @Autowired
-  private CommentRepository repository;
+  @Autowired private CommentRepository repository;
 
   @Override
   public Optional<Comment> findById(String id) {
@@ -38,10 +37,10 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public void deleteDealComments(String dealId) {
-    final Page<Comment> comments = repository.findByDealIdOrderByCreatedAt(new ObjectId(dealId),
-        Pageable.unpaged());
-    final Iterable<String> commentIds = comments.getContent().stream().map(Comment::getId)
-        .collect(Collectors.toList());
+    final Page<Comment> comments =
+        repository.findByDealIdOrderByCreatedAt(new ObjectId(dealId), Pageable.unpaged());
+    final Iterable<String> commentIds =
+        comments.getContent().stream().map(Comment::getId).collect(Collectors.toList());
     repository.deleteAllByIdIn(commentIds);
   }
 
@@ -49,5 +48,4 @@ public class CommentServiceImpl implements CommentService {
   public Comment save(Comment comment) {
     return repository.save(comment);
   }
-
 }

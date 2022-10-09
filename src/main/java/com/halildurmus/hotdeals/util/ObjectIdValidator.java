@@ -7,12 +7,10 @@ import org.bson.types.ObjectId;
 public class ObjectIdValidator implements ConstraintValidator<IsObjectId, String> {
 
   @Override
-  public void initialize(IsObjectId objectId) {
-  }
+  public void initialize(IsObjectId objectId) {}
 
   @Override
   public boolean isValid(String objectId, ConstraintValidatorContext cxt) {
     return ObjectId.isValid(objectId);
   }
-
 }

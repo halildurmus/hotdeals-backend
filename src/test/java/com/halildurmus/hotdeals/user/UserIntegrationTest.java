@@ -30,21 +30,15 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserIntegrationTest extends BaseIntegrationTest {
 
-  private final ObjectMapper objectMapper = JsonMapper.builder()
-      .findAndAddModules()
-      .build();
+  private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
-  @MockBean
-  private SecurityService securityService;
+  @MockBean private SecurityService securityService;
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @Autowired
-  private JacksonTester<User> json;
+  @Autowired private JacksonTester<User> json;
 
   @AfterEach
   void cleanUp() {
@@ -55,10 +49,11 @@ public class UserIntegrationTest extends BaseIntegrationTest {
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
     final User user = DummyUsers.user1;
-    final RequestBuilder requestBuilder = post("/users")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(user).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/users")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(user).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isCreated())
@@ -73,11 +68,12 @@ public class UserIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /users (returns empty)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/users")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -87,13 +83,14 @@ public class UserIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /users (returns 1 user)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsOneUser() throws Exception {
     final User user = DummyUsers.user1;
     mongoTemplate.insert(user);
-    final RequestBuilder requestBuilder = get("/users")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -121,11 +118,11 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     when(securityService.getUser()).thenReturn(user1);
     final UserReport userReport = DummyUserReports.userReport1;
     userReport.setReportedUser(user2);
-    final RequestBuilder requestBuilder = post("/users/" + user2.getId() + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(userReport))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/users/" + user2.getId() + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(userReport))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(requestBuilder).andExpect(status().isCreated());
   }
-
 }

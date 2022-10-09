@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 class ReportEntityCallbacks implements BeforeSaveCallback<Report> {
 
-  @Autowired
-  private SecurityService securityService;
+  @Autowired private SecurityService securityService;
 
   @Override
   public Report onBeforeSave(Report report, Document document, String collection) {
@@ -29,5 +28,4 @@ class ReportEntityCallbacks implements BeforeSaveCallback<Report> {
 
     return report;
   }
-
 }

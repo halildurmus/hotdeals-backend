@@ -44,14 +44,11 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
 
   private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
 
-  @Autowired
-  private JacksonTester<CategoryPostDTO> json;
+  @Autowired private JacksonTester<CategoryPostDTO> json;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private CategoryService service;
+  @MockBean private CategoryService service;
 
   @Test
   @DisplayName("GET /categories (returns empty array)")
@@ -70,8 +67,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   public void getCategoriesReturnsTwoCategories() throws Exception {
     final Category category1 = DummyCategories.category1;
     final Category category2 = DummyCategories.category2;
-    final Page<Category> pagedCategories = new PageImpl<>(
-        List.of(category1, category2));
+    final Page<Category> pagedCategories = new PageImpl<>(List.of(category1, category2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedCategories);
     final RequestBuilder request = get("/categories");
 
@@ -121,27 +117,29 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
     when(service.findById(category.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/categories/" + category.getId());
 
-    assertThrows(CategoryNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        CategoryNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
   @DisplayName("POST /categories")
   public void createsCategory() throws Exception {
     final Category category = DummyCategories.category1;
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        category);
+    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
     when(service.create(any(Category.class))).thenReturn(category);
 
-    final RequestBuilder request = post("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(categoryPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(categoryPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isCreated())
@@ -158,41 +156,63 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /categories (empty body)")
   public void postCategoryValidationFails() throws Exception {
-    final RequestBuilder request = post("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'names'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'category'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'iconLigature'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'names'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'category'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Field error in object 'categoryPostDTO' on field 'iconLigature'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
   }
 
   @Test
   @DisplayName("POST /categories (missing English translation)")
   public void postCategoryValidationFailsDueToMissingEnglishTranslation() throws Exception {
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        DummyCategories.category1WithoutEnglishTranslation);
-    final RequestBuilder request = post("/categories")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(categoryPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final CategoryPostDTO categoryPostDTO =
+        mapStructMapper.categoryToCategoryPostDTO(
+            DummyCategories.category1WithoutEnglishTranslation);
+    final RequestBuilder request =
+        post("/categories")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(categoryPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -203,14 +223,14 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /categories/{id}")
   public void updatesGivenCategory() throws Exception {
     final Category category = DummyCategories.category1;
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(
-        category);
+    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
     when(service.findById(anyString())).thenReturn(Optional.of(category));
     when(service.update(any(Category.class))).thenReturn(category);
-    final RequestBuilder request = put("/categories/" + category.getId())
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(categoryPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/categories/" + category.getId())
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(categoryPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -227,30 +247,50 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /categories/{id} (empty body)")
   public void putCategoryValidationFails() throws Exception {
     final String id = DummyCategories.category1.getId();
-    final RequestBuilder request = put("/categories/" + id)
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/categories/" + id)
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'names'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'category'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'iconLigature'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'names'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'parent'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'categoryPostDTO' on field 'category'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Field error in object 'categoryPostDTO' on field 'iconLigature'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Field error in object 'categoryPostDTO' on field 'iconFontFamily'")));
   }
 
   @Test
@@ -267,14 +307,14 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/categories/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
-
 }
-

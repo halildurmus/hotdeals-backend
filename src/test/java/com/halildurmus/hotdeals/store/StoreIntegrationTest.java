@@ -22,14 +22,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class StoreIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @Autowired
-  private JacksonTester<Store> json;
+  @Autowired private JacksonTester<Store> json;
 
   @AfterEach
   void cleanUp() {
@@ -38,13 +35,16 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("POST /stores")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void createsStore() throws Exception {
     final Store store = DummyStores.store1;
-    final RequestBuilder requestBuilder = post("/stores")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(store).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/stores")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(store).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isCreated())
@@ -58,9 +58,8 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /stores (returns empty)")
   public void getStoresReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/stores")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -70,13 +69,14 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /stores (returns 1 store)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getStoresReturnsOneStore() throws Exception {
     final Store store = DummyStores.store1;
     mongoTemplate.insert(store);
-    final RequestBuilder requestBuilder = get("/stores")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -87,5 +87,4 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$[0].name").value(store.getName()))
         .andExpect(jsonPath("$[0].logo").value(store.getLogo()));
   }
-
 }

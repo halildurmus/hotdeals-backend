@@ -9,6 +9,6 @@ import lombok.Data;
 public class Credentials {
 
   private final FirebaseToken decodedToken;
-  private final String idToken;
 
+  private final String idToken;
 }

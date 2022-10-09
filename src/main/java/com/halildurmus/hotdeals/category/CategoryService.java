@@ -20,5 +20,4 @@ public interface CategoryService {
 
   @IsSuper
   void delete(String id);
-
 }

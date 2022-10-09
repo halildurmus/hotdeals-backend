@@ -24,9 +24,9 @@ import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
-import com.halildurmus.hotdeals.report.user.dto.UserReportPostDTO;
 import com.halildurmus.hotdeals.report.user.UserReportReason;
 import com.halildurmus.hotdeals.report.user.UserReportService;
+import com.halildurmus.hotdeals.report.user.dto.UserReportPostDTO;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.dto.UserPostDTO;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
@@ -59,23 +59,17 @@ public class UserControllerTest extends BaseControllerUnitTest {
 
   private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
 
-  @Autowired
-  private JacksonTester<UserPostDTO> json;
+  @Autowired private JacksonTester<UserPostDTO> json;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private CommentService commentService;
+  @MockBean private CommentService commentService;
 
-  @MockBean
-  private SecurityService securityService;
+  @MockBean private SecurityService securityService;
 
-  @MockBean
-  private UserService service;
+  @MockBean private UserService service;
 
-  @MockBean
-  private UserReportService userReportService;
+  @MockBean private UserReportService userReportService;
 
   @Test
   @DisplayName("GET /users (returns empty array)")
@@ -118,14 +112,14 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
-    final UserPostDTO userPostDTO = mapStructMapper.userToUserPostDTO(
-        DummyUsers.user1);
+    final UserPostDTO userPostDTO = mapStructMapper.userToUserPostDTO(DummyUsers.user1);
     final User user = DummyUsers.user1;
     when(service.create(any(User.class))).thenReturn(user);
-    final RequestBuilder request = post("/users")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(userPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/users")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(userPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isCreated())
@@ -141,23 +135,36 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /users (empty body)")
   public void postUserValidationFails() throws Exception {
-    final RequestBuilder request = post("/users")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/users")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'userPostDTO' on field 'avatar'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'userPostDTO' on field 'email'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'userPostDTO' on field 'uid'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'userPostDTO' on field 'avatar'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'userPostDTO' on field 'email'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'userPostDTO' on field 'uid'")));
   }
 
   @Test
@@ -187,13 +194,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     when(service.findById(user.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/users/search/findByEmail?email=" + user.getEmail());
 
-    assertThrows(UserNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        UserNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -223,13 +232,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     when(service.findByUid(user.getUid())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/users/search/findByUid?uid=" + user.getUid());
 
-    assertThrows(UserNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        UserNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -253,26 +264,31 @@ public class UserControllerTest extends BaseControllerUnitTest {
         .andExpect(jsonPath("$.fcmTokens").value(equalTo(asParsedJson(user.getFcmTokens()))))
         .andExpect(jsonPath("$.createdAt").value(user.getCreatedAt().toString()))
         .andExpect(jsonPath("$.updatedAt").value(user.getUpdatedAt().toString()));
-
   }
 
   @Test
   @DisplayName("PATCH /users/me (empty body)")
   public void patchAuthenticatedUserValidationFails() throws Exception {
-    final RequestBuilder request = patch("/users/me")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType("application/json-patch+json");
+    final RequestBuilder request =
+        patch("/users/me")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType("application/json-patch+json");
 
     mvc.perform(request)
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof HttpMessageNotReadableException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains(
-                    "Cannot deserialize value of type `java.util.ArrayList<com.github.fge.jsonpatch.JsonPatchOperation>`")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof HttpMessageNotReadableException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Cannot deserialize value of type `java.util.ArrayList<com.github.fge.jsonpatch.JsonPatchOperation>`")));
   }
 
   @Test
@@ -281,12 +297,12 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final User user = DummyUsers.patchedUser1;
     when(service.patchUser(any(JsonPatch.class))).thenReturn(user);
     final String jsonPatch =
-        "[{\"op\": \"replace\", \"path\": \"/avatar\", \"value\": \"" + user.getAvatar()
-            + "\"}]";
-    final RequestBuilder request = patch("/users/me")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(jsonPatch)
-        .contentType("application/json-patch+json");
+        "[{\"op\": \"replace\", \"path\": \"/avatar\", \"value\": \"" + user.getAvatar() + "\"}]";
+    final RequestBuilder request =
+        patch("/users/me")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(jsonPatch)
+            .contentType("application/json-patch+json");
 
     mvc.perform(request)
         .andDo(print())
@@ -350,13 +366,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = put("/users/me/blocks/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -373,13 +391,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/users/me/blocks/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -482,13 +502,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = put("/users/me/favorites/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -505,24 +527,27 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/users/me/favorites/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
   @DisplayName("PUT /users/me/fcm-tokens")
   public void savesFCMToken() throws Exception {
-    final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().deviceId("425ha4123a")
-        .token("423623gasdfsa").build();
-    final RequestBuilder request = put("/users/me/fcm-tokens/")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(fcmTokenParams))
-        .contentType(MediaType.APPLICATION_JSON);
+    final FCMTokenParams fcmTokenParams =
+        FCMTokenParams.builder().deviceId("425ha4123a").token("423623gasdfsa").build();
+    final RequestBuilder request =
+        put("/users/me/fcm-tokens/")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(fcmTokenParams))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request).andExpect(status().isOk());
   }
@@ -530,28 +555,35 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /users/me/fcm-tokens (empty body)")
   public void putFCMTokenValidationFails() throws Exception {
-    final RequestBuilder request = put("/users/me/fcm-tokens/")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/users/me/fcm-tokens/")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'FCMTokenParams' on field 'token'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'FCMTokenParams' on field 'token'")));
   }
 
   @Test
   @DisplayName("PUT /users/me/fcm-tokens (missing deviceId)")
   public void putFCMTokenValidationFailsDueToMissingDeviceId() throws Exception {
     final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token("423623gasdfsa").build();
-    final RequestBuilder request = put("/users/me/fcm-tokens/")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(fcmTokenParams))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/users/me/fcm-tokens/")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(fcmTokenParams))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -564,28 +596,35 @@ public class UserControllerTest extends BaseControllerUnitTest {
     final User user = DummyUsers.user1;
     when(securityService.getUser()).thenReturn(user);
     final FCMTokenParams fcmTokenParams = FCMTokenParams.builder().token("423623gasdfsa").build();
-    final RequestBuilder request = delete("/users/me/fcm-tokens/")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(fcmTokenParams))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        delete("/users/me/fcm-tokens/")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(fcmTokenParams))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(request).andExpect(status().isNoContent());
   }
 
   @Test
   @DisplayName("DELETE /users/me/fcm-tokens (empty body)")
   public void deleteFCMTokenValidationFails() throws Exception {
-    final RequestBuilder request = delete("/users/me/fcm-tokens/")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        delete("/users/me/fcm-tokens/")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'FCMTokenParams' on field 'token'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'FCMTokenParams' on field 'token'")));
   }
 
   @Test
@@ -613,26 +652,25 @@ public class UserControllerTest extends BaseControllerUnitTest {
     when(service.findById(user.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/users/" + user.getId());
 
-    assertThrows(UserNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        UserNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
   @DisplayName("GET /users/{id}/comment-count")
   public void returnsGivenUsersCommentCount() throws Exception {
     final User user = DummyUsers.user1;
-    when(commentService.getCommentCountByPostedById(new ObjectId(user.getId())))
-        .thenReturn(5);
+    when(commentService.getCommentCountByPostedById(new ObjectId(user.getId()))).thenReturn(5);
     final RequestBuilder request = get("/users/" + user.getId() + "/comment-count");
 
-    mvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(5));
+    mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(5));
   }
 
   @Test
@@ -662,13 +700,15 @@ public class UserControllerTest extends BaseControllerUnitTest {
     when(service.findById(user.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/users/" + user.getId() + "/extended");
 
-    assertThrows(UserNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        UserNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -676,13 +716,16 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void reportsUser() throws Exception {
     final User user = DummyUsers.user1;
     when(service.findById(user.getId())).thenReturn(Optional.of(user));
-    final UserReportPostDTO userReportPostDTO = UserReportPostDTO.builder()
-        .reasons(EnumSet.of(UserReportReason.HARASSING))
-        .message("report message").build();
-    final RequestBuilder request = post("/users/" + user.getId() + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(userReportPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final UserReportPostDTO userReportPostDTO =
+        UserReportPostDTO.builder()
+            .reasons(EnumSet.of(UserReportReason.HARASSING))
+            .message("report message")
+            .build();
+    final RequestBuilder request =
+        post("/users/" + user.getId() + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(userReportPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request).andExpect(status().isCreated());
   }
@@ -691,18 +734,23 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /users/{id}/reports (empty body)")
   public void postReportUserValidationFails() throws Exception {
     final User user = DummyUsers.user1;
-    final RequestBuilder request = post("/users/" + user.getId() + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/users/" + user.getId() + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'userReportPostDTO' on field 'reasons'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'userReportPostDTO' on field 'reasons'")));
   }
-
 }

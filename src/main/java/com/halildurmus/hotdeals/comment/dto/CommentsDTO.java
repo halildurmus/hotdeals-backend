@@ -13,5 +13,4 @@ public class CommentsDTO {
   private final long count;
 
   private final List<CommentGetDTO> comments;
-
 }

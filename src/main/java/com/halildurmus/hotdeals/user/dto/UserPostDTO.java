@@ -24,5 +24,4 @@ public class UserPostDTO {
   @Email
   @NotBlank
   private final String email;
-
 }

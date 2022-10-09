@@ -18,5 +18,4 @@ public interface CommentService {
   void deleteDealComments(String dealId);
 
   Comment save(Comment comment);
-
 }

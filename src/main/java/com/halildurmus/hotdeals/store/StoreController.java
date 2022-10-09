@@ -40,15 +40,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class StoreController {
 
-  @Autowired
-  private MapStructMapper mapStructMapper;
+  @Autowired private MapStructMapper mapStructMapper;
 
-  @Autowired
-  private StoreService service;
+  @Autowired private StoreService service;
 
   @GetMapping
   @Operation(summary = "Returns all stores")
-  @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = StoreGetDTO.class)))))
+  @ApiResponses(
+      @ApiResponse(
+          responseCode = "200",
+          description = "Successful operation",
+          content =
+              @Content(
+                  mediaType = "application/json",
+                  array = @ArraySchema(schema = @Schema(implementation = StoreGetDTO.class)))))
   public List<StoreGetDTO> getStores(@ParameterObject Pageable pageable) {
     final Page<Store> stores = service.findAll(pageable);
 
@@ -61,15 +66,25 @@ public class StoreController {
   @IsSuper
   @Operation(summary = "Finds store by ID", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Invalid store ID", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
+    @ApiResponse(
+        responseCode = "200",
+        description = "Successful operation",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = StoreGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid store ID", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO getStore(
-      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id) {
+      @Parameter(
+              description = "String representation of the Store ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id) {
     final Store store = service.findById(id).orElseThrow(StoreNotFoundException::new);
 
     return mapStructMapper.storeToStoreGetDTO(store);
@@ -80,10 +95,16 @@ public class StoreController {
   @IsSuper
   @Operation(summary = "Creates a store", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "201", description = "The store created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
+    @ApiResponse(
+        responseCode = "201",
+        description = "The store created successfully",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = StoreGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public StoreGetDTO createStore(@Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = service.create(mapStructMapper.storePostDTOToStore(storePostDTO));
@@ -93,17 +114,30 @@ public class StoreController {
 
   @PutMapping("/{id}")
   @IsSuper
-  @Operation(summary = "Updates an existing store", security = @SecurityRequirement(name = "bearerAuth"))
+  @Operation(
+      summary = "Updates an existing store",
+      security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "The store successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
+    @ApiResponse(
+        responseCode = "200",
+        description = "The store successfully updated",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = StoreGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public StoreGetDTO updateStore(
-      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id, @Valid @RequestBody StorePostDTO storePostDTO) {
+      @Parameter(
+              description = "String representation of the Store ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id,
+      @Valid @RequestBody StorePostDTO storePostDTO) {
     final Store store = convertToEntity(id, storePostDTO);
 
     return mapStructMapper.storeToStoreGetDTO(service.update(store));
@@ -112,17 +146,26 @@ public class StoreController {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  @Operation(summary = "Deletes an existing store", security = @SecurityRequirement(name = "bearerAuth"))
+  @Operation(
+      summary = "Deletes an existing store",
+      security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "204", description = "The store successfully deleted", content = @Content),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
+    @ApiResponse(
+        responseCode = "204",
+        description = "The store successfully deleted",
+        content = @Content),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Store not found", content = @Content)
   })
   public void deleteStore(
-      @Parameter(description = "String representation of the Store ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id) {
+      @Parameter(
+              description = "String representation of the Store ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id) {
     service.delete(id);
   }
 
@@ -135,5 +178,4 @@ public class StoreController {
 
     return store;
   }
-
 }

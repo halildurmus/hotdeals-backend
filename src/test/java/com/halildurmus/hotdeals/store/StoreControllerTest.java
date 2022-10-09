@@ -43,14 +43,11 @@ public class StoreControllerTest extends BaseControllerUnitTest {
 
   private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
 
-  @Autowired
-  private JacksonTester<StorePostDTO> json;
+  @Autowired private JacksonTester<StorePostDTO> json;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private StoreService service;
+  @MockBean private StoreService service;
 
   @Test
   @DisplayName("GET /stores (returns empty array)")
@@ -67,8 +64,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /stores (returns 2 stores)")
   public void getStoresReturnsTwoStores() throws Exception {
-    final Page<Store> pagedStores = new PageImpl<>(
-        List.of(DummyStores.store1, DummyStores.store2));
+    final Page<Store> pagedStores = new PageImpl<>(List.of(DummyStores.store1, DummyStores.store2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedStores);
     final RequestBuilder request = get("/stores");
 
@@ -109,13 +105,15 @@ public class StoreControllerTest extends BaseControllerUnitTest {
     when(service.findById(store.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/stores/" + store.getId());
 
-    assertThrows(StoreNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        StoreNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -124,12 +122,14 @@ public class StoreControllerTest extends BaseControllerUnitTest {
     final Store store = DummyStores.store1;
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(store);
     when(service.create(any(Store.class))).thenReturn(store);
-    final RequestBuilder request = post("/stores")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(storePostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/stores")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(storePostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(3)))
         .andExpect(jsonPath("$.id").value(store.getId()))
@@ -140,20 +140,30 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /stores (empty body)")
   public void postStoreValidationFails() throws Exception {
-    final RequestBuilder request = post("/stores")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/stores")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'storePostDTO' on field 'name'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'storePostDTO' on field 'logo'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'storePostDTO' on field 'name'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'storePostDTO' on field 'logo'")));
   }
 
   @Test
@@ -163,12 +173,14 @@ public class StoreControllerTest extends BaseControllerUnitTest {
     final StorePostDTO storePostDTO = mapStructMapper.storeToStorePostDTO(store);
     when(service.findById(anyString())).thenReturn(Optional.of(store));
     when(service.update(any(Store.class))).thenReturn(store);
-    final RequestBuilder request = put("/stores/" + store.getId())
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(storePostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/stores/" + store.getId())
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(storePostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isOk())
+    mvc.perform(request)
+        .andExpect(status().isOk())
         .andExpect(jsonPath("$.*", hasSize(3)))
         .andExpect(jsonPath("$.id").value(store.getId()))
         .andExpect(jsonPath("$.name").value(store.getName()))
@@ -179,20 +191,30 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /stores/{id} (empty body)")
   public void putStoreValidationFails() throws Exception {
     final String id = DummyStores.store1.getId();
-    final RequestBuilder request = put("/stores/" + id)
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/stores/" + id)
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'storePostDTO' on field 'name'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'storePostDTO' on field 'logo'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'storePostDTO' on field 'name'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'storePostDTO' on field 'logo'")));
   }
 
   @Test
@@ -209,14 +231,14 @@ public class StoreControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/stores/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
-
 }
-

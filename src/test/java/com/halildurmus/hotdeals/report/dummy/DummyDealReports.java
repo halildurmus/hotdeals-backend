@@ -8,10 +8,11 @@ import java.util.EnumSet;
 
 public class DummyDealReports {
 
-  public static DealReport dealReport1 = DealReport.builder()
-      .reportedBy(DummyUsers.user1)
-      .reportedDeal(DummyDeals.deal1)
-      .reasons(EnumSet.of(DealReportReason.REPOST, DealReportReason.SPAM))
-      .message("Lorem dolor sit amet").build();
-
+  public static DealReport dealReport1 =
+      DealReport.builder()
+          .reportedBy(DummyUsers.user1)
+          .reportedDeal(DummyDeals.deal1)
+          .reasons(EnumSet.of(DealReportReason.REPOST, DealReportReason.SPAM))
+          .message("Lorem dolor sit amet")
+          .build();
 }

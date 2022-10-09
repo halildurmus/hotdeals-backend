@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DealReportServiceImpl implements DealReportService {
 
-  @Autowired
-  private DealReportRepository repository;
+  @Autowired private DealReportRepository repository;
 
   @Override
   public DealReport save(DealReport dealReport) {

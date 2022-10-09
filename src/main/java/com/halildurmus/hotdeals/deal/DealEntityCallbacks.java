@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 class DealEntityCallbacks implements BeforeSaveCallback<Deal> {
 
-  @Autowired
-  private SecurityService securityService;
+  @Autowired private SecurityService securityService;
 
   @Override
   public Deal onBeforeSave(Deal deal, Document document, String collection) {
@@ -28,5 +27,4 @@ class DealEntityCallbacks implements BeforeSaveCallback<Deal> {
 
     return deal;
   }
-
 }

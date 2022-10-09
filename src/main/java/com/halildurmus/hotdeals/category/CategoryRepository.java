@@ -19,10 +19,11 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
   <S extends Category> S save(S entity);
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "categories", key = "#id"),
-      @CacheEvict(value = "categories:findAll", allEntries = true)
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "categories", key = "#id"),
+        @CacheEvict(value = "categories:findAll", allEntries = true)
+      })
   void deleteById(String id);
 
   @Override
@@ -34,5 +35,4 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
   @Override
   @Cacheable("categories:findAll")
   Page<Category> findAll(Pageable pageable);
-
 }

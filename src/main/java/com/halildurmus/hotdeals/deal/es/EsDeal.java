@@ -66,5 +66,4 @@ public class EsDeal {
     this.stringFacets.add(categoryFacet);
     this.stringFacets.add(storeFacet);
   }
-
 }

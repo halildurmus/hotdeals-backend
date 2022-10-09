@@ -17,14 +17,19 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 class RepositoryConfig implements RepositoryRestConfigurer {
 
   private final Class<?>[] exposedClasses = {
-      Category.class, Comment.class, CommentReport.class, Deal.class, DealReport.class, Store.class,
-      User.class, UserReport.class
+    Category.class,
+    Comment.class,
+    CommentReport.class,
+    Deal.class,
+    DealReport.class,
+    Store.class,
+    User.class,
+    UserReport.class
   };
 
   @Override
-  public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config,
-      CorsRegistry cors) {
+  public void configureRepositoryRestConfiguration(
+      RepositoryRestConfiguration config, CorsRegistry cors) {
     config.exposeIdsFor(exposedClasses);
   }
-
 }

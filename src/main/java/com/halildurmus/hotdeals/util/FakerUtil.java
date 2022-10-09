@@ -3,9 +3,7 @@ package com.halildurmus.hotdeals.util;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Component;
 
-/**
- * A utility class with useful function(s) to make it easier to work with {@code Faker}
- */
+/** A utility class with useful function(s) to make it easier to work with {@code Faker} */
 @Component
 public class FakerUtil {
 
@@ -23,5 +21,4 @@ public class FakerUtil {
 
     return prefix + firstName + digits;
   }
-
 }

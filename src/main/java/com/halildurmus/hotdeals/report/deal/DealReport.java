@@ -22,10 +22,7 @@ public class DealReport extends Report {
 
   private static final long serialVersionUID = 1234567L;
 
-  @DocumentReference
-  private Deal reportedDeal;
+  @DocumentReference private Deal reportedDeal;
 
-  @NotEmpty
-  private EnumSet<DealReportReason> reasons;
-
+  @NotEmpty private EnumSet<DealReportReason> reasons;
 }

@@ -22,13 +22,11 @@ public abstract class Report extends DateAudit implements Serializable {
 
   private static final long serialVersionUID = 1234567L;
 
-  @Id
-  private String id;
+  @Id private String id;
 
   @DocumentReference
   @JsonProperty(access = Access.READ_ONLY)
   private User reportedBy;
 
   private String message;
-
 }

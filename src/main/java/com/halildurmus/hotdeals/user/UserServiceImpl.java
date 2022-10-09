@@ -33,17 +33,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
 
   private final DealRepository dealRepository;
+
   private final UserRepository repository;
+
   private final FakerUtil fakerUtil;
-  private final ObjectMapper objectMapper = JsonMapper.builder()
-      .findAndAddModules()
-      .build();
-  @Autowired
-  private SecurityService securityService;
+
+  private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
+
+  @Autowired private SecurityService securityService;
 
   @Autowired
-  public UserServiceImpl(DealRepository dealRepository,
-      UserRepository userRepository, FakerUtil fakerUtil) {
+  public UserServiceImpl(
+      DealRepository dealRepository, UserRepository userRepository, FakerUtil fakerUtil) {
     this.dealRepository = dealRepository;
     this.repository = userRepository;
     this.fakerUtil = fakerUtil;
@@ -143,11 +144,11 @@ public class UserServiceImpl implements UserService {
     }
     final String token = fcmTokenParams.getToken();
     final Map<String, String> fcmTokens = user.getFcmTokens();
-    final boolean isTokenExists = fcmTokens.entrySet()
-        .removeIf(entry -> (token.equals(entry.getValue())));
+    final boolean isTokenExists =
+        fcmTokens.entrySet().removeIf(entry -> (token.equals(entry.getValue())));
     if (!isTokenExists) {
-      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "User does not have this token: " + token);
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "User does not have this token: " + token);
     }
     user.setFcmTokens(fcmTokens);
     repository.save(user);
@@ -157,8 +158,9 @@ public class UserServiceImpl implements UserService {
   public List<Deal> getDeals(Pageable pageable) {
     final User user = securityService.getUser();
 
-    return dealRepository.findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()),
-        pageable).getContent();
+    return dealRepository
+        .findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()), pageable)
+        .getContent();
   }
 
   @Override
@@ -175,8 +177,8 @@ public class UserServiceImpl implements UserService {
     final User user = securityService.getUser();
     final HashSet<String> favorites = user.getFavorites();
     if (favorites.contains(dealId)) {
-      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "You've already favorited this deal before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already favorited this deal before!");
     }
     favorites.add(dealId);
     user.setFavorites(favorites);
@@ -189,8 +191,8 @@ public class UserServiceImpl implements UserService {
     final User user = securityService.getUser();
     final HashSet<String> favorites = user.getFavorites();
     if (!favorites.contains(dealId)) {
-      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "You've already unfavorited this deal before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already unfavorited this deal before!");
     }
     favorites.remove(dealId);
     user.setFavorites(favorites);
@@ -211,8 +213,8 @@ public class UserServiceImpl implements UserService {
     final User user = securityService.getUser();
     final HashSet<String> blockedUsers = user.getBlockedUsers();
     if (blockedUsers.contains(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "You've already blocked this user before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already blocked this user before!");
     }
     blockedUsers.add(id);
     user.setBlockedUsers(blockedUsers);
@@ -225,12 +227,11 @@ public class UserServiceImpl implements UserService {
     final User user = securityService.getUser();
     final HashSet<String> blockedUsers = user.getBlockedUsers();
     if (!blockedUsers.contains(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_MODIFIED,
-          "You've already unblocked this user before!");
+      throw new ResponseStatusException(
+          HttpStatus.NOT_MODIFIED, "You've already unblocked this user before!");
     }
     blockedUsers.remove(id);
     user.setBlockedUsers(blockedUsers);
     repository.save(user);
   }
-
 }

@@ -27,5 +27,4 @@ public abstract class DateAudit implements Serializable {
   @LastModifiedDate
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Instant updatedAt;
-
 }

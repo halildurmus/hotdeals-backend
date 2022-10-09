@@ -22,5 +22,4 @@ public class SecurityService {
 
     return null;
   }
-
 }

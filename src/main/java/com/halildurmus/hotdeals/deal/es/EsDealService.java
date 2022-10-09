@@ -14,5 +14,4 @@ public interface EsDealService {
   JsonNode searchDeals(DealSearchParams searchParams, Pageable pageable);
 
   EsDeal save(EsDeal esDeal);
-
 }

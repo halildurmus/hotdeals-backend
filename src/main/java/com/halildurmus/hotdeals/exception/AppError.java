@@ -8,31 +8,33 @@ import java.util.UUID;
 public class AppError {
 
   private final String apiVersion;
+
   private final ErrorBlock error;
 
-  public AppError(final String apiVersion, final String code, final String message,
-      final String domain, final String reason, final String errorMessage) {
+  public AppError(
+      final String apiVersion,
+      final String code,
+      final String message,
+      final String domain,
+      final String reason,
+      final String errorMessage) {
     this.apiVersion = apiVersion;
     this.error = new ErrorBlock(code, message, domain, reason, errorMessage);
   }
 
-  public static AppError fromDefaultAttributeMap(final String apiVersion,
-      final Map<String, Object> defaultErrorAttributes) {
+  public static AppError fromDefaultAttributeMap(
+      final String apiVersion, final Map<String, Object> defaultErrorAttributes) {
     return new AppError(
         apiVersion,
         ((Integer) defaultErrorAttributes.get("status")).toString(),
         (String) defaultErrorAttributes.getOrDefault("message", "no message available"),
         (String) defaultErrorAttributes.getOrDefault("path", "no domain available"),
         (String) defaultErrorAttributes.getOrDefault("error", "no reason available"),
-        (String) defaultErrorAttributes.get("message")
-    );
+        (String) defaultErrorAttributes.get("message"));
   }
 
   public Map<String, Object> toAttributeMap() {
-    return Map.of(
-        "apiVersion", apiVersion,
-        "error", error
-    );
+    return Map.of("apiVersion", apiVersion, "error", error);
   }
 
   public String getApiVersion() {
@@ -45,22 +47,28 @@ public class AppError {
 
   private static final class ErrorBlock {
 
-    @JsonIgnore
-    private final UUID uniqueId;
+    @JsonIgnore private final UUID uniqueId;
+
     private final String code;
+
     private final String message;
+
     private final List<Error> errors;
 
-    public ErrorBlock(final String code, final String message, final String domain,
-        final String reason, final String errorMessage) {
+    public ErrorBlock(
+        final String code,
+        final String message,
+        final String domain,
+        final String reason,
+        final String errorMessage) {
       this.code = code;
       this.message = message;
       this.uniqueId = UUID.randomUUID();
       this.errors = List.of(new Error(domain, reason, errorMessage));
     }
 
-    private ErrorBlock(final UUID uniqueId, final String code, final String message,
-        final List<Error> errors) {
+    private ErrorBlock(
+        final UUID uniqueId, final String code, final String message, final List<Error> errors) {
       this.uniqueId = uniqueId;
       this.code = code;
       this.message = message;
@@ -86,13 +94,14 @@ public class AppError {
     public List<Error> getErrors() {
       return errors;
     }
-
   }
 
   private static final class Error {
 
     private final String domain;
+
     private final String reason;
+
     private final String message;
 
     public Error(final String domain, final String reason, final String message) {
@@ -113,5 +122,4 @@ public class AppError {
       return message;
     }
   }
-
 }

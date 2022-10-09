@@ -20,5 +20,4 @@ public interface StoreService {
 
   @IsSuper
   void delete(String id);
-
 }

@@ -20,14 +20,16 @@ public class FirebaseConfig {
     // use it to get the credentials.
     if (env != null) {
       return FirebaseOptions.builder()
-          .setCredentials(GoogleCredentials.getApplicationDefault()).build();
+          .setCredentials(GoogleCredentials.getApplicationDefault())
+          .build();
     }
     // Otherwise, read the credentials directly from the json file.
     final String filePath = "src/main/resources/firebase-admin.json";
     final FileInputStream serviceAccount = new FileInputStream(filePath);
 
     return FirebaseOptions.builder()
-        .setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+        .build();
   }
 
   @Primary
@@ -49,5 +51,4 @@ public class FirebaseConfig {
   public FirebaseMessaging getMessaging() throws IOException {
     return FirebaseMessaging.getInstance(getFirebaseApp());
   }
-
 }

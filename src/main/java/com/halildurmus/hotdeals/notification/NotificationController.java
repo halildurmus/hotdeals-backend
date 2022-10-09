@@ -26,29 +26,33 @@ import org.springframework.web.server.ResponseStatusException;
 @Validated
 public class NotificationController {
 
-  @Autowired
-  private NotificationService notificationService;
+  @Autowired private NotificationService notificationService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Sends a push notification using FCM", description = "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required")
+  @Operation(
+      summary = "Sends a push notification using FCM",
+      description =
+          "<b>*</b>(<b>title</b> or <b>titleLocKey</b>) and (<b>body</b> or <b>bodyLocKey</b>) parameters are required")
   @ApiResponses({
-      @ApiResponse(responseCode = "201", description = "Push notification sent", content = @Content(schema = @Schema(type = "integer", defaultValue = "1"))),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+    @ApiResponse(
+        responseCode = "201",
+        description = "Push notification sent",
+        content = @Content(schema = @Schema(type = "integer", defaultValue = "1"))),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public Integer sendNotification(@Valid @RequestBody Notification notification) {
-    if (ObjectUtils.isEmpty(notification.getTitle()) && ObjectUtils.isEmpty(
-        notification.getTitleLocKey())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "title or titleLocKey parameters cannot be empty");
-    } else if (ObjectUtils.isEmpty(notification.getBody()) && ObjectUtils.isEmpty(
-        notification.getBodyLocKey())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "body or bodyLocKey parameters cannot be empty");
+    if (ObjectUtils.isEmpty(notification.getTitle())
+        && ObjectUtils.isEmpty(notification.getTitleLocKey())) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "title or titleLocKey parameters cannot be empty");
+    } else if (ObjectUtils.isEmpty(notification.getBody())
+        && ObjectUtils.isEmpty(notification.getBodyLocKey())) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "body or bodyLocKey parameters cannot be empty");
     }
 
     return notificationService.send(notification);
   }
-
 }

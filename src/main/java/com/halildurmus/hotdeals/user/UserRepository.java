@@ -13,22 +13,31 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface UserRepository extends MongoRepository<User, String> {
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "users:findByEmail", key = "#entity.email"),
-      @CacheEvict(value = "users:findByNickname", key = "#entity.nickname"),
-      @CacheEvict(value = "users:findByUid", key = "#entity.uid")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "users:findByEmail", key = "#entity.email"),
+        @CacheEvict(value = "users:findByNickname", key = "#entity.nickname"),
+        @CacheEvict(value = "users:findByUid", key = "#entity.uid")
+      })
   <S extends User> S save(S entity);
 
-  @Cacheable(value = "users:findByEmail", key = "#email", condition = "#email.blank != true and #result != null")
+  @Cacheable(
+      value = "users:findByEmail",
+      key = "#email",
+      condition = "#email.blank != true and #result != null")
   Optional<User> findByEmail(String email);
 
-  @Cacheable(value = "users:findByNickname", key = "#nickname", condition = "#nickname.blank != true and #result != null")
+  @Cacheable(
+      value = "users:findByNickname",
+      key = "#nickname",
+      condition = "#nickname.blank != true and #result != null")
   Optional<User> findByNickname(String nickname);
 
-  @Cacheable(value = "users:findByUid", key = "#uid", condition = "#uid.blank != true and #result != null")
+  @Cacheable(
+      value = "users:findByUid",
+      key = "#uid",
+      condition = "#uid.blank != true and #result != null")
   Optional<User> findByUid(String uid);
 
   Page<User> findAllByIdIn(Iterable<String> userIds, Pageable pageable);
-
 }

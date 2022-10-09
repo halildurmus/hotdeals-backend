@@ -11,13 +11,12 @@ import org.bson.types.ObjectId;
 public class ObjectIdJsonSerializer extends JsonSerializer<ObjectId> {
 
   @Override
-  public void serialize(ObjectId objectId, JsonGenerator jsonGenerator,
-      SerializerProvider serializerProvider) {
+  public void serialize(
+      ObjectId objectId, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
     try {
       jsonGenerator.writeString(objectId.toString());
     } catch (IOException e) {
       log.error("Failed to serialize ObjectId!", e);
     }
   }
-
 }

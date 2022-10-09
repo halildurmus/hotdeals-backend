@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 class SwaggerProperties {
 
   private SwaggerContact contact;
-  private String description;
-  private String title;
-  private String version;
 
+  private String description;
+
+  private String title;
+
+  private String version;
 }

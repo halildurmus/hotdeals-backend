@@ -22,10 +22,7 @@ public class UserReport extends Report {
 
   private static final long serialVersionUID = 1234567L;
 
-  @DocumentReference
-  private User reportedUser;
+  @DocumentReference private User reportedUser;
 
-  @NotEmpty
-  private EnumSet<UserReportReason> reasons;
-
+  @NotEmpty private EnumSet<UserReportReason> reasons;
 }

@@ -20,19 +20,22 @@ public interface DealReportRepository extends MongoRepository<DealReport, String
   <S extends DealReport> S save(S entity);
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "dealReports", key = "#id"),
-      @CacheEvict(value = "dealReports:findAll", allEntries = true)
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "dealReports", key = "#id"),
+        @CacheEvict(value = "dealReports:findAll", allEntries = true)
+      })
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "dealReports", key = "#id", condition = "#id.blank != true and #result != null")
+  @Cacheable(
+      value = "dealReports",
+      key = "#id",
+      condition = "#id.blank != true and #result != null")
   Optional<DealReport> findById(String id);
 
   @Override
   @Cacheable("dealReports:findAll")
   @Query("{\"reportedDeal\" : { $exists: true } }")
   Page<DealReport> findAll(Pageable pageable);
-
 }

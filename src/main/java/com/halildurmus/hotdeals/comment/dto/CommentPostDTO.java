@@ -18,5 +18,4 @@ public class CommentPostDTO {
   @NotBlank
   @Size(min = 1, max = 500)
   private String message;
-
 }

@@ -8,6 +8,6 @@ import lombok.Data;
 public class PriceRange {
 
   private Double from;
-  private Double to;
 
+  private Double to;
 }

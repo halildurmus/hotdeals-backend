@@ -20,19 +20,22 @@ public interface UserReportRepository extends MongoRepository<UserReport, String
   <S extends UserReport> S save(S entity);
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "userReports", key = "#id"),
-      @CacheEvict(value = "userReports:findAll", allEntries = true)
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "userReports", key = "#id"),
+        @CacheEvict(value = "userReports:findAll", allEntries = true)
+      })
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "userReports", key = "#id", condition = "#id.blank != true and #result != null")
+  @Cacheable(
+      value = "userReports",
+      key = "#id",
+      condition = "#id.blank != true and #result != null")
   Optional<UserReport> findById(String id);
 
   @Override
   @Cacheable("userReports:findAll")
   @Query("{\"reportedUser\" : { $exists: true } }")
   Page<UserReport> findAll(Pageable pageable);
-
 }

@@ -32,8 +32,7 @@ public class Comment extends DateAudit {
 
   private static final long serialVersionUID = 1234567L;
 
-  @Id
-  private String id;
+  @Id private String id;
 
   @NotNull
   @Indexed
@@ -47,5 +46,4 @@ public class Comment extends DateAudit {
   @NotBlank
   @Size(min = 1, max = 500)
   private String message;
-
 }

@@ -12,7 +12,9 @@ public class CategoryGetDTO {
   @Schema(description = "Category ID", example = "5fbe790ec6f0b32014074bb1")
   private final String id;
 
-  @Schema(description = "Category names", example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
+  @Schema(
+      description = "Category names",
+      example = "{\"en\": \"Computers\", \"tr\": \"Bilgisayar\"}")
   private final Map<String, String> names;
 
   @Schema(description = "Parent category path", example = "/")
@@ -26,5 +28,4 @@ public class CategoryGetDTO {
 
   @Schema(description = "Category icon font family", example = "MaterialIcons")
   private final String iconFontFamily;
-
 }

@@ -14,8 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-  @Autowired
-  private CategoryRepository repository;
+  @Autowired private CategoryRepository repository;
 
   @Override
   public Page<Category> findAll(Pageable pageable) {
@@ -31,9 +30,12 @@ public class CategoryServiceImpl implements CategoryService {
   public Category create(Category category) {
     // If the category has a parent category, make sure it exists
     if (!category.getParent().equals("/")) {
-      repository.findByCategory(category.getParent())
-          .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "The parent category does not exists!"));
+      repository
+          .findByCategory(category.getParent())
+          .orElseThrow(
+              () ->
+                  new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "The parent category does not exists!"));
     }
 
     return repository.save(category);
@@ -50,5 +52,4 @@ public class CategoryServiceImpl implements CategoryService {
     repository.findById(id).orElseThrow(CategoryNotFoundException::new);
     repository.deleteById(id);
   }
-
 }

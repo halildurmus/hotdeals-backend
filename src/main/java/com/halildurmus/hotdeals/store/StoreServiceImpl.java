@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-  @Autowired
-  private StoreRepository repository;
+  @Autowired private StoreRepository repository;
 
   @Override
   public Page<Store> findAll(Pageable pageable) {
@@ -42,5 +41,4 @@ public class StoreServiceImpl implements StoreService {
     repository.findById(id).orElseThrow(StoreNotFoundException::new);
     repository.deleteById(id);
   }
-
 }

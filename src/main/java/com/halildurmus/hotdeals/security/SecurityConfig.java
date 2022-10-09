@@ -28,21 +28,22 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String[] PUBLIC_GET_ENDPOINTS = {"/actuator/health", "/categories",
-      "/deals/**", "/error", "/stores"};
+  private static final String[] PUBLIC_GET_ENDPOINTS = {
+    "/actuator/health", "/categories", "/deals/**", "/error", "/stores"
+  };
+
   // Matches /users/{id}, /users/{id}/comment-count, /users/{id}/extended
   private static final String[] PUBLIC_GET_ENDPOINTS_REGEX = {"/users/(?!me|search).+"};
+
   private static final String[] PUBLIC_POST_ENDPOINTS = {"/users"};
+
   private static final String[] SWAGGER_ENDPOINTS = {"/swagger-ui/**", "/v3/api-docs/**"};
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @Autowired
-  private SecurityProperties securityProperties;
+  @Autowired private SecurityProperties securityProperties;
 
-  @Autowired
-  private FirebaseFilter firebaseFilter;
+  @Autowired private FirebaseFilter firebaseFilter;
 
   @Bean
   public AuthenticationEntryPoint restAuthenticationEntryPoint() {
@@ -71,17 +72,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
-        .formLogin().disable()
-        .httpBasic().disable().exceptionHandling()
+    httpSecurity
+        .cors()
+        .configurationSource(corsConfigurationSource())
+        .and()
+        .csrf()
+        .disable()
+        .formLogin()
+        .disable()
+        .httpBasic()
+        .disable()
+        .exceptionHandling()
         .authenticationEntryPoint(restAuthenticationEntryPoint())
-        .and().authorizeRequests()
-        .antMatchers("/actuator/**", "/comment-reports/**", "/deal-reports/**",
-            "/user-reports/**")
+        .and()
+        .authorizeRequests()
+        .antMatchers("/actuator/**", "/comment-reports/**", "/deal-reports/**", "/user-reports/**")
         .access("hasRole('SUPER')")
-        .anyRequest().authenticated().and()
+        .anyRequest()
+        .authenticated()
+        .and()
         .addFilterBefore(firebaseFilter, BasicAuthenticationFilter.class)
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
   @Override
@@ -93,5 +105,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
         .antMatchers(HttpMethod.GET, SWAGGER_ENDPOINTS);
   }
-
 }

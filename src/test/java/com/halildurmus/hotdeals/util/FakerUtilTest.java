@@ -15,5 +15,4 @@ public class FakerUtilTest {
     assertThat(nickname).hasSizeGreaterThanOrEqualTo(8);
     assertThat(nickname).containsPattern(Pattern.compile("^\\w+\\d{3}$"));
   }
-
 }

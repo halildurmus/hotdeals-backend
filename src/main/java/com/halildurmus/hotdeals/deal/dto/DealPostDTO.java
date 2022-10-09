@@ -26,12 +26,17 @@ public class DealPostDTO {
   @NotBlank
   private final String category;
 
-  @Schema(description = "Deal title", example = "HP 24mh FHD Monitor with 23.8-Inch IPS Display (1080p)")
+  @Schema(
+      description = "Deal title",
+      example = "HP 24mh FHD Monitor with 23.8-Inch IPS Display (1080p)")
   @NotBlank
   @Size(min = 10, max = 100)
   private final String title;
 
-  @Schema(description = "Deal description", example = "OUTSTANDING VISUALS – This FHD display with IPS technology gives you brilliant visuals and unforgettable quality; with a maximum resolution of 1920 x 1080 at 75 Hz, you’ll experience the image accuracy and wide-viewing spectrums of premium tablets and mobile devices ")
+  @Schema(
+      description = "Deal description",
+      example =
+          "OUTSTANDING VISUALS – This FHD display with IPS technology gives you brilliant visuals and unforgettable quality; with a maximum resolution of 1920 x 1080 at 75 Hz, you’ll experience the image accuracy and wide-viewing spectrums of premium tablets and mobile devices ")
   @NotBlank
   @Size(min = 10, max = 3000)
   private final String description;
@@ -51,12 +56,13 @@ public class DealPostDTO {
   @NotNull
   private final String coverPhoto;
 
-  @Schema(description = "Deal URL", example = "https://www.amazon.com/HP-24mh-FHD-Monitor-Built/dp/B08BF4CZSV/")
+  @Schema(
+      description = "Deal URL",
+      example = "https://www.amazon.com/HP-24mh-FHD-Monitor-Built/dp/B08BF4CZSV/")
   @URL
   @NotNull
   private final String dealUrl;
 
   @Schema(description = "Deal photo URLs", example = "https://www.gravatar.com/avatar")
   private final List<String> photos;
-
 }

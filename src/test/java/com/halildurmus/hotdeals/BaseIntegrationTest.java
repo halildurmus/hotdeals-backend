@@ -19,7 +19,9 @@ import org.testcontainers.utility.DockerImageName;
 public abstract class BaseIntegrationTest {
 
   private static final int REDIS_PORT = 6379;
+
   private static final DockerImageName REDIS_IMAGE = DockerImageName.parse("redis:latest");
+
   private static final GenericContainer<?> redis;
 
   static {
@@ -38,5 +40,4 @@ public abstract class BaseIntegrationTest {
     final String json = new ObjectMapper().writeValueAsString(object);
     return JsonPath.read(json, "$");
   }
-
 }

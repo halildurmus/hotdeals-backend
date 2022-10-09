@@ -66,12 +66,17 @@ public class Deal extends DateAudit {
   @NotBlank
   private String category;
 
-  @Schema(description = "Deal title", example = "HP 24mh FHD Monitor with 23.8-Inch IPS Display (1080p)")
+  @Schema(
+      description = "Deal title",
+      example = "HP 24mh FHD Monitor with 23.8-Inch IPS Display (1080p)")
   @NotBlank
   @Size(min = 10, max = 100)
   private String title;
 
-  @Schema(description = "Deal description", example = "OUTSTANDING VISUALS – This FHD display with IPS technology gives you brilliant visuals and unforgettable quality; with a maximum resolution of 1920 x 1080 at 75 Hz, you’ll experience the image accuracy and wide-viewing spectrums of premium tablets and mobile devices ")
+  @Schema(
+      description = "Deal description",
+      example =
+          "OUTSTANDING VISUALS – This FHD display with IPS technology gives you brilliant visuals and unforgettable quality; with a maximum resolution of 1920 x 1080 at 75 Hz, you’ll experience the image accuracy and wide-viewing spectrums of premium tablets and mobile devices ")
   @NotBlank
   @Size(min = 10, max = 3000)
   private String description;
@@ -91,18 +96,18 @@ public class Deal extends DateAudit {
   @NotNull
   private String coverPhoto;
 
-  @Schema(description = "Deal URL", example = "https://www.amazon.com/HP-24mh-FHD-Monitor-Built/dp/B08BF4CZSV/")
+  @Schema(
+      description = "Deal URL",
+      example = "https://www.amazon.com/HP-24mh-FHD-Monitor-Built/dp/B08BF4CZSV/")
   @URL
   @NotNull
   private String dealUrl;
 
-  @Default
-  private DealStatus status = DealStatus.ACTIVE;
+  @Default private DealStatus status = DealStatus.ACTIVE;
 
   @Schema(description = "Deal photo URLs", example = "https://www.gravatar.com/avatar")
   private List<String> photos = new ArrayList<>();
 
   @Schema(description = "Deal views", example = "10")
   private int views = 0;
-
 }

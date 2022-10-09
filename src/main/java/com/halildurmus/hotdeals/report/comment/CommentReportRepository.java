@@ -20,19 +20,22 @@ public interface CommentReportRepository extends MongoRepository<CommentReport, 
   <S extends CommentReport> S save(S entity);
 
   @Override
-  @Caching(evict = {
-      @CacheEvict(value = "commentReports", key = "#id"),
-      @CacheEvict(value = "commentReports:findAll", allEntries = true)
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "commentReports", key = "#id"),
+        @CacheEvict(value = "commentReports:findAll", allEntries = true)
+      })
   void deleteById(String id);
 
   @Override
-  @Cacheable(value = "commentReports", key = "#id", condition = "#id.blank != true and #result != null")
+  @Cacheable(
+      value = "commentReports",
+      key = "#id",
+      condition = "#id.blank != true and #result != null")
   Optional<CommentReport> findById(String id);
 
   @Override
   @Cacheable("commentReports:findAll")
   @Query("{\"reportedComment\" : { $exists: true } }")
   Page<CommentReport> findAll(Pageable pageable);
-
 }

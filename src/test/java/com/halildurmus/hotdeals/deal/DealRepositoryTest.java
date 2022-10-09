@@ -20,11 +20,9 @@ import org.springframework.data.domain.Pageable;
 
 class DealRepositoryTest extends BaseIntegrationTest {
 
-  @MockBean
-  private SecurityService securityService;
+  @MockBean private SecurityService securityService;
 
-  @Autowired
-  private DealRepository repository;
+  @Autowired private DealRepository repository;
 
   @AfterEach
   void cleanUp() {
@@ -39,8 +37,8 @@ class DealRepositoryTest extends BaseIntegrationTest {
     when(securityService.getUser()).thenReturn(user);
     this.repository.save(deal);
     final ObjectId objectId = new ObjectId(user.getId());
-    final List<Deal> deals = repository.findAllByPostedByOrderByCreatedAtDesc(objectId,
-        Pageable.unpaged()).getContent();
+    final List<Deal> deals =
+        repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
 
     assertFalse(deals.isEmpty());
     assertEquals(deals.get(0).getPostedBy(), objectId);
@@ -49,10 +47,9 @@ class DealRepositoryTest extends BaseIntegrationTest {
   @Test
   void findAllByPostedByReturnsEmptyArray() {
     final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
-    final List<Deal> deals = repository.findAllByPostedByOrderByCreatedAtDesc(objectId,
-        Pageable.unpaged()).getContent();
+    final List<Deal> deals =
+        repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
 
     assertTrue(deals.isEmpty());
   }
-
 }

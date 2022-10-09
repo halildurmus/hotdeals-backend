@@ -23,5 +23,4 @@ public class UserBasicDTO {
 
   @Schema(description = "User createdAt", example = "2021-06-30T16:36:59.713Z")
   private final Instant createdAt;
-
 }

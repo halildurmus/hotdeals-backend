@@ -48,14 +48,11 @@ public class EsDealServiceImpl implements EsDealService {
 
   private static final String SEARCH_DEALS_ENDPOINT = "/deal/_search";
 
-  @Autowired
-  private DealRepository dealRepository;
+  @Autowired private DealRepository dealRepository;
 
-  @Autowired
-  private EsDealRepository repository;
+  @Autowired private EsDealRepository repository;
 
-  @Autowired
-  private RestHighLevelClient client;
+  @Autowired private RestHighLevelClient client;
 
   @Override
   public Page<EsDeal> findAll(Pageable pageable) {
@@ -92,10 +89,10 @@ public class EsDealServiceImpl implements EsDealService {
   private NestedQueryBuilder createStringFacetFilter(String facetName, String facetValue) {
     final String facetGroup = "stringFacets";
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-    final TermQueryBuilder facetNameTermQuery = new TermQueryBuilder(
-        facetGroup + ".facetName", facetName);
-    final TermQueryBuilder facetValueTermQuery = new TermQueryBuilder(
-        facetGroup + ".facetValue", facetValue);
+    final TermQueryBuilder facetNameTermQuery =
+        new TermQueryBuilder(facetGroup + ".facetName", facetName);
+    final TermQueryBuilder facetValueTermQuery =
+        new TermQueryBuilder(facetGroup + ".facetValue", facetValue);
     boolQuery.filter(facetNameTermQuery).filter(facetValueTermQuery);
 
     return new NestedQueryBuilder(facetGroup, boolQuery, ScoreMode.Avg);
@@ -104,10 +101,10 @@ public class EsDealServiceImpl implements EsDealService {
   private NestedQueryBuilder createNumberFacetFilter(String facetName, Double from, Double to) {
     final String facetGroup = "numberFacets";
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-    final TermQueryBuilder facetNameTermQuery = new TermQueryBuilder(
-        facetGroup + ".facetName", facetName);
-    final RangeQueryBuilder facetValueRangeQuery = QueryBuilders.rangeQuery(
-        facetGroup + ".facetValue").gte(from);
+    final TermQueryBuilder facetNameTermQuery =
+        new TermQueryBuilder(facetGroup + ".facetName", facetName);
+    final RangeQueryBuilder facetValueRangeQuery =
+        QueryBuilders.rangeQuery(facetGroup + ".facetValue").gte(from);
     if (to != null) {
       facetValueRangeQuery.lt(to);
     }
@@ -123,8 +120,7 @@ public class EsDealServiceImpl implements EsDealService {
   private FieldSortBuilder createPriceSort(SortOrder sortOrder) {
     final String nestedPath = "numberFacets";
     final String fieldName = "numberFacets.facetValue";
-    final TermQueryBuilder termQuery = new TermQueryBuilder(nestedPath + ".facetName",
-        "price");
+    final TermQueryBuilder termQuery = new TermQueryBuilder(nestedPath + ".facetName", "price");
     final NestedSortBuilder nestedSort = new NestedSortBuilder(nestedPath).setFilter(termQuery);
 
     return SortBuilders.fieldSort(fieldName).order(sortOrder).setNestedSort(nestedSort);
@@ -192,7 +188,8 @@ public class EsDealServiceImpl implements EsDealService {
 
   private BoolQueryBuilder createFilters(DealSearchParams searchParams, String filterToBeExcluded) {
     final BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-    if (searchParams.getCategories() == null && searchParams.getPrices() == null
+    if (searchParams.getCategories() == null
+        && searchParams.getPrices() == null
         && searchParams.getStores() == null) {
       return boolQuery;
     }
@@ -228,78 +225,87 @@ public class EsDealServiceImpl implements EsDealService {
   }
 
   private NestedAggregationBuilder createAllFiltersSubAgg(String facetGroup) {
-    final NestedAggregationBuilder stringFacets = new NestedAggregationBuilder(facetGroup,
-        facetGroup);
-    final TermsAggregationBuilder facetNames = new TermsAggregationBuilder("names").field(
-        facetGroup + ".facetName");
-    final TermsAggregationBuilder facetValues = new TermsAggregationBuilder("values").field(
-        facetGroup + ".facetValue");
+    final NestedAggregationBuilder stringFacets =
+        new NestedAggregationBuilder(facetGroup, facetGroup);
+    final TermsAggregationBuilder facetNames =
+        new TermsAggregationBuilder("names").field(facetGroup + ".facetName");
+    final TermsAggregationBuilder facetValues =
+        new TermsAggregationBuilder("values").field(facetGroup + ".facetValue");
     facetNames.subAggregation(facetValues);
 
     return stringFacets.subAggregation(facetNames);
   }
 
   private FilterAggregationBuilder createAllFiltersAgg(DealSearchParams searchParams) {
-    final FilterAggregationBuilder allFiltersAgg = new FilterAggregationBuilder(
-        "aggAllFilters", createFilters(searchParams, null));
+    final FilterAggregationBuilder allFiltersAgg =
+        new FilterAggregationBuilder("aggAllFilters", createFilters(searchParams, null));
 
-    return allFiltersAgg.subAggregation(createAllFiltersSubAgg("stringFacets"))
+    return allFiltersAgg
+        .subAggregation(createAllFiltersSubAgg("stringFacets"))
         .subAggregation(createAllFiltersSubAgg("numberFacets"));
   }
 
   private FilterAggregationBuilder createFilterAgg(String fieldName, String facetName) {
-    return new FilterAggregationBuilder("aggSpecial",
-        QueryBuilders.matchQuery(fieldName, facetName));
+    return new FilterAggregationBuilder(
+        "aggSpecial", QueryBuilders.matchQuery(fieldName, facetName));
   }
 
   private NestedAggregationBuilder createNestedSubAgg(String facetGroup, String facetName) {
-    final NestedAggregationBuilder stringFacets = new NestedAggregationBuilder(facetGroup,
-        facetGroup);
-    final TermsAggregationBuilder facetNames = new TermsAggregationBuilder("names").field(
-        facetGroup + ".facetName");
-    final TermsAggregationBuilder facetValues = new TermsAggregationBuilder("values").field(
-        facetGroup + ".facetValue");
+    final NestedAggregationBuilder stringFacets =
+        new NestedAggregationBuilder(facetGroup, facetGroup);
+    final TermsAggregationBuilder facetNames =
+        new TermsAggregationBuilder("names").field(facetGroup + ".facetName");
+    final TermsAggregationBuilder facetValues =
+        new TermsAggregationBuilder("values").field(facetGroup + ".facetValue");
     facetNames.subAggregation(facetValues);
-    final FilterAggregationBuilder filterAgg = createFilterAgg(
-        facetGroup + ".facetName", facetName).subAggregation(facetNames);
+    final FilterAggregationBuilder filterAgg =
+        createFilterAgg(facetGroup + ".facetName", facetName).subAggregation(facetNames);
 
     return stringFacets.subAggregation(filterAgg);
   }
 
   private FilterAggregationBuilder createCategoryAgg(DealSearchParams searchParams) {
-    final FilterAggregationBuilder categoryAgg = new FilterAggregationBuilder(
-        "aggCategory", createFilters(searchParams, "category"));
-    final NestedAggregationBuilder nestedAgg = createNestedSubAgg(
-        "stringFacets", "category");
+    final FilterAggregationBuilder categoryAgg =
+        new FilterAggregationBuilder("aggCategory", createFilters(searchParams, "category"));
+    final NestedAggregationBuilder nestedAgg = createNestedSubAgg("stringFacets", "category");
 
     return categoryAgg.subAggregation(nestedAgg);
   }
 
   private FilterAggregationBuilder createStoreAgg(DealSearchParams searchParams) {
-    final FilterAggregationBuilder storeAgg = new FilterAggregationBuilder(
-        "aggStore", createFilters(searchParams, "store"));
-    final NestedAggregationBuilder nestedAgg = createNestedSubAgg(
-        "stringFacets", "store");
+    final FilterAggregationBuilder storeAgg =
+        new FilterAggregationBuilder("aggStore", createFilters(searchParams, "store"));
+    final NestedAggregationBuilder nestedAgg = createNestedSubAgg("stringFacets", "store");
 
     return storeAgg.subAggregation(nestedAgg);
   }
 
   private FilterAggregationBuilder createPriceAgg(DealSearchParams searchParams) {
-    final FilterAggregationBuilder priceAgg = new FilterAggregationBuilder(
-        "aggPrice", createFilters(searchParams, "price"));
+    final FilterAggregationBuilder priceAgg =
+        new FilterAggregationBuilder("aggPrice", createFilters(searchParams, "price"));
     final RangeAggregationBuilder facetValues = new RangeAggregationBuilder("values");
-    facetValues.field("numberFacets.facetValue").keyed(false).addRange(0, 1).addRange(1, 5)
-        .addRange(5, 10).addRange(10, 20).addRange(20, 50).addRange(50, 100).addRange(100, 250)
-        .addRange(250, 500).addRange(500, 1000).addRange(1000, 1500).addRange(1500, 2000)
+    facetValues
+        .field("numberFacets.facetValue")
+        .keyed(false)
+        .addRange(0, 1)
+        .addRange(1, 5)
+        .addRange(5, 10)
+        .addRange(10, 20)
+        .addRange(20, 50)
+        .addRange(50, 100)
+        .addRange(100, 250)
+        .addRange(250, 500)
+        .addRange(500, 1000)
+        .addRange(1000, 1500)
+        .addRange(1500, 2000)
         .addUnboundedFrom(2000);
-    final TermsAggregationBuilder facetNames = new TermsAggregationBuilder("names")
-        .field("numberFacets.facetName");
+    final TermsAggregationBuilder facetNames =
+        new TermsAggregationBuilder("names").field("numberFacets.facetName");
     facetNames.subAggregation(facetValues);
-    final FilterAggregationBuilder filterAgg = createFilterAgg(
-        "numberFacets.facetName", "price")
-        .subAggregation(facetNames);
-    final NestedAggregationBuilder nestedAgg = new NestedAggregationBuilder("numberFacets",
-        "numberFacets").subAggregation(filterAgg);
+    final FilterAggregationBuilder filterAgg =
+        createFilterAgg("numberFacets.facetName", "price").subAggregation(facetNames);
+    final NestedAggregationBuilder nestedAgg =
+        new NestedAggregationBuilder("numberFacets", "numberFacets").subAggregation(filterAgg);
 
     return priceAgg.subAggregation(nestedAgg);
   }
@@ -314,8 +320,7 @@ public class EsDealServiceImpl implements EsDealService {
     return aggregations;
   }
 
-  private Request createSearchRequest(DealSearchParams searchParams,
-      Pageable pageable) {
+  private Request createSearchRequest(DealSearchParams searchParams, Pageable pageable) {
     final Request request = new Request("GET", SEARCH_DEALS_ENDPOINT);
     final SearchSourceBuilder searchSource = new SearchSourceBuilder();
     searchSource.from(pageable.getPageNumber()).size(pageable.getPageSize());
@@ -357,5 +362,4 @@ public class EsDealServiceImpl implements EsDealService {
   public EsDeal save(EsDeal esDeal) {
     return repository.save(esDeal);
   }
-
 }

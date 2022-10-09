@@ -25,23 +25,17 @@ public class Category extends DateAudit {
 
   private static final long serialVersionUID = 1234567L;
 
-  @Id
-  private String id;
+  @Id private String id;
 
-  @NotNull
-  private Map<String, String> names;
+  @NotNull private Map<String, String> names;
 
-  @NotBlank
-  private String parent;
+  @NotBlank private String parent;
 
   @Indexed(unique = true)
   @NotBlank
   private String category;
 
-  @NotBlank
-  private String iconLigature;
+  @NotBlank private String iconLigature;
 
-  @NotBlank
-  private String iconFontFamily;
-
+  @NotBlank private String iconFontFamily;
 }

@@ -41,15 +41,20 @@ import org.springframework.web.server.ResponseStatusException;
 @Validated
 public class CategoryController {
 
-  @Autowired
-  private MapStructMapper mapStructMapper;
+  @Autowired private MapStructMapper mapStructMapper;
 
-  @Autowired
-  private CategoryService service;
+  @Autowired private CategoryService service;
 
   @GetMapping
   @Operation(summary = "Returns all categories")
-  @ApiResponses(@ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryGetDTO.class)))))
+  @ApiResponses(
+      @ApiResponse(
+          responseCode = "200",
+          description = "Successful operation",
+          content =
+              @Content(
+                  mediaType = "application/json",
+                  array = @ArraySchema(schema = @Schema(implementation = CategoryGetDTO.class)))))
   public List<CategoryGetDTO> getCategories(@ParameterObject Pageable pageable) {
     final Page<Category> categories = service.findAll(pageable);
 
@@ -62,15 +67,25 @@ public class CategoryController {
   @IsSuper
   @Operation(summary = "Finds category by ID", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Invalid category ID", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
+    @ApiResponse(
+        responseCode = "200",
+        description = "Successful operation",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = CategoryGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Invalid category ID", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public CategoryGetDTO getCategory(
-      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id) {
+      @Parameter(
+              description = "String representation of the Category ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id) {
     final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
 
     return mapStructMapper.categoryToCategoryGetDTO(category);
@@ -81,35 +96,53 @@ public class CategoryController {
   @IsSuper
   @Operation(summary = "Creates a category", security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "201", description = "The category created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
+    @ApiResponse(
+        responseCode = "201",
+        description = "The category created successfully",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = CategoryGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public CategoryGetDTO createCategory(@Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     if (!categoryPostDTO.getNames().containsKey("en")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "The category name must have an English translation!");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "The category name must have an English translation!");
     }
-    final Category category = service.create(
-        mapStructMapper.categoryPostDTOToCategory(categoryPostDTO));
+    final Category category =
+        service.create(mapStructMapper.categoryPostDTOToCategory(categoryPostDTO));
 
     return mapStructMapper.categoryToCategoryGetDTO(category);
   }
 
   @PutMapping("/{id}")
   @IsSuper
-  @Operation(summary = "Updates an existing category", security = @SecurityRequirement(name = "bearerAuth"))
+  @Operation(
+      summary = "Updates an existing category",
+      security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "The category successfully updated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryGetDTO.class))),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
+    @ApiResponse(
+        responseCode = "200",
+        description = "The category successfully updated",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = CategoryGetDTO.class))),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public CategoryGetDTO updateCategory(
-      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id,
+      @Parameter(
+              description = "String representation of the Category ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
     final Category category = convertToEntity(id, categoryPostDTO);
 
@@ -119,29 +152,37 @@ public class CategoryController {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @IsSuper
-  @Operation(summary = "Deletes an existing category", security = @SecurityRequirement(name = "bearerAuth"))
+  @Operation(
+      summary = "Deletes an existing category",
+      security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses({
-      @ApiResponse(responseCode = "204", description = "The category successfully deleted", content = @Content),
-      @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-      @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-      @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-      @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
+    @ApiResponse(
+        responseCode = "204",
+        description = "The category successfully deleted",
+        content = @Content),
+    @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+    @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+    @ApiResponse(responseCode = "404", description = "Category not found", content = @Content)
   })
   public void deleteCategory(
-      @Parameter(description = "String representation of the Category ID", example = "5fbe790ec6f0b32014074bb1")
-      @IsObjectId @PathVariable String id) {
+      @Parameter(
+              description = "String representation of the Category ID",
+              example = "5fbe790ec6f0b32014074bb1")
+          @IsObjectId
+          @PathVariable
+          String id) {
     service.delete(id);
   }
 
   private Category convertToEntity(String id, CategoryPostDTO categoryPostDTO) {
     // Fetch the category from the db and set the missing properties from it
-    final Category originalCategory = service.findById(id)
-        .orElseThrow(CategoryNotFoundException::new);
+    final Category originalCategory =
+        service.findById(id).orElseThrow(CategoryNotFoundException::new);
     final Category category = mapStructMapper.categoryPostDTOToCategory(categoryPostDTO);
     category.setId(id);
     category.setCreatedAt(originalCategory.getCreatedAt());
 
     return category;
   }
-
 }

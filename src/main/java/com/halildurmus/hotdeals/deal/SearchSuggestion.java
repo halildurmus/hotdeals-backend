@@ -13,5 +13,4 @@ public class SearchSuggestion {
 
   @Schema(description = "Deal title", example = "iPhone 12 Pro Max 128 GB")
   private final String title;
-
 }

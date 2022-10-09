@@ -8,12 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentReportServiceImpl implements CommentReportService {
 
-  @Autowired
-  private CommentReportRepository repository;
+  @Autowired private CommentReportRepository repository;
 
   @Override
   public CommentReport save(CommentReport commentReport) {
     return repository.save(commentReport);
   }
-
 }

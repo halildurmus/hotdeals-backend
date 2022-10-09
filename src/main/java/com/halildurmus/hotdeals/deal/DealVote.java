@@ -12,7 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DealVote {
 
-  @NotNull
-  private DealVoteType voteType;
-
+  @NotNull private DealVoteType voteType;
 }

@@ -69,26 +69,19 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
   private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
 
-  @Autowired
-  private JacksonTester<DealPostDTO> json;
+  @Autowired private JacksonTester<DealPostDTO> json;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private CommentService commentService;
+  @MockBean private CommentService commentService;
 
-  @MockBean
-  private CommentReportService commentReportService;
+  @MockBean private CommentReportService commentReportService;
 
-  @MockBean
-  private DealReportService dealReportService;
+  @MockBean private DealReportService dealReportService;
 
-  @MockBean
-  private DealService service;
+  @MockBean private DealService service;
 
-  @MockBean
-  private EsDealService esDealService;
+  @MockBean private EsDealService esDealService;
 
   @Test
   @DisplayName("GET /deals (returns empty array)")
@@ -142,9 +135,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     when(service.countDealsByPostedBy(new ObjectId(id))).thenReturn(3);
     final RequestBuilder request = get("/deals/count/byPostedBy?postedBy=" + id);
 
-    mvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(3));
+    mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(3));
   }
 
   @Test
@@ -153,13 +144,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = get("/deals/count/byPostedBy?postedBy=" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -169,9 +162,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     when(service.countDealsByStore(new ObjectId(id))).thenReturn(4);
     final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
-    mvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(4));
+    mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(4));
   }
 
   @Test
@@ -180,13 +171,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -238,10 +231,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/search/byStoreId?storeId={id} (returns empty array)")
   public void findDealsByStoreIdReturnsEmptyArray() throws Exception {
     final Deal deal = DummyDeals.deal1;
-    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class))).thenReturn(
-        Page.empty());
-    final RequestBuilder request = get(
-        "/deals/search/byStoreId?storeId=" + deal.getStore());
+    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
+        .thenReturn(Page.empty());
+    final RequestBuilder request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -254,10 +246,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void findsDealsByStoreId() throws Exception {
     final Deal deal = DummyDeals.deal1;
     final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class))).thenReturn(
-        pagedDeals);
-    final RequestBuilder request = get(
-        "/deals/search/byStoreId?storeId=" + deal.getStore());
+    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
+        .thenReturn(pagedDeals);
+    final RequestBuilder request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -378,12 +369,18 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MissingServletRequestParameterException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains(
-                    "Required request parameter 'query' for method parameter type String is not present")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException()
+                        instanceof MissingServletRequestParameterException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Required request parameter 'query' for method parameter type String is not present")));
   }
 
   @Test
@@ -393,8 +390,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(status().reason(
-            equalTo("Invalid sortBy! Supported sortBy values => [createdAt, price]")));
+        .andExpect(
+            status()
+                .reason(equalTo("Invalid sortBy! Supported sortBy values => [createdAt, price]")));
   }
 
   @Test
@@ -404,8 +402,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(status().reason(
-            equalTo("Invalid order! Supported order values => [asc, desc]")));
+        .andExpect(
+            status().reason(equalTo("Invalid order! Supported order values => [asc, desc]")));
   }
 
   @Test
@@ -415,12 +413,18 @@ public class DealControllerTest extends BaseControllerUnitTest {
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MissingServletRequestParameterException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains(
-                    "Required request parameter 'query' for method parameter type String is not present")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException()
+                        instanceof MissingServletRequestParameterException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Required request parameter 'query' for method parameter type String is not present")));
   }
 
   @Test
@@ -428,13 +432,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void getSuggestionsValidationFailsDueToInvalidQueryLength() {
     final RequestBuilder request = get("/deals/suggestions?query=a");
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -474,13 +480,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     when(service.findById(deal.getId())).thenReturn(Optional.empty());
     final RequestBuilder request = get("/deals/" + deal.getId());
 
-    assertThrows(DealNotFoundException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        DealNotFoundException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -489,12 +497,14 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final Deal deal = DummyDeals.deal1;
     final DealPostDTO dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
     when(service.create(any(Deal.class))).thenReturn(deal);
-    final RequestBuilder request = post("/deals")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(dealPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(dealPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(17)))
         .andExpect(jsonPath("$.id").value(deal.getId()))
@@ -519,58 +529,92 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals (empty body)")
   public void postDealValidationFails() throws Exception {
-    final RequestBuilder request = post("/deals")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'title'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'description'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'originalPrice'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'price'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'category'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'store'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'coverPhoto'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'dealUrl'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'title'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'description'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'originalPrice'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'price'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'category'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'store'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'coverPhoto'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'dealUrl'")));
   }
 
   @Test
   @DisplayName("PATCH /deals/{id} (empty body)")
   public void patchDealValidationFails() throws Exception {
     final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = patch("/deals/" + id)
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType("application/json-patch+json");
+    final RequestBuilder request =
+        patch("/deals/" + id)
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType("application/json-patch+json");
 
     mvc.perform(request)
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof HttpMessageNotReadableException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains(
-                    "Cannot deserialize value of type `java.util.ArrayList<com.github.fge.jsonpatch.JsonPatchOperation>`")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof HttpMessageNotReadableException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Cannot deserialize value of type `java.util.ArrayList<com.github.fge.jsonpatch.JsonPatchOperation>`")));
   }
 
   @Test
@@ -581,10 +625,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
     when(service.patch(anyString(), any(JsonPatch.class))).thenReturn(deal);
     final String jsonPatch =
         "[{\"op\": \"replace\", \"path\": \"/status\", \"value\": \"EXPIRED\"}]";
-    final RequestBuilder request = patch("/deals/" + deal.getId())
-        .accept(MediaType.APPLICATION_JSON)
-        .content(jsonPatch)
-        .contentType("application/json-patch+json");
+    final RequestBuilder request =
+        patch("/deals/" + deal.getId())
+            .accept(MediaType.APPLICATION_JSON)
+            .content(jsonPatch)
+            .contentType("application/json-patch+json");
 
     mvc.perform(request)
         .andDo(print())
@@ -617,10 +662,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final DealPostDTO dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
     when(service.findById(anyString())).thenReturn(Optional.of(deal));
     when(service.update(any(Deal.class))).thenReturn(deal);
-    final RequestBuilder request = put("/deals/" + deal.getId())
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(dealPostDTO).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + deal.getId())
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(dealPostDTO).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -648,39 +694,66 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /deals/{id} (empty body)")
   public void putDealValidationFails() throws Exception {
     final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = put("/deals/" + id)
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + id)
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'title'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'description'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'originalPrice'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'price'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'category'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'store'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'coverPhoto'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealPostDTO' on field 'dealUrl'")));
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'title'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'description'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'originalPrice'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'price'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'category'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'store'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'coverPhoto'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealPostDTO' on field 'dealUrl'")));
   }
 
   @Test
@@ -697,13 +770,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/deals/" + id);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -753,9 +828,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     when(commentService.getCommentCountByDealId(any(ObjectId.class))).thenReturn(3);
     final RequestBuilder request = get("/deals/" + id + "/comment-count");
 
-    mvc.perform(request)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$").value(3));
+    mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(3));
   }
 
   @Test
@@ -764,13 +837,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = get("/deals/" + id + "/comment-count");
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -781,12 +856,14 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final CommentPostDTO commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.save(any(Comment.class))).thenReturn(comment);
-    final RequestBuilder request = post("/deals/" + id + "/comments")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(commentPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + id + "/comments")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(commentPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(5)))
         .andExpect(jsonPath("$.id").value(comment.getId()))
@@ -802,35 +879,45 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final Comment comment = DummyComments.comment1;
     final CommentPostDTO commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
-    final RequestBuilder request = post("/deals/" + id + "/comments")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(commentPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + id + "/comments")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(commentPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
   @DisplayName("POST /deals/{id}/comments (empty body)")
   public void postCommentValidationFailsDueToEmptyBody() throws Exception {
     final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = post("/deals/" + id + "/comments")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + id + "/comments")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'commentPostDTO' on field 'message'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'commentPostDTO' on field 'message'")));
   }
 
   @Test
@@ -839,14 +926,15 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String dealId = DummyDeals.deal1.getId();
     final String commentId = DummyComments.comment1.getId();
     final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final CommentReportPostDTO commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(
-        commentReport);
+    final CommentReportPostDTO commentReportPostDTO =
+        mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.findById(anyString())).thenReturn(Optional.of(DummyComments.comment1));
-    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(commentReportPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(commentReportPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(request).andExpect(status().isCreated());
   }
 
@@ -856,20 +944,23 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String dealId = DummyDeals.deal1.getId();
     final String commentId = "23478fsf234";
     final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final CommentReportPostDTO commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(
-        commentReport);
-    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(commentReportPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final CommentReportPostDTO commentReportPostDTO =
+        mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
+    final RequestBuilder request =
+        post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(commentReportPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -877,17 +968,25 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void postCommentReportValidationFailsDueToEmptyBody() throws Exception {
     final String dealId = DummyDeals.deal1.getId();
     final String commentId = DummyComments.comment1.getId();
-    final RequestBuilder request = post("/deals/" + dealId + "/comments/" + commentId + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + dealId + "/comments/" + commentId + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'commentReportPostDTO' on field 'reasons'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains(
+                            "Field error in object 'commentReportPostDTO' on field 'reasons'")));
   }
 
   @Test
@@ -895,13 +994,14 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void createsDealReport() throws Exception {
     final String id = DummyDeals.deal1.getId();
     final DealReport dealReport = DummyDealReports.dealReport1;
-    final DealReportPostDTO dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(
-        dealReport);
+    final DealReportPostDTO dealReportPostDTO =
+        mapStructMapper.dealReportToDealReportPostDTO(dealReport);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
-    final RequestBuilder request = post("/deals/" + id + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealReportPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + id + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealReportPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(request).andExpect(status().isCreated());
   }
 
@@ -910,37 +1010,47 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void postDealReportThrowsConstraintViolationException() throws JsonProcessingException {
     final String id = "23478fsf234";
     final DealReport dealReport = DummyDealReports.dealReport1;
-    final DealReportPostDTO dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(
-        dealReport);
-    final RequestBuilder request = post("/deals/" + id + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealReportPostDTO))
-        .contentType(MediaType.APPLICATION_JSON);
+    final DealReportPostDTO dealReportPostDTO =
+        mapStructMapper.dealReportToDealReportPostDTO(dealReport);
+    final RequestBuilder request =
+        post("/deals/" + id + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealReportPostDTO))
+            .contentType(MediaType.APPLICATION_JSON);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
   @DisplayName("POST /deals/{id}/reports (empty body)")
   public void postDealReportValidationFailsDueToEmptyBody() throws Exception {
     final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = post("/deals/" + id + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/deals/" + id + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealReportPostDTO' on field 'reasons'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealReportPostDTO' on field 'reasons'")));
   }
 
   @Test
@@ -949,10 +1059,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final Deal deal = DummyDeals.deal1;
     final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
     when(service.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
-    final RequestBuilder request = put("/deals/" + deal.getId() + "/votes")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealVote))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + deal.getId() + "/votes")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealVote))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -981,18 +1092,21 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void voteDealThrowsConstraintViolationException() throws JsonProcessingException {
     final String id = "23478fsf234";
     final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
-    final RequestBuilder request = put("/deals/" + id + "/votes")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealVote))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + id + "/votes")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealVote))
+            .contentType(MediaType.APPLICATION_JSON);
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
 
   @Test
@@ -1000,10 +1114,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void voteDealValidationFailsDueToInvalidVoteType() throws Exception {
     final String id = DummyDeals.deal1.getId();
     final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UNVOTE).build();
-    final RequestBuilder request = put("/deals/" + id + "/votes")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealVote))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + id + "/votes")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealVote))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -1015,17 +1130,24 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("PUT /deals/{id}/votes (empty body)")
   public void voteDealValidationFailsDueToEmptyBody() throws Exception {
     final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = put("/deals/" + id + "/votes")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        put("/deals/" + id + "/votes")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'dealVote' on field 'voteType'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'dealVote' on field 'voteType'")));
   }
 
   @Test
@@ -1043,13 +1165,14 @@ public class DealControllerTest extends BaseControllerUnitTest {
     final String id = "23478fsf234";
     final RequestBuilder request = delete("/deals/" + id + "/votes");
 
-    assertThrows(ConstraintViolationException.class, () -> {
-      try {
-        mvc.perform(request);
-      } catch (NestedServletException e) {
-        throw e.getCause();
-      }
-    });
+    assertThrows(
+        ConstraintViolationException.class,
+        () -> {
+          try {
+            mvc.perform(request);
+          } catch (NestedServletException e) {
+            throw e.getCause();
+          }
+        });
   }
-
 }

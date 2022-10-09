@@ -36,21 +36,15 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class DealIntegrationTest extends BaseIntegrationTest {
 
-  private final ObjectMapper objectMapper = JsonMapper.builder()
-      .findAndAddModules()
-      .build();
+  private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
-  @MockBean
-  private SecurityService securityService;
+  @MockBean private SecurityService securityService;
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @Autowired
-  private JacksonTester<Deal> json;
+  @Autowired private JacksonTester<Deal> json;
 
   @AfterEach
   void cleanUp() {
@@ -60,47 +54,48 @@ public class DealIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("users");
   }
 
-//  @Test
-//  @DisplayName("POST /deals")
-//  public void createsDeal() throws Exception {
-//    final User user = mongoTemplate.insert(DummyUsers.user1);
-//    when(securityService.getUser()).thenReturn(user);
-//    final Deal deal = DummyDeals.deal1;
-//    final RequestBuilder requestBuilder = post("/deals")
-//        .accept(MediaType.APPLICATION_JSON)
-//        .content(json.write(deal).getJson())
-//        .contentType(MediaType.APPLICATION_JSON);
-//
-//    mvc.perform(requestBuilder)
-//        .andExpect(status().isCreated())
-//        .andExpect(content().contentType("application/json"))
-//        .andExpect(jsonPath("$.*", hasSize(17)))
-//        .andExpect(jsonPath("$.id").value(deal.getId()))
-//        .andExpect(jsonPath("$.postedBy").value(user.getId()))
-//        .andExpect(jsonPath("$.title").value(deal.getTitle()))
-//        .andExpect(jsonPath("$.description").value(deal.getDescription()))
-//        .andExpect(jsonPath("$.originalPrice").value(deal.getOriginalPrice()))
-//        .andExpect(jsonPath("$.price").value(deal.getPrice()))
-//        .andExpect(jsonPath("$.store").value(deal.getStore().toString()))
-//        .andExpect(jsonPath("$.category").value(deal.getCategory()))
-//        .andExpect(jsonPath("$.coverPhoto").value(deal.getCoverPhoto()))
-//        .andExpect(jsonPath("$.photos", hasSize(deal.getPhotos().size())))
-//        .andExpect(jsonPath("$.dealUrl").value(deal.getDealUrl()))
-//        .andExpect(jsonPath("$.dealScore").value(deal.getDealScore()))
-//        .andExpect(jsonPath("$.upvoters", hasSize(deal.getUpvoters().size())))
-//        .andExpect(jsonPath("$.downvoters", hasSize(deal.getDownvoters().size())))
-//        .andExpect(jsonPath("$.views").value(deal.getViews()))
-//        .andExpect(jsonPath("$.status").value(deal.getStatus().toString()))
-//        .andExpect(jsonPath("$.createdAt").isNotEmpty());
-//  }
+  // @Test
+  // @DisplayName("POST /deals")
+  // public void createsDeal() throws Exception {
+  // final User user = mongoTemplate.insert(DummyUsers.user1);
+  // when(securityService.getUser()).thenReturn(user);
+  // final Deal deal = DummyDeals.deal1;
+  // final RequestBuilder requestBuilder = post("/deals")
+  // .accept(MediaType.APPLICATION_JSON)
+  // .content(json.write(deal).getJson())
+  // .contentType(MediaType.APPLICATION_JSON);
+  //
+  // mvc.perform(requestBuilder)
+  // .andExpect(status().isCreated())
+  // .andExpect(content().contentType("application/json"))
+  // .andExpect(jsonPath("$.*", hasSize(17)))
+  // .andExpect(jsonPath("$.id").value(deal.getId()))
+  // .andExpect(jsonPath("$.postedBy").value(user.getId()))
+  // .andExpect(jsonPath("$.title").value(deal.getTitle()))
+  // .andExpect(jsonPath("$.description").value(deal.getDescription()))
+  // .andExpect(jsonPath("$.originalPrice").value(deal.getOriginalPrice()))
+  // .andExpect(jsonPath("$.price").value(deal.getPrice()))
+  // .andExpect(jsonPath("$.store").value(deal.getStore().toString()))
+  // .andExpect(jsonPath("$.category").value(deal.getCategory()))
+  // .andExpect(jsonPath("$.coverPhoto").value(deal.getCoverPhoto()))
+  // .andExpect(jsonPath("$.photos", hasSize(deal.getPhotos().size())))
+  // .andExpect(jsonPath("$.dealUrl").value(deal.getDealUrl()))
+  // .andExpect(jsonPath("$.dealScore").value(deal.getDealScore()))
+  // .andExpect(jsonPath("$.upvoters", hasSize(deal.getUpvoters().size())))
+  // .andExpect(jsonPath("$.downvoters", hasSize(deal.getDownvoters().size())))
+  // .andExpect(jsonPath("$.views").value(deal.getViews()))
+  // .andExpect(jsonPath("$.status").value(deal.getStatus().toString()))
+  // .andExpect(jsonPath("$.createdAt").isNotEmpty());
+  // }
 
   @Test
   @DisplayName("GET /deals (returns empty)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/deals")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/deals").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -110,14 +105,15 @@ public class DealIntegrationTest extends BaseIntegrationTest {
 
   @Test
   @DisplayName("GET /deals (returns 1 deal)")
-  @WithMockUser(username = "admin", roles = {"ADMIN", "SUPER"})
+  @WithMockUser(
+      username = "admin",
+      roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsOneDeal() throws Exception {
     final User user = mongoTemplate.insert(DummyUsers.user3);
     when(securityService.getUser()).thenReturn(user);
     final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final RequestBuilder requestBuilder = get("/deals")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/deals").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -152,10 +148,11 @@ public class DealIntegrationTest extends BaseIntegrationTest {
     final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
     final Comment comment = DummyComments.comment1;
     comment.setDealId(new ObjectId(deal.getId()));
-    final RequestBuilder requestBuilder = post("/deals/" + deal.getId() + "/comments")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(comment))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/deals/" + deal.getId() + "/comments")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(comment))
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isCreated())
@@ -179,11 +176,11 @@ public class DealIntegrationTest extends BaseIntegrationTest {
     dummyComment.setDealId(new ObjectId(deal.getId()));
     final Comment comment = mongoTemplate.insert(dummyComment);
     final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final RequestBuilder requestBuilder = post(
-        "/deals/" + deal.getId() + "/comments/" + comment.getId() + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(commentReport))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/deals/" + deal.getId() + "/comments/" + comment.getId() + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(commentReport))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(requestBuilder).andExpect(status().isCreated());
   }
 
@@ -194,11 +191,11 @@ public class DealIntegrationTest extends BaseIntegrationTest {
     when(securityService.getUser()).thenReturn(user);
     final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
     final DealReport dealReport = DummyDealReports.dealReport1;
-    final RequestBuilder requestBuilder = post("/deals/" + deal.getId() + "/reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(dealReport))
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        post("/deals/" + deal.getId() + "/reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(dealReport))
+            .contentType(MediaType.APPLICATION_JSON);
     mvc.perform(requestBuilder).andExpect(status().isCreated());
   }
-
 }

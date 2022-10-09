@@ -25,25 +25,24 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 @Import(NotificationController.class)
 public class NotificationControllerTest extends BaseControllerUnitTest {
 
-  @Autowired
-  private JacksonTester<Notification> json;
+  @Autowired private JacksonTester<Notification> json;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-  @MockBean
-  private NotificationService service;
+  @MockBean private NotificationService service;
 
   @Test
   @DisplayName("POST /notifications")
   public void sendsNotification() throws Exception {
     when(service.send(any(Notification.class))).thenReturn(1);
-    final RequestBuilder request = post("/notifications")
-        .accept(MediaType.APPLICATION_JSON)
-        .content(json.write(DummyNotifications.notification1).getJson())
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/notifications")
+            .accept(MediaType.APPLICATION_JSON)
+            .content(json.write(DummyNotifications.notification1).getJson())
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isCreated())
+    mvc.perform(request)
+        .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$").value(1));
   }
@@ -51,20 +50,29 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /notifications (empty body)")
   public void postNotificationValidationFails() throws Exception {
-    final RequestBuilder request = post("/notifications")
-        .accept(MediaType.APPLICATION_JSON)
-        .content("{}")
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder request =
+        post("/notifications")
+            .accept(MediaType.APPLICATION_JSON)
+            .content("{}")
+            .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(request).andExpect(status().isBadRequest())
-        .andExpect(result -> assertTrue(
-            result.getResolvedException() instanceof MethodArgumentNotValidException))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'notification' on field 'data'")))
-        .andExpect(result -> assertTrue(
-            Objects.requireNonNull(result.getResolvedException()).getMessage()
-                .contains("Field error in object 'notification' on field 'tokens'")));
+    mvc.perform(request)
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(
+                    result.getResolvedException() instanceof MethodArgumentNotValidException))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'notification' on field 'data'")))
+        .andExpect(
+            result ->
+                assertTrue(
+                    Objects.requireNonNull(result.getResolvedException())
+                        .getMessage()
+                        .contains("Field error in object 'notification' on field 'tokens'")));
   }
-
 }

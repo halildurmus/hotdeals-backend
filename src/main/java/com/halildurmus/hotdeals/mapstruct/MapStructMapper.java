@@ -68,5 +68,4 @@ public interface MapStructMapper {
   UserPostDTO userToUserPostDTO(User user);
 
   UserReport userReportPostDTOToUserReport(UserReportPostDTO userReportPostDTO);
-
 }

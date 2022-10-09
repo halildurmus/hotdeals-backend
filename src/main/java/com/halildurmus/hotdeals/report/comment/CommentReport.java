@@ -22,10 +22,7 @@ public class CommentReport extends Report {
 
   private static final long serialVersionUID = 1234567L;
 
-  @DocumentReference
-  private Comment reportedComment;
+  @DocumentReference private Comment reportedComment;
 
-  @NotEmpty
-  private EnumSet<CommentReportReason> reasons;
-
+  @NotEmpty private EnumSet<CommentReportReason> reasons;
 }

@@ -15,8 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration-test")
 class UserRepositoryTest {
 
-  @Autowired
-  private UserRepository repository;
+  @Autowired private UserRepository repository;
 
   @AfterEach
   void cleanUp() {
@@ -73,5 +72,4 @@ class UserRepositoryTest {
 
     assertTrue(user.isEmpty());
   }
-
 }

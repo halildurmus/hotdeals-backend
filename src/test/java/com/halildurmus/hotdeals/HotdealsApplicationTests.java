@@ -9,7 +9,5 @@ import org.springframework.test.context.ActiveProfiles;
 class HotdealsApplicationTests {
 
   @Test
-  void contextLoads() {
-  }
-
+  void contextLoads() {}
 }

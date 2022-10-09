@@ -19,14 +19,11 @@ import org.springframework.dao.DuplicateKeyException;
 @DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 class UserServiceImplTest {
 
-  @MockBean
-  private FakerUtil fakerUtil;
+  @MockBean private FakerUtil fakerUtil;
 
-  @MockBean
-  private DealRepository dealRepository;
+  @MockBean private DealRepository dealRepository;
 
-  @MockBean
-  private UserRepository userRepository;
+  @MockBean private UserRepository userRepository;
 
   private UserService userService;
 
@@ -54,5 +51,4 @@ class UserServiceImplTest {
     assertNotNull(user);
     assertEquals(user.getNickname(), "MrNobody124");
   }
-
 }

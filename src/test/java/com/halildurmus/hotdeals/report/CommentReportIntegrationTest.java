@@ -26,14 +26,11 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 public class CommentReportIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired
-  private CacheManager cacheManager;
+  @Autowired private CacheManager cacheManager;
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-  @Autowired
-  private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
   @AfterEach
   void cleanUp() {
@@ -51,9 +48,10 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /comment-reports (returns empty)")
   public void getCommentReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder = get("/comment-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/comment-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -70,9 +68,10 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
     commentReport.setReportedComment(comment);
     commentReport.setReportedBy(user);
     mongoTemplate.insert(commentReport);
-    final RequestBuilder requestBuilder = get("/comment-reports")
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON);
+    final RequestBuilder requestBuilder =
+        get("/comment-reports")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
         .andExpect(status().isOk())
@@ -89,5 +88,4 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$._embedded.comment-reports[0].createdAt").isNotEmpty())
         .andExpect(jsonPath("$._embedded.comment-reports[0].updatedAt").isNotEmpty());
   }
-
 }

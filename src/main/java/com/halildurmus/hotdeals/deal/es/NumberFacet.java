@@ -15,5 +15,4 @@ public class NumberFacet {
   @NotNull
   @Field(type = FieldType.Double)
   private final Double facetValue;
-
 }

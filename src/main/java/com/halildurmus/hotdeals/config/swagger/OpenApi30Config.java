@@ -15,31 +15,35 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApi30Config {
 
   private static final String SECURITY_SCHEME_NAME = "bearerAuth";
-  private static final Tag CATEGORIES_TAG = new Tag().name("categories");
-  private static final Tag DEALS_TAG = new Tag().name("deals");
-  private static final Tag NOTIFICATIONS_TAG = new Tag().name("notifications");
-  private static final Tag ROLES_TAG = new Tag().name("roles");
-  private static final Tag STORES_TAG = new Tag().name("stores");
-  private static final Tag USERS_TAG = new Tag().name("users");
-  private static final List<Tag> TAGS = List.of(CATEGORIES_TAG, DEALS_TAG, NOTIFICATIONS_TAG,
-      ROLES_TAG, STORES_TAG, USERS_TAG);
 
-  @Autowired
-  private SwaggerProperties swaggerProperties;
+  private static final Tag CATEGORIES_TAG = new Tag().name("categories");
+
+  private static final Tag DEALS_TAG = new Tag().name("deals");
+
+  private static final Tag NOTIFICATIONS_TAG = new Tag().name("notifications");
+
+  private static final Tag ROLES_TAG = new Tag().name("roles");
+
+  private static final Tag STORES_TAG = new Tag().name("stores");
+
+  private static final Tag USERS_TAG = new Tag().name("users");
+
+  private static final List<Tag> TAGS =
+      List.of(CATEGORIES_TAG, DEALS_TAG, NOTIFICATIONS_TAG, ROLES_TAG, STORES_TAG, USERS_TAG);
+
+  @Autowired private SwaggerProperties swaggerProperties;
 
   @Bean
   public OpenAPI hotdealsAPI() {
-    return new OpenAPI()
-        .info(getApiInfo())
-        .components(getComponents())
-        .tags(TAGS);
+    return new OpenAPI().info(getApiInfo()).components(getComponents()).tags(TAGS);
   }
 
   private Info getApiInfo() {
-    final Contact contact = new Contact()
-        .name(swaggerProperties.getContact().getName())
-        .email(swaggerProperties.getContact().getEmail())
-        .url(swaggerProperties.getContact().getUrl());
+    final Contact contact =
+        new Contact()
+            .name(swaggerProperties.getContact().getName())
+            .email(swaggerProperties.getContact().getEmail())
+            .url(swaggerProperties.getContact().getUrl());
 
     return new Info()
         .contact(contact)
@@ -60,5 +64,4 @@ public class OpenApi30Config {
   private Components getComponents() {
     return new Components().addSecuritySchemes(SECURITY_SCHEME_NAME, getBearerSecurityScheme());
   }
-
 }

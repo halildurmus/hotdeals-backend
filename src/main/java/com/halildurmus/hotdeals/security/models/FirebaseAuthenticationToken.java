@@ -8,7 +8,9 @@ import org.springframework.util.Assert;
 public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
 
   private static final long serialVersionUID = 1234567L;
+
   private final Object principal;
+
   private Object credentials;
 
   public FirebaseAuthenticationToken(Object principal, Object credentials) {
@@ -18,8 +20,8 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
     this.setAuthenticated(false);
   }
 
-  public FirebaseAuthenticationToken(Object principal, Object credentials,
-      Collection<? extends GrantedAuthority> authorities) {
+  public FirebaseAuthenticationToken(
+      Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
     this.principal = principal;
     this.credentials = credentials;
@@ -35,7 +37,8 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
   }
 
   public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-    Assert.isTrue(!isAuthenticated,
+    Assert.isTrue(
+        !isAuthenticated,
         "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
     super.setAuthenticated(false);
   }
@@ -44,5 +47,4 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
     super.eraseCredentials();
     this.credentials = null;
   }
-
 }
