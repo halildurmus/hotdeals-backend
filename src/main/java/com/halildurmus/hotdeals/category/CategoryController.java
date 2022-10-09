@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -56,8 +55,7 @@ public class CategoryController {
                   mediaType = "application/json",
                   array = @ArraySchema(schema = @Schema(implementation = CategoryGetDTO.class)))))
   public List<CategoryGetDTO> getCategories(@ParameterObject Pageable pageable) {
-    final Page<Category> categories = service.findAll(pageable);
-
+    var categories = service.findAll(pageable);
     return categories.getContent().stream()
         .map(mapStructMapper::categoryToCategoryGetDTO)
         .collect(Collectors.toList());
@@ -86,8 +84,7 @@ public class CategoryController {
           @IsObjectId
           @PathVariable
           String id) {
-    final Category category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
-
+    var category = service.findById(id).orElseThrow(CategoryNotFoundException::new);
     return mapStructMapper.categoryToCategoryGetDTO(category);
   }
 
@@ -112,9 +109,7 @@ public class CategoryController {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "The category name must have an English translation!");
     }
-    final Category category =
-        service.create(mapStructMapper.categoryPostDTOToCategory(categoryPostDTO));
-
+    var category = service.create(mapStructMapper.categoryPostDTOToCategory(categoryPostDTO));
     return mapStructMapper.categoryToCategoryGetDTO(category);
   }
 
@@ -144,8 +139,7 @@ public class CategoryController {
           @PathVariable
           String id,
       @Valid @RequestBody CategoryPostDTO categoryPostDTO) {
-    final Category category = convertToEntity(id, categoryPostDTO);
-
+    var category = convertToEntity(id, categoryPostDTO);
     return mapStructMapper.categoryToCategoryGetDTO(service.update(category));
   }
 
@@ -177,12 +171,10 @@ public class CategoryController {
 
   private Category convertToEntity(String id, CategoryPostDTO categoryPostDTO) {
     // Fetch the category from the db and set the missing properties from it
-    final Category originalCategory =
-        service.findById(id).orElseThrow(CategoryNotFoundException::new);
-    final Category category = mapStructMapper.categoryPostDTOToCategory(categoryPostDTO);
+    var originalCategory = service.findById(id).orElseThrow(CategoryNotFoundException::new);
+    var category = mapStructMapper.categoryPostDTOToCategory(categoryPostDTO);
     category.setId(id);
     category.setCreatedAt(originalCategory.getCreatedAt());
-
     return category;
   }
 }

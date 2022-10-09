@@ -1,7 +1,6 @@
 package com.halildurmus.hotdeals.comment;
 
 import com.halildurmus.hotdeals.security.SecurityService;
-import com.halildurmus.hotdeals.user.User;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -19,13 +18,12 @@ class CommentEntityCallbacks implements BeforeSaveCallback<Comment> {
   @Override
   public Comment onBeforeSave(Comment comment, Document document, String collection) {
     if (collection.equals("comments") && ObjectUtils.isEmpty(comment.getPostedBy())) {
-      final User user = securityService.getUser();
+      var user = securityService.getUser();
       comment.setPostedBy(user);
       // Since we're using @DocumentReference on the postedBy property, we need to
       // add the user's ObjectId instead of the User object to the document
       document.put("postedBy", new ObjectId(user.getId()));
     }
-
     return comment;
   }
 }

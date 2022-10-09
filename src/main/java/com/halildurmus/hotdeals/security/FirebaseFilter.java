@@ -47,11 +47,10 @@ public class FirebaseFilter extends OncePerRequestFilter {
   }
 
   public String parseBearerToken(HttpServletRequest request) throws Exception {
-    final String authorization = request.getHeader("Authorization");
+    var authorization = request.getHeader("Authorization");
     if (!authorization.startsWith("Bearer ")) {
       throw new Exception("Invalid Authorization header! The header must contain a Bearer token.");
     }
-
     return authorization.substring(7);
   }
 
@@ -60,7 +59,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
   }
 
   public List<GrantedAuthority> parseAuthorities(FirebaseToken token, String email) {
-    final List<GrantedAuthority> authorities = new ArrayList<>();
+    List<GrantedAuthority> authorities = new ArrayList<>();
     // Handle ROLE_SUPER authority
     if (securityProperties.getSuperAdmins() != null
         && securityProperties.getSuperAdmins().contains(email)) {
@@ -80,7 +79,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
   }
 
   private void verifyToken(HttpServletRequest request) throws Exception {
-    final String token = parseBearerToken(request);
+    var token = parseBearerToken(request);
     log.info("Bearer Token: " + token);
     FirebaseToken decodedToken;
     try {
@@ -91,10 +90,10 @@ public class FirebaseFilter extends OncePerRequestFilter {
       throw e;
     }
 
-    final User user = firebaseTokenToUser(decodedToken);
+    var user = firebaseTokenToUser(decodedToken);
     log.info("User: " + user);
-    final List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
-    final FirebaseAuthenticationToken authentication =
+    List<GrantedAuthority> authorities = parseAuthorities(decodedToken, user.getEmail());
+    var authentication =
         new FirebaseAuthenticationToken(user, new Credentials(decodedToken, token), authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }

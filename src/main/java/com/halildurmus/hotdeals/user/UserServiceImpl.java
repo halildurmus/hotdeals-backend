@@ -14,7 +14,6 @@ import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.dto.UserPatchDTO;
 import com.halildurmus.hotdeals.util.FakerUtil;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService {
     // Try until the generated nickname is unique
     do {
       try {
-        final String nickname = fakerUtil.generateNickname();
+        var nickname = fakerUtil.generateNickname();
         user.setNickname(nickname);
         repository.insert(user);
         errorOccurred = false;
@@ -95,11 +94,11 @@ public class UserServiceImpl implements UserService {
 
   private UserPatchDTO applyPatchToUser(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
-    final UserPatchDTO userPatchDTO = new UserPatchDTO();
+    var userPatchDTO = new UserPatchDTO();
     // Convert the user to a JsonNode
-    final JsonNode target = objectMapper.convertValue(userPatchDTO, JsonNode.class);
+    var target = objectMapper.convertValue(userPatchDTO, JsonNode.class);
     // Apply the patch to the user
-    final JsonNode patched = patch.apply(target);
+    var patched = patch.apply(target);
 
     // Convert the JsonNode to a UserPatchDTO instance
     return objectMapper.treeToValue(patched, UserPatchDTO.class);
@@ -107,9 +106,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User patchUser(JsonPatch patch) {
-    final User user = securityService.getUser();
+    var user = securityService.getUser();
     try {
-      final UserPatchDTO patchedUser = applyPatchToUser(patch);
+      var patchedUser = applyPatchToUser(patch);
       if (patchedUser.getAvatar().isPresent()) {
         user.setAvatar(patchedUser.getAvatar().get());
       } else if (patchedUser.getNickname().isPresent()) {
@@ -127,10 +126,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void addFCMToken(FCMTokenParams fcmTokenParams) {
-    final String deviceId = fcmTokenParams.getDeviceId();
-    final String token = fcmTokenParams.getToken();
-    final User user = securityService.getUser();
-    final Map<String, String> fcmTokens = user.getFcmTokens();
+    var deviceId = fcmTokenParams.getDeviceId();
+    var token = fcmTokenParams.getToken();
+    var user = securityService.getUser();
+    Map<String, String> fcmTokens = user.getFcmTokens();
     fcmTokens.put(deviceId, token);
     user.setFcmTokens(fcmTokens);
     repository.save(user);
@@ -138,14 +137,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void deleteFCMToken(String userUid, FCMTokenParams fcmTokenParams) {
-    final User user = repository.findByUid(userUid).orElse(null);
+    var user = repository.findByUid(userUid).orElse(null);
     if (user == null) {
       return;
     }
-    final String token = fcmTokenParams.getToken();
-    final Map<String, String> fcmTokens = user.getFcmTokens();
-    final boolean isTokenExists =
-        fcmTokens.entrySet().removeIf(entry -> (token.equals(entry.getValue())));
+    var token = fcmTokenParams.getToken();
+    Map<String, String> fcmTokens = user.getFcmTokens();
+    var isTokenExists = fcmTokens.entrySet().removeIf(entry -> (token.equals(entry.getValue())));
     if (!isTokenExists) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "User does not have this token: " + token);
@@ -156,8 +154,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<Deal> getDeals(Pageable pageable) {
-    final User user = securityService.getUser();
-
+    var user = securityService.getUser();
     return dealRepository
         .findAllByPostedByOrderByCreatedAtDesc(new ObjectId(user.getId()), pageable)
         .getContent();
@@ -165,17 +162,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<Deal> getFavorites(Pageable pageable) {
-    final User user = securityService.getUser();
-    final HashSet<String> favorites = user.getFavorites();
-
+    var user = securityService.getUser();
+    var favorites = user.getFavorites();
     return dealRepository.findAllByIdIn(favorites, pageable).getContent();
   }
 
   @Override
   public void favoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
-    final HashSet<String> favorites = user.getFavorites();
+    var user = securityService.getUser();
+    var favorites = user.getFavorites();
     if (favorites.contains(dealId)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already favorited this deal before!");
@@ -188,8 +184,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public void unfavoriteDeal(String dealId) {
     dealRepository.findById(dealId).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
-    final HashSet<String> favorites = user.getFavorites();
+    var user = securityService.getUser();
+    var favorites = user.getFavorites();
     if (!favorites.contains(dealId)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already unfavorited this deal before!");
@@ -201,17 +197,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<User> getBlockedUsers(Pageable pageable) {
-    final User user = securityService.getUser();
-    final HashSet<String> blockedUsers = user.getBlockedUsers();
-
+    var user = securityService.getUser();
+    var blockedUsers = user.getBlockedUsers();
     return repository.findAllByIdIn(blockedUsers, pageable).getContent();
   }
 
   @Override
   public void block(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
-    final User user = securityService.getUser();
-    final HashSet<String> blockedUsers = user.getBlockedUsers();
+    var user = securityService.getUser();
+    var blockedUsers = user.getBlockedUsers();
     if (blockedUsers.contains(id)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already blocked this user before!");
@@ -224,8 +219,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public void unblock(String id) {
     repository.findById(id).orElseThrow(UserNotFoundException::new);
-    final User user = securityService.getUser();
-    final HashSet<String> blockedUsers = user.getBlockedUsers();
+    var user = securityService.getUser();
+    var blockedUsers = user.getBlockedUsers();
     if (!blockedUsers.contains(id)) {
       throw new ResponseStatusException(
           HttpStatus.NOT_MODIFIED, "You've already unblocked this user before!");

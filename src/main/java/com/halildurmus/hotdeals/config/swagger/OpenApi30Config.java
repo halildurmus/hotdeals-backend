@@ -39,7 +39,7 @@ public class OpenApi30Config {
   }
 
   private Info getApiInfo() {
-    final Contact contact =
+    var contact =
         new Contact()
             .name(swaggerProperties.getContact().getName())
             .email(swaggerProperties.getContact().getEmail())

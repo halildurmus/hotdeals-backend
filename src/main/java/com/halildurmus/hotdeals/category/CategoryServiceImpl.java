@@ -37,7 +37,6 @@ public class CategoryServiceImpl implements CategoryService {
                   new ResponseStatusException(
                       HttpStatus.BAD_REQUEST, "The parent category does not exists!"));
     }
-
     return repository.save(category);
   }
 

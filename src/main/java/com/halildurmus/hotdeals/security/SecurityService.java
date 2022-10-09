@@ -1,7 +1,6 @@
 package com.halildurmus.hotdeals.security;
 
 import com.halildurmus.hotdeals.user.User;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +13,11 @@ public class SecurityService {
    * @return {@code User} if there is an authenticated user; otherwise {@code null}
    */
   public User getUser() {
-    final SecurityContext securityContext = SecurityContextHolder.getContext();
-    final Object principal = securityContext.getAuthentication().getPrincipal();
+    var securityContext = SecurityContextHolder.getContext();
+    var principal = securityContext.getAuthentication().getPrincipal();
     if (principal instanceof User) {
       return ((User) principal);
     }
-
     return null;
   }
 }

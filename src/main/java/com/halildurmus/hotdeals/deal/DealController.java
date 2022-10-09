@@ -2,7 +2,6 @@ package com.halildurmus.hotdeals.deal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonpatch.JsonPatch;
-import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.comment.dto.CommentGetDTO;
 import com.halildurmus.hotdeals.comment.dto.CommentPostDTO;
@@ -13,10 +12,8 @@ import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.exception.CommentNotFoundException;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
-import com.halildurmus.hotdeals.report.comment.CommentReport;
 import com.halildurmus.hotdeals.report.comment.CommentReportService;
 import com.halildurmus.hotdeals.report.comment.dto.CommentReportPostDTO;
-import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
 import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
 import com.halildurmus.hotdeals.security.role.IsSuper;
@@ -40,7 +37,6 @@ import javax.validation.constraints.Size;
 import org.bson.types.ObjectId;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -151,8 +147,7 @@ public class DealController {
       @Parameter(description = "The category path", example = "/computers") @RequestParam
           String category,
       @ParameterObject Pageable pageable) {
-    final Page<Deal> deals = service.getDealsByCategory(category, pageable);
-
+    var deals = service.getDealsByCategory(category, pageable);
     return deals.getContent().stream()
         .map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
@@ -178,8 +173,7 @@ public class DealController {
           @RequestParam
           String storeId,
       @ParameterObject Pageable pageable) {
-    final Page<Deal> deals = service.getDealsByStoreId(new ObjectId(storeId), pageable);
-
+    var deals = service.getDealsByStoreId(new ObjectId(storeId), pageable);
     return deals.getContent().stream()
         .map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
@@ -196,8 +190,7 @@ public class DealController {
                   mediaType = "application/json",
                   array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))))
   public List<DealGetDTO> getLatestActiveDeals(@ParameterObject Pageable pageable) {
-    final Page<Deal> deals = service.getLatestActiveDeals(pageable);
-
+    var deals = service.getLatestActiveDeals(pageable);
     return deals.getContent().stream()
         .map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
@@ -214,18 +207,18 @@ public class DealController {
                   mediaType = "application/json",
                   array = @ArraySchema(schema = @Schema(implementation = DealGetDTO.class)))))
   public List<DealGetDTO> getMostLikedActiveDeals(@ParameterObject Pageable pageable) {
-    final Page<Deal> deals = service.getMostLikedActiveDeals(pageable);
+    var deals = service.getMostLikedActiveDeals(pageable);
     return deals.getContent().stream()
         .map(mapStructMapper::dealToDealGetDTO)
         .collect(Collectors.toList());
   }
 
   private List<PriceRange> parsePricesParam(List<String> prices) {
-    final List<PriceRange> priceRanges = new ArrayList<>();
+    List<PriceRange> priceRanges = new ArrayList<>();
     try {
-      for (String price : prices) {
-        final String[] arr = price.split(":");
-        final double from = Double.parseDouble(arr[0]);
+      for (var price : prices) {
+        var arr = price.split(":");
+        var from = Double.parseDouble(arr[0]);
         Double to = null;
         if (!arr[1].equals("*")) {
           to = Double.parseDouble(arr[1]);
@@ -308,7 +301,7 @@ public class DealController {
           HttpStatus.BAD_REQUEST, "Invalid order! Supported order values => " + ORDER_TYPES);
     }
 
-    final DealSearchParams searchParams =
+    var searchParams =
         DealSearchParams.builder()
             .query(query)
             .categories(categories)
@@ -340,8 +333,8 @@ public class DealController {
           @Size(min = 3, max = 100)
           @RequestParam
           String query) {
-    final JsonNode suggestions = esDealService.getSuggestions(query);
-    final List<SearchSuggestion> searchSuggestions = new ArrayList<>();
+    var suggestions = esDealService.getSuggestions(query);
+    List<SearchSuggestion> searchSuggestions = new ArrayList<>();
     suggestions
         .elements()
         .forEachRemaining(
@@ -375,8 +368,7 @@ public class DealController {
           @IsObjectId
           @PathVariable
           String id) {
-    final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
-
+    var deal = service.findById(id).orElseThrow(DealNotFoundException::new);
     return mapStructMapper.dealToDealGetDTO(deal);
   }
 
@@ -395,8 +387,7 @@ public class DealController {
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public DealGetDTO createDeal(@Valid @RequestBody DealPostDTO dealPostDTO) {
-    final Deal deal = service.create(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
-
+    var deal = service.create(mapStructMapper.dealPostDTOToDeal(dealPostDTO));
     return mapStructMapper.dealToDealGetDTO(deal);
   }
 
@@ -457,8 +448,7 @@ public class DealController {
           @PathVariable
           String id,
       @Valid @RequestBody DealPostDTO dealPostDTO) {
-    final Deal deal = convertToEntity(id, dealPostDTO);
-
+    var deal = convertToEntity(id, dealPostDTO);
     return mapStructMapper.dealToDealGetDTO(service.update(deal));
   }
 
@@ -508,12 +498,11 @@ public class DealController {
           @PathVariable
           String id,
       @ParameterObject Pageable pageable) {
-    final Page<Comment> comments = commentService.getCommentsByDealId(new ObjectId(id), pageable);
-    final List<CommentGetDTO> commentGetDTOs =
+    var comments = commentService.getCommentsByDealId(new ObjectId(id), pageable);
+    List<CommentGetDTO> commentGetDTOs =
         comments.getContent().stream()
             .map(mapStructMapper::commentToCommentGetDTO)
             .collect(Collectors.toList());
-
     return CommentsDTO.builder()
         .count(comments.getTotalElements())
         .comments(commentGetDTOs)
@@ -565,9 +554,8 @@ public class DealController {
           String id,
       @Valid @RequestBody CommentPostDTO commentPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
-    final Comment comment = mapStructMapper.commentPostDTOToComment(commentPostDTO);
+    var comment = mapStructMapper.commentPostDTOToComment(commentPostDTO);
     comment.setDealId(new ObjectId(id));
-
     return mapStructMapper.commentToCommentGetDTO(commentService.save(comment));
   }
 
@@ -603,10 +591,8 @@ public class DealController {
           String commentId,
       @Valid @RequestBody CommentReportPostDTO commentReportPostDTO) {
     service.findById(id).orElseThrow(DealNotFoundException::new);
-    final Comment comment =
-        commentService.findById(commentId).orElseThrow(CommentNotFoundException::new);
-    final CommentReport commentReport =
-        mapStructMapper.commentReportPostDTOToCommentReport(commentReportPostDTO);
+    var comment = commentService.findById(commentId).orElseThrow(CommentNotFoundException::new);
+    var commentReport = mapStructMapper.commentReportPostDTOToCommentReport(commentReportPostDTO);
     commentReport.setReportedComment(comment);
     commentReportService.save(commentReport);
   }
@@ -628,8 +614,8 @@ public class DealController {
           @PathVariable
           String id,
       @Valid @RequestBody DealReportPostDTO dealReportPostDTO) {
-    final Deal deal = service.findById(id).orElseThrow(DealNotFoundException::new);
-    final DealReport dealReport = mapStructMapper.dealReportPostDTOToDealReport(dealReportPostDTO);
+    var deal = service.findById(id).orElseThrow(DealNotFoundException::new);
+    var dealReport = mapStructMapper.dealReportPostDTOToDealReport(dealReportPostDTO);
     dealReport.setReportedDeal(deal);
     dealReportService.save(dealReport);
   }
@@ -665,8 +651,7 @@ public class DealController {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "To unvote the deal you need to make a DELETE request!");
     }
-    final Deal deal = service.vote(id, voteType);
-
+    var deal = service.vote(id, voteType);
     return mapStructMapper.dealToDealGetDTO(deal);
   }
 
@@ -693,15 +678,14 @@ public class DealController {
           @IsObjectId
           @PathVariable
           String id) {
-    final Deal deal = service.vote(id, DealVoteType.UNVOTE);
-
+    var deal = service.vote(id, DealVoteType.UNVOTE);
     return mapStructMapper.dealToDealGetDTO(deal);
   }
 
   private Deal convertToEntity(String id, DealPostDTO dealPostDTO) {
     // Fetch the deal from the db and set the missing properties from it
-    final Deal originalDeal = service.findById(id).orElseThrow(DealNotFoundException::new);
-    final Deal deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
+    var originalDeal = service.findById(id).orElseThrow(DealNotFoundException::new);
+    var deal = mapStructMapper.dealPostDTOToDeal(dealPostDTO);
     deal.setId(id);
     deal.setPostedBy(originalDeal.getPostedBy());
     deal.setDealScore(originalDeal.getDealScore());
@@ -710,7 +694,6 @@ public class DealController {
     deal.setStatus(originalDeal.getStatus());
     deal.setViews(originalDeal.getViews());
     deal.setCreatedAt(originalDeal.getCreatedAt());
-
     return deal;
   }
 }

@@ -17,7 +17,6 @@ import com.halildurmus.hotdeals.deal.es.EsDeal;
 import com.halildurmus.hotdeals.deal.es.EsDealRepository;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.security.SecurityService;
-import com.halildurmus.hotdeals.user.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,6 @@ import org.springframework.data.mongodb.core.aggregation.AggregationUpdate;
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Subtract;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.ConcatArrays;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -72,11 +70,10 @@ public class DealServiceImpl implements DealService {
 
   @Override
   public Optional<Deal> findById(String id) {
-    final Optional<Deal> deal = repository.findById(id);
+    var deal = repository.findById(id);
     if (deal.isPresent()) {
       return Optional.of(incrementViewsCounter(id));
     }
-
     return deal;
   }
 
@@ -103,33 +100,32 @@ public class DealServiceImpl implements DealService {
   @Transactional
   @Override
   public Deal create(Deal deal) {
-    final Deal savedDeal = repository.save(deal);
+    var savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
-
     return savedDeal;
   }
 
   private DealPatchDTO applyPatchToDeal(JsonPatch patch)
       throws JsonPatchException, JsonProcessingException {
-    final DealPatchDTO dealPatchDTO = new DealPatchDTO();
+    var dealPatchDTO = new DealPatchDTO();
     // Convert the deal to a JsonNode
-    final JsonNode target = objectMapper.convertValue(dealPatchDTO, JsonNode.class);
+    var target = objectMapper.convertValue(dealPatchDTO, JsonNode.class);
     // Apply the patch to the deal
-    final JsonNode patched = patch.apply(target);
-
+    var patched = patch.apply(target);
     // Convert the JsonNode to a DealPatchDTO instance
     return objectMapper.treeToValue(patched, DealPatchDTO.class);
   }
 
   @Override
   public Deal patch(String id, JsonPatch patch) {
-    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
+    var deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
+    var user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
     }
+
     try {
-      final DealPatchDTO patchedDeal = applyPatchToDeal(patch);
+      var patchedDeal = applyPatchToDeal(patch);
       deal.setStatus(patchedDeal.getStatus());
       repository.save(deal);
       esDealRepository.save(new EsDeal(deal));
@@ -143,21 +139,20 @@ public class DealServiceImpl implements DealService {
   @Transactional
   @Override
   public Deal update(Deal deal) {
-    final User user = securityService.getUser();
+    var user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
     }
-    final Deal savedDeal = repository.save(deal);
+    var savedDeal = repository.save(deal);
     esDealRepository.save(new EsDeal(deal));
-
     return savedDeal;
   }
 
   @Transactional
   @Override
   public void delete(String id) {
-    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
-    final User user = securityService.getUser();
+    var deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
+    var user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only remove your own deal!");
     }
@@ -167,18 +162,17 @@ public class DealServiceImpl implements DealService {
   }
 
   private Deal incrementViewsCounter(String id) {
-    final Query query = query(where("_id").is(id));
-    final Update update = new Update().inc("views", 1);
-    final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
-
+    var query = query(where("_id").is(id));
+    var update = new Update().inc("views", 1);
+    var options = FindAndModifyOptions.options().returnNew(true);
     return mongoTemplate.findAndModify(query, update, options, Deal.class);
   }
 
   @Override
   public Deal vote(String id, DealVoteType voteType) {
-    final User user = securityService.getUser();
-    final ObjectId userId = new ObjectId(user.getId());
-    final Deal deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
+    var user = securityService.getUser();
+    var userId = new ObjectId(user.getId());
+    var deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
 
     if (voteType.equals(DealVoteType.UP) && deal.getUpvoters().contains(userId)) {
       throw new ResponseStatusException(
@@ -188,9 +182,9 @@ public class DealServiceImpl implements DealService {
           HttpStatus.NOT_MODIFIED, "You've already downvoted this deal before!");
     }
 
-    final Query query = query(where("_id").is(id));
-    final AggregationUpdate update = AggregationUpdate.update();
-    final FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
+    var query = query(where("_id").is(id));
+    var update = AggregationUpdate.update();
+    var options = FindAndModifyOptions.options().returnNew(true);
 
     if (voteType.equals(DealVoteType.UNVOTE)) {
       // Remove the userId from the upvoters array if it exists
@@ -202,8 +196,8 @@ public class DealServiceImpl implements DealService {
           .set("downvoters")
           .toValue(filter("downvoters").as("id").by(valueOf("id").notEqualToValue(userId)));
     } else {
-      final String fieldName1 = voteType.equals(DealVoteType.UP) ? "upvoters" : "downvoters";
-      final String fieldName2 = voteType.equals(DealVoteType.UP) ? "downvoters" : "upvoters";
+      var fieldName1 = voteType.equals(DealVoteType.UP) ? "upvoters" : "downvoters";
+      var fieldName2 = voteType.equals(DealVoteType.UP) ? "downvoters" : "upvoters";
       // If the voteType is DealVoteType.UP, add the userId to the upvoters array,
       // if the voteType is DealVoteType.DOWN then add the userId to the downvoters
       // array

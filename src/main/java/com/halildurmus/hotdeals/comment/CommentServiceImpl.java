@@ -37,9 +37,9 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public void deleteDealComments(String dealId) {
-    final Page<Comment> comments =
+    var comments =
         repository.findByDealIdOrderByCreatedAt(new ObjectId(dealId), Pageable.unpaged());
-    final Iterable<String> commentIds =
+    var commentIds =
         comments.getContent().stream().map(Comment::getId).collect(Collectors.toList());
     repository.deleteAllByIdIn(commentIds);
   }

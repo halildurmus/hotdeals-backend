@@ -52,7 +52,6 @@ public class NotificationController {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "body or bodyLocKey parameters cannot be empty");
     }
-
     return notificationService.send(notification);
   }
 }

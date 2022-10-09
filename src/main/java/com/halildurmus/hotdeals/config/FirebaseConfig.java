@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Primary;
 public class FirebaseConfig {
 
   private FirebaseOptions getFirebaseOptions() throws IOException {
-    final String env = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+    var env = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
     // If 'GOOGLE_APPLICATION_CREDENTIALS' is present in the environment variables,
     // use it to get the credentials.
     if (env != null) {
@@ -24,8 +24,8 @@ public class FirebaseConfig {
           .build();
     }
     // Otherwise, read the credentials directly from the json file.
-    final String filePath = "src/main/resources/firebase-admin.json";
-    final FileInputStream serviceAccount = new FileInputStream(filePath);
+    var filePath = "src/main/resources/firebase-admin.json";
+    var serviceAccount = new FileInputStream(filePath);
 
     return FirebaseOptions.builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -38,7 +38,6 @@ public class FirebaseConfig {
     if (FirebaseApp.getApps().isEmpty()) {
       FirebaseApp.initializeApp(getFirebaseOptions());
     }
-
     return FirebaseApp.getInstance();
   }
 

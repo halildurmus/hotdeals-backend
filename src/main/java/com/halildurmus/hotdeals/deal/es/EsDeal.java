@@ -59,10 +59,10 @@ public class EsDeal {
     this.originalPrice = deal.getOriginalPrice();
     this.status = deal.getStatus();
     this.createdAt = deal.getCreatedAt();
-    final NumberFacet priceFacet = new NumberFacet("price", deal.getPrice());
+    var priceFacet = new NumberFacet("price", deal.getPrice());
     this.numberFacets.add(priceFacet);
-    final StringFacet categoryFacet = new StringFacet("category", deal.getCategory());
-    final StringFacet storeFacet = new StringFacet("store", deal.getStore().toString());
+    var categoryFacet = new StringFacet("category", deal.getCategory());
+    var storeFacet = new StringFacet("store", deal.getStore().toString());
     this.stringFacets.add(categoryFacet);
     this.stringFacets.add(storeFacet);
   }

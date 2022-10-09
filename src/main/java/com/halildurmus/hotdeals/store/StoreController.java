@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -55,8 +54,7 @@ public class StoreController {
                   mediaType = "application/json",
                   array = @ArraySchema(schema = @Schema(implementation = StoreGetDTO.class)))))
   public List<StoreGetDTO> getStores(@ParameterObject Pageable pageable) {
-    final Page<Store> stores = service.findAll(pageable);
-
+    var stores = service.findAll(pageable);
     return stores.getContent().stream()
         .map(mapStructMapper::storeToStoreGetDTO)
         .collect(Collectors.toList());
@@ -85,8 +83,7 @@ public class StoreController {
           @IsObjectId
           @PathVariable
           String id) {
-    final Store store = service.findById(id).orElseThrow(StoreNotFoundException::new);
-
+    var store = service.findById(id).orElseThrow(StoreNotFoundException::new);
     return mapStructMapper.storeToStoreGetDTO(store);
   }
 
@@ -107,8 +104,7 @@ public class StoreController {
     @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)
   })
   public StoreGetDTO createStore(@Valid @RequestBody StorePostDTO storePostDTO) {
-    final Store store = service.create(mapStructMapper.storePostDTOToStore(storePostDTO));
-
+    var store = service.create(mapStructMapper.storePostDTOToStore(storePostDTO));
     return mapStructMapper.storeToStoreGetDTO(store);
   }
 
@@ -138,8 +134,7 @@ public class StoreController {
           @PathVariable
           String id,
       @Valid @RequestBody StorePostDTO storePostDTO) {
-    final Store store = convertToEntity(id, storePostDTO);
-
+    var store = convertToEntity(id, storePostDTO);
     return mapStructMapper.storeToStoreGetDTO(service.update(store));
   }
 
@@ -171,11 +166,10 @@ public class StoreController {
 
   private Store convertToEntity(String id, StorePostDTO storePostDTO) {
     // Fetch the store from the db and set the missing properties from it
-    final Store originalStore = service.findById(id).orElseThrow(StoreNotFoundException::new);
-    final Store store = mapStructMapper.storePostDTOToStore(storePostDTO);
+    var originalStore = service.findById(id).orElseThrow(StoreNotFoundException::new);
+    var store = mapStructMapper.storePostDTOToStore(storePostDTO);
     store.setId(id);
     store.setCreatedAt(originalStore.getCreatedAt());
-
     return store;
   }
 }

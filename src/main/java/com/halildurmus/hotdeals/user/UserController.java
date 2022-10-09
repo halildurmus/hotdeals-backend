@@ -5,7 +5,6 @@ import com.halildurmus.hotdeals.comment.CommentService;
 import com.halildurmus.hotdeals.deal.dto.DealGetDTO;
 import com.halildurmus.hotdeals.exception.UserNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapper;
-import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.report.user.UserReportService;
 import com.halildurmus.hotdeals.report.user.dto.UserReportPostDTO;
 import com.halildurmus.hotdeals.security.SecurityService;
@@ -95,8 +94,7 @@ public class UserController {
     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   })
   public UserBasicDTO createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
-    final User user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
-
+    var user = service.create(mapStructMapper.userPostDTOToUser(userPostDTO));
     return mapStructMapper.userToUserBasicDTO(user);
   }
 
@@ -118,8 +116,7 @@ public class UserController {
   })
   public UserExtendedDTO getUserByEmail(
       @Parameter(description = "User's email address") @RequestParam @Email String email) {
-    final User user = service.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
+    var user = service.findByEmail(email).orElseThrow(UserNotFoundException::new);
     return mapStructMapper.userToUserExtendedDTO(user);
   }
 
@@ -143,8 +140,7 @@ public class UserController {
               example = "5fbe790ec6f0b32014074bb1")
           @RequestParam
           String uid) {
-    final User user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
-
+    var user = service.findByUid(uid).orElseThrow(UserNotFoundException::new);
     return mapStructMapper.userToUserExtendedDTO(user);
   }
 
@@ -200,8 +196,7 @@ public class UserController {
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public List<UserExtendedDTO> getBlockedUsers(@ParameterObject Pageable pageable) {
-    final List<User> blockedUsers = service.getBlockedUsers(pageable);
-
+    List<User> blockedUsers = service.getBlockedUsers(pageable);
     return blockedUsers.stream()
         .map(mapStructMapper::userToUserExtendedDTO)
         .collect(Collectors.toList());
@@ -365,7 +360,7 @@ public class UserController {
     @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
   })
   public void deleteFCMToken(@Valid @RequestBody FCMTokenParams fcmTokenParams) {
-    final User user = securityService.getUser();
+    var user = securityService.getUser();
     service.deleteFCMToken(user.getUid(), fcmTokenParams);
   }
 
@@ -389,8 +384,7 @@ public class UserController {
           @IsObjectId
           @PathVariable
           String id) {
-    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
-
+    var user = service.findById(id).orElseThrow(UserNotFoundException::new);
     return mapStructMapper.userToUserBasicDTO(user);
   }
 
@@ -433,8 +427,7 @@ public class UserController {
           @IsObjectId
           @PathVariable
           String id) {
-    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
-
+    var user = service.findById(id).orElseThrow(UserNotFoundException::new);
     return mapStructMapper.userToUserExtendedDTO(user);
   }
 
@@ -455,8 +448,8 @@ public class UserController {
           @PathVariable
           String id,
       @Valid @RequestBody UserReportPostDTO userReportPostDTO) {
-    final User user = service.findById(id).orElseThrow(UserNotFoundException::new);
-    final UserReport userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);
+    var user = service.findById(id).orElseThrow(UserNotFoundException::new);
+    var userReport = mapStructMapper.userReportPostDTOToUserReport(userReportPostDTO);
     userReport.setReportedUser(user);
     userReportService.save(userReport);
   }

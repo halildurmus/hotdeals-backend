@@ -32,7 +32,6 @@ public class StoreServiceImpl implements StoreService {
   @Override
   public Store update(Store store) {
     repository.findById(store.getId()).orElseThrow(StoreNotFoundException::new);
-
     return repository.save(store);
   }
 
