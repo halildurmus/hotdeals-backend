@@ -1,6 +1,6 @@
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
     container_name: hotdeals_elasticsearch
     environment:
       discovery.type: single-node
@@ -9,7 +9,7 @@ services:
     ports:
       - 9200:9200
   mongodb:
-    image: mongo:4.4
+    image: mongo:latest
     container_name: hotdeals_mongodb
     environment:
       - MONGO_INITDB_DATABASE=db
