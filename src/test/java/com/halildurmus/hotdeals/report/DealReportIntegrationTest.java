@@ -7,22 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
-import com.halildurmus.hotdeals.deal.Deal;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
-import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
-import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class DealReportIntegrationTest extends BaseIntegrationTest {
 
@@ -37,8 +32,8 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("deals");
     mongoTemplate.dropCollection("reports");
     mongoTemplate.dropCollection("users");
-    for (String name : cacheManager.getCacheNames()) {
-      final Cache cache = cacheManager.getCache(name);
+    for (var name : cacheManager.getCacheNames()) {
+      var cache = cacheManager.getCache(name);
       if (cache != null) {
         cache.clear();
       }
@@ -48,7 +43,7 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns empty)")
   public void getDealReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/deal-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
@@ -62,13 +57,13 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns 1 deal report)")
   public void getDealReportsReturnsOneDealReport() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user1);
-    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final DealReport dealReport = DummyDealReports.dealReport1;
+    var user = mongoTemplate.insert(DummyUsers.user1);
+    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var dealReport = DummyDealReports.dealReport1;
     dealReport.setReportedDeal(deal);
     dealReport.setReportedBy(user);
     mongoTemplate.insert(dealReport);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/deal-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);

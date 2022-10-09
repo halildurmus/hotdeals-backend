@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -27,20 +26,20 @@ public class RoleControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /roles (success)")
   public void addsRole() throws Exception {
-    final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
     params.add("role", Role.ROLE_SUPER.name());
-    final RequestBuilder request = put("/roles").params(params);
+    var request = put("/roles").params(params);
     mvc.perform(request).andExpect(status().isOk());
   }
 
   @Test
   @DisplayName("PUT /roles (invalid role enum)")
   public void putRoleValidationFailsDueToInvalidRoleEnum() throws Exception {
-    final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("uid", "23hsdfds532h4j32");
     params.add("role", "INVALID_ROLE");
-    final RequestBuilder request = put("/roles").params(params);
+    var request = put("/roles").params(params);
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -60,7 +59,7 @@ public class RoleControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /roles (no params)")
   public void putRoleValidationFailsDueToNoParams() throws Exception {
-    final RequestBuilder request = put("/roles");
+    var request = put("/roles");
     mvc.perform(request).andExpect(status().isBadRequest());
   }
 }

@@ -9,8 +9,8 @@ public class FakerUtilTest {
 
   @Test
   public void generatesRandomNickname() {
-    final FakerUtil fakerUtil = new FakerUtil();
-    final String nickname = fakerUtil.generateNickname();
+    var fakerUtil = new FakerUtil();
+    var nickname = fakerUtil.generateNickname();
 
     assertThat(nickname).hasSizeGreaterThanOrEqualTo(8);
     assertThat(nickname).containsPattern(Pattern.compile("^\\w+\\d{3}$"));

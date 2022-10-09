@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class CategoryIntegrationTest extends BaseIntegrationTest {
 
@@ -40,8 +39,8 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void createsCategory() throws Exception {
-    final Category category = DummyCategories.category1;
-    final RequestBuilder requestBuilder =
+    var category = DummyCategories.category1;
+    var requestBuilder =
         post("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(category).getJson())
@@ -65,7 +64,7 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getCategoriesReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
@@ -79,9 +78,9 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /categories (returns 1 category)")
   public void getCategoriesReturnsOneCategory() throws Exception {
-    final Category category = DummyCategories.category1;
+    var category = DummyCategories.category1;
     mongoTemplate.insert(category);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);

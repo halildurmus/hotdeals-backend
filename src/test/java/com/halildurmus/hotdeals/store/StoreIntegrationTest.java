@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class StoreIntegrationTest extends BaseIntegrationTest {
 
@@ -39,8 +38,8 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void createsStore() throws Exception {
-    final Store store = DummyStores.store1;
-    final RequestBuilder requestBuilder =
+    var store = DummyStores.store1;
+    var requestBuilder =
         post("/stores")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(store).getJson())
@@ -58,7 +57,7 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /stores (returns empty)")
   public void getStoresReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
@@ -73,9 +72,9 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getStoresReturnsOneStore() throws Exception {
-    final Store store = DummyStores.store1;
+    var store = DummyStores.store1;
     mongoTemplate.insert(store);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)

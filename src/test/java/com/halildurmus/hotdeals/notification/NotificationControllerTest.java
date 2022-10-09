@@ -19,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Import(NotificationController.class)
@@ -35,7 +34,7 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /notifications")
   public void sendsNotification() throws Exception {
     when(service.send(any(Notification.class))).thenReturn(1);
-    final RequestBuilder request =
+    var request =
         post("/notifications")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(DummyNotifications.notification1).getJson())
@@ -50,7 +49,7 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /notifications (empty body)")
   public void postNotificationValidationFails() throws Exception {
-    final RequestBuilder request =
+    var request =
         post("/notifications")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")

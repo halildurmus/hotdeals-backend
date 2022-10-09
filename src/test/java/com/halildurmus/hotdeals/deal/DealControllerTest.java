@@ -23,19 +23,14 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.halildurmus.hotdeals.BaseControllerUnitTest;
 import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.CommentService;
-import com.halildurmus.hotdeals.comment.dto.CommentPostDTO;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
 import com.halildurmus.hotdeals.deal.dto.DealPostDTO;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.deal.es.EsDealService;
 import com.halildurmus.hotdeals.exception.DealNotFoundException;
 import com.halildurmus.hotdeals.mapstruct.MapStructMapperImpl;
-import com.halildurmus.hotdeals.report.comment.CommentReport;
 import com.halildurmus.hotdeals.report.comment.CommentReportService;
-import com.halildurmus.hotdeals.report.comment.dto.CommentReportPostDTO;
-import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.deal.DealReportService;
-import com.halildurmus.hotdeals.report.deal.dto.DealReportPostDTO;
 import com.halildurmus.hotdeals.report.dummy.DummyCommentReports;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.store.dummy.DummyStores;
@@ -57,7 +52,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.util.NestedServletException;
@@ -87,7 +81,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals (returns empty array)")
   public void getDealsReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals");
+    var request = get("/deals");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -98,10 +92,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals (returns 1 deal)")
   public void getDealsReturnsOneDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    var deal = DummyDeals.deal1;
+    var pagedDeals = new PageImpl<>(List.of(deal));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedDeals);
-    final RequestBuilder request = get("/deals");
+    var request = get("/deals");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -131,9 +125,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/count/byPostedBy")
   public void returnsNumberOfDealsThatGivenUserPosted() throws Exception {
-    final String id = DummyUsers.user1.getId();
+    var id = DummyUsers.user1.getId();
     when(service.countDealsByPostedBy(new ObjectId(id))).thenReturn(3);
-    final RequestBuilder request = get("/deals/count/byPostedBy?postedBy=" + id);
+    var request = get("/deals/count/byPostedBy?postedBy=" + id);
 
     mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(3));
   }
@@ -141,8 +135,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/count/byPostedBy (invalid id)")
   public void getDealsCountByPostedByThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = get("/deals/count/byPostedBy?postedBy=" + id);
+    var id = "23478fsf234";
+    var request = get("/deals/count/byPostedBy?postedBy=" + id);
 
     assertThrows(
         ConstraintViolationException.class,
@@ -158,9 +152,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/count/byStoreId")
   public void returnsNumberOfDealsThatGivenStoreHas() throws Exception {
-    final String id = DummyStores.store1.getId();
+    var id = DummyStores.store1.getId();
     when(service.countDealsByStore(new ObjectId(id))).thenReturn(4);
-    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
+    var request = get("/deals/count/byStoreId?storeId=" + id);
 
     mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(4));
   }
@@ -168,8 +162,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/count/byStoreId (invalid id)")
   public void getDealsCountByStoreThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = get("/deals/count/byStoreId?storeId=" + id);
+    var id = "23478fsf234";
+    var request = get("/deals/count/byStoreId?storeId=" + id);
 
     assertThrows(
         ConstraintViolationException.class,
@@ -185,9 +179,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/byCategory?category={category} (returns empty array)")
   public void findDealsByCategoryReturnsEmptyArray() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(service.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals/search/byCategory?category=" + deal.getCategory());
+    var request = get("/deals/search/byCategory?category=" + deal.getCategory());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -198,10 +192,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/byCategory?category={category} (returns 1 deal)")
   public void findsDealsByCategory() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    var deal = DummyDeals.deal1;
+    var pagedDeals = new PageImpl<>(List.of(deal));
     when(service.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(pagedDeals);
-    final RequestBuilder request = get("/deals/search/byCategory?category=" + deal.getCategory());
+    var request = get("/deals/search/byCategory?category=" + deal.getCategory());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -230,10 +224,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/byStoreId?storeId={id} (returns empty array)")
   public void findDealsByStoreIdReturnsEmptyArray() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
+    var request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -244,11 +238,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/byStoreId?storeId={id} (returns 1 deal)")
   public void findsDealsByStoreId() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    var deal = DummyDeals.deal1;
+    var pagedDeals = new PageImpl<>(List.of(deal));
     when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(pagedDeals);
-    final RequestBuilder request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
+    var request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -278,7 +272,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/search/latestActive (returns empty array)")
   public void getLatestActiveDealsReturnsEmptyArray() throws Exception {
     when(service.getLatestActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals/search/latestActive");
+    var request = get("/deals/search/latestActive");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -289,10 +283,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/latestActive (returns 1 deal)")
   public void returnsLatestActiveDeals() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    var deal = DummyDeals.deal1;
+    var pagedDeals = new PageImpl<>(List.of(deal));
     when(service.getLatestActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
-    final RequestBuilder request = get("/deals/search/latestActive");
+    var request = get("/deals/search/latestActive");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -322,7 +316,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/search/mostLikedActive (returns empty array)")
   public void getMostLikedActiveDealsReturnsEmptyArray() throws Exception {
     when(service.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals/search/mostLikedActive");
+    var request = get("/deals/search/mostLikedActive");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -333,10 +327,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/mostLikedActive (returns 1 deal)")
   public void returnsMostLikedActiveDeals() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Page<Deal> pagedDeals = new PageImpl<>(List.of(deal));
+    var deal = DummyDeals.deal1;
+    var pagedDeals = new PageImpl<>(List.of(deal));
     when(service.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
-    final RequestBuilder request = get("/deals/search/mostLikedActive");
+    var request = get("/deals/search/mostLikedActive");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -365,7 +359,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/searches (missing query)")
   public void getSearchesValidationFailsDueToMissingQuery() throws Exception {
-    final RequestBuilder request = get("/deals/searches");
+    var request = get("/deals/searches");
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -386,7 +380,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/searches (unsupported sortBy)")
   public void getSearchesValidationFailsDueToUnsupportedSortBy() throws Exception {
-    final RequestBuilder request = get("/deals/searches?query=max&sortBy=invalid");
+    var request = get("/deals/searches?query=max&sortBy=invalid");
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -398,7 +392,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/searches (unsupported order)")
   public void getSearchesValidationFailsDueToUnsupportedOrder() throws Exception {
-    final RequestBuilder request = get("/deals/searches?query=max&order=invalid");
+    var request = get("/deals/searches?query=max&order=invalid");
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -409,7 +403,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/suggestions (missing query)")
   public void getSuggestionsValidationFailsDueToMissingQuery() throws Exception {
-    final RequestBuilder request = get("/deals/suggestions");
+    var request = get("/deals/suggestions");
 
     mvc.perform(request)
         .andExpect(status().isBadRequest())
@@ -430,7 +424,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/suggestions (invalid query length)")
   public void getSuggestionsValidationFailsDueToInvalidQueryLength() {
-    final RequestBuilder request = get("/deals/suggestions?query=a");
+    var request = get("/deals/suggestions?query=a");
 
     assertThrows(
         ConstraintViolationException.class,
@@ -446,9 +440,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id}")
   public void returnsGivenDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(service.findById(deal.getId())).thenReturn(Optional.of(deal));
-    final RequestBuilder request = get("/deals/" + deal.getId());
+    var request = get("/deals/" + deal.getId());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -476,9 +470,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id} (deal not found)")
   public void getDealThrowsDealNotFoundException() {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(service.findById(deal.getId())).thenReturn(Optional.empty());
-    final RequestBuilder request = get("/deals/" + deal.getId());
+    var request = get("/deals/" + deal.getId());
 
     assertThrows(
         DealNotFoundException.class,
@@ -494,10 +488,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals")
   public void createsDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final DealPostDTO dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
+    var deal = DummyDeals.deal1;
+    var dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
     when(service.create(any(Deal.class))).thenReturn(deal);
-    final RequestBuilder request =
+    var request =
         post("/deals")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(dealPostDTO).getJson())
@@ -529,7 +523,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals (empty body)")
   public void postDealValidationFails() throws Exception {
-    final RequestBuilder request =
+    var request =
         post("/deals")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -594,8 +588,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PATCH /deals/{id} (empty body)")
   public void patchDealValidationFails() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var request =
         patch("/deals/" + id)
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -620,12 +614,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PATCH /deals/{id}")
   public void patchesGivenDealsStatus() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     deal.setStatus(DealStatus.EXPIRED);
     when(service.patch(anyString(), any(JsonPatch.class))).thenReturn(deal);
-    final String jsonPatch =
-        "[{\"op\": \"replace\", \"path\": \"/status\", \"value\": \"EXPIRED\"}]";
-    final RequestBuilder request =
+    var jsonPatch = "[{\"op\": \"replace\", \"path\": \"/status\", \"value\": \"EXPIRED\"}]";
+    var request =
         patch("/deals/" + deal.getId())
             .accept(MediaType.APPLICATION_JSON)
             .content(jsonPatch)
@@ -658,11 +651,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id}")
   public void updatesGivenDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final DealPostDTO dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
+    var deal = DummyDeals.deal1;
+    var dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
     when(service.findById(anyString())).thenReturn(Optional.of(deal));
     when(service.update(any(Deal.class))).thenReturn(deal);
-    final RequestBuilder request =
+    var request =
         put("/deals/" + deal.getId())
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(dealPostDTO).getJson())
@@ -693,8 +686,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id} (empty body)")
   public void putDealValidationFails() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var request =
         put("/deals/" + id)
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -759,16 +752,16 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /deals/{id}")
   public void deletesGivenDeal() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request = delete("/deals/" + id);
+    var id = DummyDeals.deal1.getId();
+    var request = delete("/deals/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
   }
 
   @Test
   @DisplayName("DELETE /deals/{id} (invalid id)")
   public void deleteDealThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = delete("/deals/" + id);
+    var id = "23478fsf234";
+    var request = delete("/deals/" + id);
 
     assertThrows(
         ConstraintViolationException.class,
@@ -784,10 +777,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id}/comments (returns empty array)")
   public void getDealCommentsReturnsEmptyArray() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(commentService.getCommentsByDealId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(Page.empty());
-    final RequestBuilder request = get("/deals/" + deal.getId() + "/comments");
+    var request = get("/deals/" + deal.getId() + "/comments");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -800,12 +793,12 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id}/comments (returns 1 comment)")
   public void getDealCommentsReturnsOneComment() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final Comment comment = DummyComments.comment1;
-    final Page<Comment> pagedComments = new PageImpl<>(List.of(comment));
+    var deal = DummyDeals.deal1;
+    var comment = DummyComments.comment1;
+    var pagedComments = new PageImpl<>(List.of(comment));
     when(commentService.getCommentsByDealId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(pagedComments);
-    final RequestBuilder request = get("/deals/" + deal.getId() + "/comments");
+    var request = get("/deals/" + deal.getId() + "/comments");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -824,9 +817,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id}/comment-count")
   public void returnsNumberOfCommentsThatGivenDealHas() throws Exception {
-    final String id = DummyDeals.deal1.getId();
+    var id = DummyDeals.deal1.getId();
     when(commentService.getCommentCountByDealId(any(ObjectId.class))).thenReturn(3);
-    final RequestBuilder request = get("/deals/" + id + "/comment-count");
+    var request = get("/deals/" + id + "/comment-count");
 
     mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(3));
   }
@@ -834,8 +827,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/{id}/comment-count (invalid id)")
   public void getDealCommentCountThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = get("/deals/" + id + "/comment-count");
+    var id = "23478fsf234";
+    var request = get("/deals/" + id + "/comment-count");
 
     assertThrows(
         ConstraintViolationException.class,
@@ -851,12 +844,12 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/comments")
   public void createsComment() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final Comment comment = DummyComments.comment1;
-    final CommentPostDTO commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
+    var id = DummyDeals.deal1.getId();
+    var comment = DummyComments.comment1;
+    var commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.save(any(Comment.class))).thenReturn(comment);
-    final RequestBuilder request =
+    var request =
         post("/deals/" + id + "/comments")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentPostDTO))
@@ -876,10 +869,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/comments (invalid id)")
   public void postCommentThrowsConstraintViolationException() throws JsonProcessingException {
-    final String id = "23478fsf234";
-    final Comment comment = DummyComments.comment1;
-    final CommentPostDTO commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
-    final RequestBuilder request =
+    var id = "23478fsf234";
+    var comment = DummyComments.comment1;
+    var commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
+    var request =
         post("/deals/" + id + "/comments")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentPostDTO))
@@ -899,8 +892,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/comments (empty body)")
   public void postCommentValidationFailsDueToEmptyBody() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var request =
         post("/deals/" + id + "/comments")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -923,14 +916,13 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports ")
   public void createsCommentReport() throws Exception {
-    final String dealId = DummyDeals.deal1.getId();
-    final String commentId = DummyComments.comment1.getId();
-    final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final CommentReportPostDTO commentReportPostDTO =
-        mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
+    var dealId = DummyDeals.deal1.getId();
+    var commentId = DummyComments.comment1.getId();
+    var commentReport = DummyCommentReports.commentReport1;
+    var commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.findById(anyString())).thenReturn(Optional.of(DummyComments.comment1));
-    final RequestBuilder request =
+    var request =
         post("/deals/" + dealId + "/comments/" + commentId + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentReportPostDTO))
@@ -941,12 +933,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports (invalid comment id)")
   public void postCommentReportThrowsConstraintViolationException() throws JsonProcessingException {
-    final String dealId = DummyDeals.deal1.getId();
-    final String commentId = "23478fsf234";
-    final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final CommentReportPostDTO commentReportPostDTO =
-        mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
-    final RequestBuilder request =
+    var dealId = DummyDeals.deal1.getId();
+    var commentId = "23478fsf234";
+    var commentReport = DummyCommentReports.commentReport1;
+    var commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
+    var request =
         post("/deals/" + dealId + "/comments/" + commentId + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentReportPostDTO))
@@ -966,9 +957,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{dealId}/comments/{commentId}/reports (empty body)")
   public void postCommentReportValidationFailsDueToEmptyBody() throws Exception {
-    final String dealId = DummyDeals.deal1.getId();
-    final String commentId = DummyComments.comment1.getId();
-    final RequestBuilder request =
+    var dealId = DummyDeals.deal1.getId();
+    var commentId = DummyComments.comment1.getId();
+    var request =
         post("/deals/" + dealId + "/comments/" + commentId + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -992,12 +983,11 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/reports")
   public void createsDealReport() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final DealReport dealReport = DummyDealReports.dealReport1;
-    final DealReportPostDTO dealReportPostDTO =
-        mapStructMapper.dealReportToDealReportPostDTO(dealReport);
+    var id = DummyDeals.deal1.getId();
+    var dealReport = DummyDealReports.dealReport1;
+    var dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(dealReport);
     when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
-    final RequestBuilder request =
+    var request =
         post("/deals/" + id + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealReportPostDTO))
@@ -1008,11 +998,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/reports (invalid id)")
   public void postDealReportThrowsConstraintViolationException() throws JsonProcessingException {
-    final String id = "23478fsf234";
-    final DealReport dealReport = DummyDealReports.dealReport1;
-    final DealReportPostDTO dealReportPostDTO =
-        mapStructMapper.dealReportToDealReportPostDTO(dealReport);
-    final RequestBuilder request =
+    var id = "23478fsf234";
+    var dealReport = DummyDealReports.dealReport1;
+    var dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(dealReport);
+    var request =
         post("/deals/" + id + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealReportPostDTO))
@@ -1032,8 +1021,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /deals/{id}/reports (empty body)")
   public void postDealReportValidationFailsDueToEmptyBody() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var request =
         post("/deals/" + id + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -1056,10 +1045,10 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id}/votes")
   public void savesDealVote() throws Exception {
-    final Deal deal = DummyDeals.deal1;
-    final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
+    var deal = DummyDeals.deal1;
+    var dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
     when(service.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
-    final RequestBuilder request =
+    var request =
         put("/deals/" + deal.getId() + "/votes")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealVote))
@@ -1090,9 +1079,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id}/votes (invalid id)")
   public void voteDealThrowsConstraintViolationException() throws JsonProcessingException {
-    final String id = "23478fsf234";
-    final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
-    final RequestBuilder request =
+    var id = "23478fsf234";
+    var dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
+    var request =
         put("/deals/" + id + "/votes")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealVote))
@@ -1112,9 +1101,9 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id}/votes (invalid vote type (DealVoteType.UNVOTE))")
   public void voteDealValidationFailsDueToInvalidVoteType() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final DealVote dealVote = DealVote.builder().voteType(DealVoteType.UNVOTE).build();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var dealVote = DealVote.builder().voteType(DealVoteType.UNVOTE).build();
+    var request =
         put("/deals/" + id + "/votes")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealVote))
@@ -1129,8 +1118,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /deals/{id}/votes (empty body)")
   public void voteDealValidationFailsDueToEmptyBody() throws Exception {
-    final String id = DummyDeals.deal1.getId();
-    final RequestBuilder request =
+    var id = DummyDeals.deal1.getId();
+    var request =
         put("/deals/" + id + "/votes")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -1153,17 +1142,17 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /deals/{id}/votes")
   public void deletesVoteFromDeal() throws Exception {
-    final Deal deal = DummyDeals.deal1;
+    var deal = DummyDeals.deal1;
     when(service.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
-    final RequestBuilder request = delete("/deals/" + deal.getId() + "/votes");
+    var request = delete("/deals/" + deal.getId() + "/votes");
     mvc.perform(request).andExpect(status().isOk());
   }
 
   @Test
   @DisplayName("DELETE /deals/{id}/votes (invalid id)")
   public void deleteVoteThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = delete("/deals/" + id + "/votes");
+    var id = "23478fsf234";
+    var request = delete("/deals/" + id + "/votes");
 
     assertThrows(
         ConstraintViolationException.class,

@@ -31,13 +31,13 @@ public abstract class BaseIntegrationTest {
 
   @DynamicPropertySource
   static void properties(DynamicPropertyRegistry registry) {
-    registry.add("spring.redis.host", redis::getContainerIpAddress);
+    registry.add("spring.redis.host", redis::getHost);
     registry.add("spring.redis.port", () -> redis.getMappedPort(REDIS_PORT));
   }
 
   // See https://stackoverflow.com/questions/53514532/
   protected <T> T asParsedJson(Object object) throws JsonProcessingException {
-    final String json = new ObjectMapper().writeValueAsString(object);
+    var json = new ObjectMapper().writeValueAsString(object);
     return JsonPath.read(json, "$");
   }
 }

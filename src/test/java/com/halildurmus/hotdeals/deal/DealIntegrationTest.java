@@ -11,15 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.halildurmus.hotdeals.BaseIntegrationTest;
-import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
-import com.halildurmus.hotdeals.report.comment.CommentReport;
-import com.halildurmus.hotdeals.report.deal.DealReport;
 import com.halildurmus.hotdeals.report.dummy.DummyCommentReports;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
 import com.halildurmus.hotdeals.security.SecurityService;
-import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +28,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class DealIntegrationTest extends BaseIntegrationTest {
 
@@ -57,10 +52,10 @@ public class DealIntegrationTest extends BaseIntegrationTest {
   // @Test
   // @DisplayName("POST /deals")
   // public void createsDeal() throws Exception {
-  // final User user = mongoTemplate.insert(DummyUsers.user1);
+  // var user = mongoTemplate.insert(DummyUsers.user1);
   // when(securityService.getUser()).thenReturn(user);
-  // final Deal deal = DummyDeals.deal1;
-  // final RequestBuilder requestBuilder = post("/deals")
+  // var deal = DummyDeals.deal1;
+  // var requestBuilder = post("/deals")
   // .accept(MediaType.APPLICATION_JSON)
   // .content(json.write(deal).getJson())
   // .contentType(MediaType.APPLICATION_JSON);
@@ -94,7 +89,7 @@ public class DealIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/deals").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
@@ -109,10 +104,10 @@ public class DealIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getDealsReturnsOneDeal() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user3);
+    var user = mongoTemplate.insert(DummyUsers.user3);
     when(securityService.getUser()).thenReturn(user);
-    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final RequestBuilder requestBuilder =
+    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var requestBuilder =
         get("/deals").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
@@ -143,12 +138,12 @@ public class DealIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /deals/{id}/comments")
   public void createsComment() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user3);
+    var user = mongoTemplate.insert(DummyUsers.user3);
     when(securityService.getUser()).thenReturn(user);
-    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final Comment comment = DummyComments.comment1;
+    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var comment = DummyComments.comment1;
     comment.setDealId(new ObjectId(deal.getId()));
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         post("/deals/" + deal.getId() + "/comments")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(comment))
@@ -168,15 +163,15 @@ public class DealIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /deals/{id}/comments/{commentId}/reports")
   public void shouldCreateCommentReportThenReturnCommentReport() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user1);
+    var user = mongoTemplate.insert(DummyUsers.user1);
     when(securityService.getUser()).thenReturn(user);
-    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final Comment dummyComment = DummyComments.comment1;
+    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var dummyComment = DummyComments.comment1;
     dummyComment.setPostedBy(user);
     dummyComment.setDealId(new ObjectId(deal.getId()));
-    final Comment comment = mongoTemplate.insert(dummyComment);
-    final CommentReport commentReport = DummyCommentReports.commentReport1;
-    final RequestBuilder requestBuilder =
+    var comment = mongoTemplate.insert(dummyComment);
+    var commentReport = DummyCommentReports.commentReport1;
+    var requestBuilder =
         post("/deals/" + deal.getId() + "/comments/" + comment.getId() + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentReport))
@@ -187,11 +182,11 @@ public class DealIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /deals/{id}/reports")
   public void shouldCreateDealReportThenReturnDealReport() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user1);
+    var user = mongoTemplate.insert(DummyUsers.user1);
     when(securityService.getUser()).thenReturn(user);
-    final Deal deal = mongoTemplate.insert(DummyDeals.deal1);
-    final DealReport dealReport = DummyDealReports.dealReport1;
-    final RequestBuilder requestBuilder =
+    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var dealReport = DummyDealReports.dealReport1;
+    var requestBuilder =
         post("/deals/" + deal.getId() + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(dealReport))

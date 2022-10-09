@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
-import com.halildurmus.hotdeals.report.user.UserReport;
 import com.halildurmus.hotdeals.security.SecurityService;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
@@ -26,7 +25,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserIntegrationTest extends BaseIntegrationTest {
 
@@ -48,8 +46,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
-    final User user = DummyUsers.user1;
-    final RequestBuilder requestBuilder =
+    var user = DummyUsers.user1;
+    var requestBuilder =
         post("/users")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(user).getJson())
@@ -72,7 +70,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
@@ -87,9 +85,9 @@ public class UserIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsOneUser() throws Exception {
-    final User user = DummyUsers.user1;
+    var user = DummyUsers.user1;
     mongoTemplate.insert(user);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(requestBuilder)
@@ -113,12 +111,12 @@ public class UserIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /users/{id}/reports")
   public void createsUserReport() throws Exception {
-    final User user1 = mongoTemplate.insert(DummyUsers.user1);
-    final User user2 = mongoTemplate.insert(DummyUsers.user2);
+    var user1 = mongoTemplate.insert(DummyUsers.user1);
+    var user2 = mongoTemplate.insert(DummyUsers.user2);
     when(securityService.getUser()).thenReturn(user1);
-    final UserReport userReport = DummyUserReports.userReport1;
+    var userReport = DummyUserReports.userReport1;
     userReport.setReportedUser(user2);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         post("/users/" + user2.getId() + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userReport))

@@ -35,7 +35,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.util.NestedServletException;
 
@@ -54,7 +53,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /categories (returns empty array)")
   public void getCategoriesReturnsEmptyArray() throws Exception {
     when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
-    final RequestBuilder request = get("/categories");
+    var request = get("/categories");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -65,11 +64,11 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories (returns 2 categories)")
   public void getCategoriesReturnsTwoCategories() throws Exception {
-    final Category category1 = DummyCategories.category1;
-    final Category category2 = DummyCategories.category2;
-    final Page<Category> pagedCategories = new PageImpl<>(List.of(category1, category2));
+    var category1 = DummyCategories.category1;
+    var category2 = DummyCategories.category2;
+    var pagedCategories = new PageImpl<>(List.of(category1, category2));
     when(service.findAll(any(Pageable.class))).thenReturn(pagedCategories);
-    final RequestBuilder request = get("/categories");
+    var request = get("/categories");
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -94,9 +93,9 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories/{id}")
   public void returnsGivenCategory() throws Exception {
-    final Category category = DummyCategories.category1;
+    var category = DummyCategories.category1;
     when(service.findById(category.getId())).thenReturn(Optional.of(category));
-    final RequestBuilder request = get("/categories/" + category.getId());
+    var request = get("/categories/" + category.getId());
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -113,9 +112,9 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /categories/{id} (category not found)")
   public void getCategoryThrowsCategoryNotFoundException() {
-    final Category category = DummyCategories.category1;
+    var category = DummyCategories.category1;
     when(service.findById(category.getId())).thenReturn(Optional.empty());
-    final RequestBuilder request = get("/categories/" + category.getId());
+    var request = get("/categories/" + category.getId());
 
     assertThrows(
         CategoryNotFoundException.class,
@@ -131,11 +130,11 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /categories")
   public void createsCategory() throws Exception {
-    final Category category = DummyCategories.category1;
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
+    var category = DummyCategories.category1;
+    var categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
     when(service.create(any(Category.class))).thenReturn(category);
 
-    final RequestBuilder request =
+    var request =
         post("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(categoryPostDTO).getJson())
@@ -156,7 +155,7 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /categories (empty body)")
   public void postCategoryValidationFails() throws Exception {
-    final RequestBuilder request =
+    var request =
         post("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -205,10 +204,10 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("POST /categories (missing English translation)")
   public void postCategoryValidationFailsDueToMissingEnglishTranslation() throws Exception {
-    final CategoryPostDTO categoryPostDTO =
+    var categoryPostDTO =
         mapStructMapper.categoryToCategoryPostDTO(
             DummyCategories.category1WithoutEnglishTranslation);
-    final RequestBuilder request =
+    var request =
         post("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(categoryPostDTO).getJson())
@@ -222,11 +221,11 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /categories/{id}")
   public void updatesGivenCategory() throws Exception {
-    final Category category = DummyCategories.category1;
-    final CategoryPostDTO categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
+    var category = DummyCategories.category1;
+    var categoryPostDTO = mapStructMapper.categoryToCategoryPostDTO(category);
     when(service.findById(anyString())).thenReturn(Optional.of(category));
     when(service.update(any(Category.class))).thenReturn(category);
-    final RequestBuilder request =
+    var request =
         put("/categories/" + category.getId())
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(categoryPostDTO).getJson())
@@ -246,8 +245,8 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("PUT /categories/{id} (empty body)")
   public void putCategoryValidationFails() throws Exception {
-    final String id = DummyCategories.category1.getId();
-    final RequestBuilder request =
+    var id = DummyCategories.category1.getId();
+    var request =
         put("/categories/" + id)
             .accept(MediaType.APPLICATION_JSON)
             .content("{}")
@@ -296,16 +295,16 @@ public class CategoryControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("DELETE /categories/{id}")
   public void deletesGivenCategory() throws Exception {
-    final String id = DummyCategories.category1.getId();
-    final RequestBuilder request = delete("/categories/" + id);
+    var id = DummyCategories.category1.getId();
+    var request = delete("/categories/" + id);
     mvc.perform(request).andExpect(status().isNoContent());
   }
 
   @Test
   @DisplayName("DELETE /categories/{id} (invalid id)")
   public void deleteCategoryThrowsConstraintViolationException() {
-    final String id = "23478fsf234";
-    final RequestBuilder request = delete("/categories/" + id);
+    var id = "23478fsf234";
+    var request = delete("/categories/" + id);
 
     assertThrows(
         ConstraintViolationException.class,

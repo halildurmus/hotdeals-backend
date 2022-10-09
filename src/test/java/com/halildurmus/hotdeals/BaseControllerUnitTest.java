@@ -13,7 +13,7 @@ public abstract class BaseControllerUnitTest {
 
   // See https://stackoverflow.com/questions/53514532/
   protected <T> T asParsedJson(Object object) throws JsonProcessingException {
-    final String json = new ObjectMapper().writeValueAsString(object);
+    var json = new ObjectMapper().writeValueAsString(object);
     return JsonPath.read(json, "$");
   }
 }

@@ -8,19 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.report.dummy.DummyUserReports;
-import com.halildurmus.hotdeals.report.user.UserReport;
-import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class UserReportIntegrationTest extends BaseIntegrationTest {
 
@@ -35,8 +31,8 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("deals");
     mongoTemplate.dropCollection("reports");
     mongoTemplate.dropCollection("users");
-    for (String name : cacheManager.getCacheNames()) {
-      Cache cache = cacheManager.getCache(name);
+    for (var name : cacheManager.getCacheNames()) {
+      var cache = cacheManager.getCache(name);
       if (cache != null) {
         cache.clear();
       }
@@ -46,7 +42,7 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /user-reports (returns empty)")
   public void getUserReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/user-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
@@ -60,13 +56,13 @@ public class UserReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /user-reports (returns 1 user report)")
   public void getUserReportsReturnsOneUser() throws Exception {
-    final User user1 = mongoTemplate.insert(DummyUsers.user1);
-    final User user2 = mongoTemplate.insert(DummyUsers.user2);
-    final UserReport userReport = DummyUserReports.userReport1;
+    var user1 = mongoTemplate.insert(DummyUsers.user1);
+    var user2 = mongoTemplate.insert(DummyUsers.user2);
+    var userReport = DummyUserReports.userReport1;
     userReport.setReportedBy(user1);
     userReport.setReportedUser(user2);
     mongoTemplate.insert(userReport);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/user-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);

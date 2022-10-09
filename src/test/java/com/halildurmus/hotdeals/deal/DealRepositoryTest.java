@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 import com.halildurmus.hotdeals.BaseIntegrationTest;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
 import com.halildurmus.hotdeals.security.SecurityService;
-import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
-import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -31,13 +29,13 @@ class DealRepositoryTest extends BaseIntegrationTest {
 
   @Test
   void findAllByPostedByReturnsOneDeal() {
-    final User user = DummyUsers.user1;
-    final Deal deal = DummyDeals.deal1;
+    var user = DummyUsers.user1;
+    var deal = DummyDeals.deal1;
     deal.setPostedBy(new ObjectId(user.getId()));
     when(securityService.getUser()).thenReturn(user);
     this.repository.save(deal);
-    final ObjectId objectId = new ObjectId(user.getId());
-    final List<Deal> deals =
+    var objectId = new ObjectId(user.getId());
+    var deals =
         repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
 
     assertFalse(deals.isEmpty());
@@ -46,8 +44,8 @@ class DealRepositoryTest extends BaseIntegrationTest {
 
   @Test
   void findAllByPostedByReturnsEmptyArray() {
-    final ObjectId objectId = new ObjectId("607345b0eeeee1452898128b");
-    final List<Deal> deals =
+    var objectId = new ObjectId("607345b0eeeee1452898128b");
+    var deals =
         repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
 
     assertTrue(deals.isEmpty());

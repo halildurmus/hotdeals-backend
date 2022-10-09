@@ -7,22 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
-import com.halildurmus.hotdeals.comment.Comment;
 import com.halildurmus.hotdeals.comment.dummy.DummyComments;
-import com.halildurmus.hotdeals.report.comment.CommentReport;
 import com.halildurmus.hotdeals.report.dummy.DummyCommentReports;
-import com.halildurmus.hotdeals.user.User;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 public class CommentReportIntegrationTest extends BaseIntegrationTest {
 
@@ -37,8 +32,8 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
     mongoTemplate.dropCollection("comments");
     mongoTemplate.dropCollection("reports");
     mongoTemplate.dropCollection("users");
-    for (String name : cacheManager.getCacheNames()) {
-      final Cache cache = cacheManager.getCache(name);
+    for (var name : cacheManager.getCacheNames()) {
+      var cache = cacheManager.getCache(name);
       if (cache != null) {
         cache.clear();
       }
@@ -48,7 +43,7 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /comment-reports (returns empty)")
   public void getCommentReportsReturnsEmptyArray() throws Exception {
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/comment-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
@@ -62,13 +57,13 @@ public class CommentReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /comment-reports (returns 1 comment report)")
   public void getCommentReportsReturnsOneCommentReport() throws Exception {
-    final User user = mongoTemplate.insert(DummyUsers.user1);
-    final Comment comment = mongoTemplate.insert(DummyComments.comment1);
-    final CommentReport commentReport = DummyCommentReports.commentReport1;
+    var user = mongoTemplate.insert(DummyUsers.user1);
+    var comment = mongoTemplate.insert(DummyComments.comment1);
+    var commentReport = DummyCommentReports.commentReport1;
     commentReport.setReportedComment(comment);
     commentReport.setReportedBy(user);
     mongoTemplate.insert(commentReport);
-    final RequestBuilder requestBuilder =
+    var requestBuilder =
         get("/comment-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
