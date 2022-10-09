@@ -8,15 +8,15 @@ spring:
     mongodb:
       auto-index-creation: true
       database: db
-      #uri: mongodb://localhost:27017
+    #      uri: mongodb://localhost:27017
     rest:
       detection-strategy: annotated
-#  elasticsearch:
-#    rest:
-#      uris: localhost:9200
-#  redis:
-#    host: localhost
-#    port: 6379
+#    elasticsearch:
+#      rest:
+#        uris: localhost:9200
+#    redis:
+#      host: localhost
+#      port: 6379
 security:
   allowed-origins:
     - http://localhost:3000
@@ -27,7 +27,7 @@ security:
     - POST
     - PUT
     - DELETE
-  # SET THE ADMIN EMAIL ADDRESSES HERE
+  # Set super admin email addresses here
   super-admins:
     - admin1@gmail.com
     - admin2@gmail.com

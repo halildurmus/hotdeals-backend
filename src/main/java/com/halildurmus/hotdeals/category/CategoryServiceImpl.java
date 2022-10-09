@@ -42,7 +42,6 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   public Category update(Category category) {
     repository.findById(category.getId()).orElseThrow(CategoryNotFoundException::new);
-
     return repository.save(category);
   }
 
