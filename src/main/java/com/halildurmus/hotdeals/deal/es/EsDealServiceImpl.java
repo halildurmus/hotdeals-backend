@@ -162,7 +162,7 @@ public class EsDealServiceImpl implements EsDealService {
   }
 
   private TermQueryBuilder createTermQuery() {
-    return new TermQueryBuilder("status.keyword", "ACTIVE");
+    return new TermQueryBuilder("status", "ACTIVE");
   }
 
   private BoolQueryBuilder createBoolQuery(Boolean hideExpired, String query) {
