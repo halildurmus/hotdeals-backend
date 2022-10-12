@@ -2,7 +2,7 @@ embedded:
   containers:
     enabled: true
   elasticsearch:
-    dockerImage: docker.elastic.co/elasticsearch/elasticsearch:8.4.3
+    dockerImage: elasticsearch:7.17.4
     enabled: true
     env:
       discovery.type: single-node
