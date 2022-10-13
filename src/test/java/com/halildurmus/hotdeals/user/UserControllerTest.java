@@ -53,26 +53,26 @@ import org.springframework.web.util.NestedServletException;
 @Import({UserController.class, MapStructMapperImpl.class})
 public class UserControllerTest extends BaseControllerUnitTest {
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
-
-  private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
+  @MockBean private CommentService commentService;
 
   @Autowired private JacksonTester<UserPostDTO> json;
 
+  @Autowired private MapStructMapperImpl mapStructMapper;
+
   @Autowired private MockMvc mvc;
 
-  @MockBean private CommentService commentService;
+  @Autowired private ObjectMapper objectMapper;
 
   @MockBean private SecurityService securityService;
 
-  @MockBean private UserService service;
-
   @MockBean private UserReportService userReportService;
+
+  @MockBean private UserService userService;
 
   @Test
   @DisplayName("GET /users (returns empty array)")
   public void getUsersReturnsEmptyArray() throws Exception {
-    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
+    when(userService.findAll(any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/users");
 
     mvc.perform(request)
@@ -86,7 +86,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void getUsersReturnsOneUser() throws Exception {
     var user = DummyUsers.user1;
     var pagedUsers = new PageImpl<>(List.of(user));
-    when(service.findAll(any(Pageable.class))).thenReturn(pagedUsers);
+    when(userService.findAll(any(Pageable.class))).thenReturn(pagedUsers);
     var request = get("/users");
 
     mvc.perform(request)
@@ -112,7 +112,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   public void createsUser() throws Exception {
     var userPostDTO = mapStructMapper.userToUserPostDTO(DummyUsers.user1);
     var user = DummyUsers.user1;
-    when(service.create(any(User.class))).thenReturn(user);
+    when(userService.create(any(User.class))).thenReturn(user);
     var request =
         post("/users")
             .accept(MediaType.APPLICATION_JSON)
@@ -169,7 +169,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/search/findByEmail?email={email}")
   public void findsUserByEmail() throws Exception {
     var user = DummyUsers.user1;
-    when(service.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+    when(userService.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
     var request = get("/users/search/findByEmail?email=" + user.getEmail());
 
     mvc.perform(request)
@@ -189,7 +189,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/search/findByEmail?email={email} (user not found)")
   public void findByEmailThrowsUserNotFoundException() {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.empty());
+    when(userService.findById(user.getId())).thenReturn(Optional.empty());
     var request = get("/users/search/findByEmail?email=" + user.getEmail());
 
     assertThrows(
@@ -207,7 +207,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/search/findByUid?uid={uid}")
   public void findsUserByUid() throws Exception {
     var user = DummyUsers.user1;
-    when(service.findByUid(user.getUid())).thenReturn(Optional.of(user));
+    when(userService.findByUid(user.getUid())).thenReturn(Optional.of(user));
     var request = get("/users/search/findByUid?uid=" + user.getUid());
 
     mvc.perform(request)
@@ -227,7 +227,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/search/findByUid?uid={uid} (user not found)")
   public void findByUidThrowsUserNotFoundException() {
     var user = DummyUsers.user1;
-    when(service.findByUid(user.getUid())).thenReturn(Optional.empty());
+    when(userService.findByUid(user.getUid())).thenReturn(Optional.empty());
     var request = get("/users/search/findByUid?uid=" + user.getUid());
 
     assertThrows(
@@ -293,7 +293,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("PATCH /users/me (update avatar)")
   public void patchesAuthenticatedUsersAvatar() throws Exception {
     var user = DummyUsers.patchedUser1;
-    when(service.patchUser(any(JsonPatch.class))).thenReturn(user);
+    when(userService.patchUser(any(JsonPatch.class))).thenReturn(user);
     var jsonPatch =
         "[{\"op\": \"replace\", \"path\": \"/avatar\", \"value\": \"" + user.getAvatar() + "\"}]";
     var request =
@@ -319,7 +319,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /users/me/blocks (returns empty array)")
   public void getBlockedUsersReturnsEmptyArray() throws Exception {
-    when(service.getBlockedUsers(any(Pageable.class))).thenReturn(List.of());
+    when(userService.getBlockedUsers(any(Pageable.class))).thenReturn(List.of());
     var request = get("/users/me/blocks");
 
     mvc.perform(request)
@@ -332,7 +332,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/me/blocks (returns 1 user)")
   public void getBlockedUsersReturnsOneUser() throws Exception {
     var user = DummyUsers.user1;
-    when(service.getBlockedUsers(any(Pageable.class))).thenReturn(List.of(user));
+    when(userService.getBlockedUsers(any(Pageable.class))).thenReturn(List.of(user));
     var request = get("/users/me/blocks");
 
     mvc.perform(request)
@@ -403,7 +403,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /users/me/deals (returns empty array)")
   public void getDealsReturnsEmptyArray() throws Exception {
-    when(service.getDeals(any(Pageable.class))).thenReturn(List.of());
+    when(userService.getDeals(any(Pageable.class))).thenReturn(List.of());
 
     var request = get("/users/me/deals");
     mvc.perform(request)
@@ -416,7 +416,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/me/deals (returns 1 deal)")
   public void getDealsReturnsOneDeal() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.getDeals(any(Pageable.class))).thenReturn(List.of(deal));
+    when(userService.getDeals(any(Pageable.class))).thenReturn(List.of(deal));
     var request = get("/users/me/deals");
 
     mvc.perform(request)
@@ -446,7 +446,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /users/me/favorites (returns empty array)")
   public void getFavoritesReturnsEmptyArray() throws Exception {
-    when(service.getFavorites(any(Pageable.class))).thenReturn(List.of());
+    when(userService.getFavorites(any(Pageable.class))).thenReturn(List.of());
     var request = get("/users/me/favorites");
 
     mvc.perform(request)
@@ -459,7 +459,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/me/favorites (returns 1 deal)")
   public void getFavoritesReturnsOneDeal() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.getFavorites(any(Pageable.class))).thenReturn(List.of(deal));
+    when(userService.getFavorites(any(Pageable.class))).thenReturn(List.of(deal));
     var request = get("/users/me/favorites");
 
     mvc.perform(request)
@@ -629,7 +629,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/{id}")
   public void returnsGivenUser() throws Exception {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userService.findById(user.getId())).thenReturn(Optional.of(user));
     var request = get("/users/" + user.getId());
 
     mvc.perform(request)
@@ -647,7 +647,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/{id} (user not found)")
   public void getUserThrowsUserNotFoundException() {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.empty());
+    when(userService.findById(user.getId())).thenReturn(Optional.empty());
     var request = get("/users/" + user.getId());
 
     assertThrows(
@@ -675,7 +675,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/{id}/extended")
   public void returnsGivenUserExtended() throws Exception {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userService.findById(user.getId())).thenReturn(Optional.of(user));
     var request = get("/users/" + user.getId() + "/extended");
 
     mvc.perform(request)
@@ -695,7 +695,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /users/{id}/extended (user not found)")
   public void getUserExtendedThrowsUserNotFoundException() {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.empty());
+    when(userService.findById(user.getId())).thenReturn(Optional.empty());
     var request = get("/users/" + user.getId() + "/extended");
 
     assertThrows(
@@ -713,7 +713,7 @@ public class UserControllerTest extends BaseControllerUnitTest {
   @DisplayName("POST /users/{id}/reports")
   public void reportsUser() throws Exception {
     var user = DummyUsers.user1;
-    when(service.findById(user.getId())).thenReturn(Optional.of(user));
+    when(userService.findById(user.getId())).thenReturn(Optional.of(user));
     var userReportPostDTO =
         UserReportPostDTO.builder()
             .reasons(EnumSet.of(UserReportReason.HARASSING))

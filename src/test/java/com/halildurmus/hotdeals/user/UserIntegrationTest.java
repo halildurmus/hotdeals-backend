@@ -21,39 +21,38 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 public class UserIntegrationTest extends BaseIntegrationTest {
 
+  @Autowired private JacksonTester<User> json;
+
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private MockMvc mvc;
+
   private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
   @MockBean private SecurityService securityService;
 
-  @Autowired private MongoTemplate mongoTemplate;
-
-  @Autowired private MockMvc mvc;
-
-  @Autowired private JacksonTester<User> json;
-
   @AfterEach
   void cleanUp() {
-    mongoTemplate.dropCollection("users");
+    userRepository.deleteAll();
   }
 
   @Test
   @DisplayName("POST /users")
   public void createsUser() throws Exception {
     var user = DummyUsers.user1;
-    var requestBuilder =
+    var request =
         post("/users")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(user).getJson())
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(5)))
@@ -70,10 +69,10 @@ public class UserIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsEmptyArray() throws Exception {
-    var requestBuilder =
+    var request =
         get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(0)));
@@ -86,11 +85,11 @@ public class UserIntegrationTest extends BaseIntegrationTest {
       roles = {"ADMIN", "SUPER"})
   public void getUsersReturnsOneUser() throws Exception {
     var user = DummyUsers.user1;
-    mongoTemplate.insert(user);
-    var requestBuilder =
+    userRepository.save(user);
+    var request =
         get("/users").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))
@@ -111,16 +110,16 @@ public class UserIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("POST /users/{id}/reports")
   public void createsUserReport() throws Exception {
-    var user1 = mongoTemplate.insert(DummyUsers.user1);
-    var user2 = mongoTemplate.insert(DummyUsers.user2);
+    var user1 = userRepository.save(DummyUsers.user1);
+    var user2 = userRepository.save(DummyUsers.user2);
     when(securityService.getUser()).thenReturn(user1);
     var userReport = DummyUserReports.userReport1;
     userReport.setReportedUser(user2);
-    var requestBuilder =
+    var request =
         post("/users/" + user2.getId() + "/reports")
             .accept(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userReport))
             .contentType(MediaType.APPLICATION_JSON);
-    mvc.perform(requestBuilder).andExpect(status().isCreated());
+    mvc.perform(request).andExpect(status().isCreated());
   }
 }

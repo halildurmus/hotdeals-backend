@@ -14,18 +14,18 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration-test")
 class UserRepositoryTest {
 
-  @Autowired private UserRepository repository;
+  @Autowired private UserRepository userRepository;
 
   @AfterEach
   void cleanUp() {
-    this.repository.deleteAll();
+    this.userRepository.deleteAll();
   }
 
   @Test
   void findByUidFindsUser() {
     var user1 = DummyUsers.user1;
-    this.repository.save(user1);
-    var user = repository.findByUid(user1.getUid());
+    this.userRepository.save(user1);
+    var user = userRepository.findByUid(user1.getUid());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getUid(), user1.getUid());
@@ -33,15 +33,15 @@ class UserRepositoryTest {
 
   @Test
   void findByUidCannotFindUserDueToNonexistentUid() {
-    var user = repository.findByUid(DummyUsers.user1.getUid());
+    var user = userRepository.findByUid(DummyUsers.user1.getUid());
     assertTrue(user.isEmpty());
   }
 
   @Test
   void findByEmailFindsUser() {
     var user1 = DummyUsers.user1;
-    this.repository.save(user1);
-    var user = repository.findByEmail(user1.getEmail());
+    this.userRepository.save(user1);
+    var user = userRepository.findByEmail(user1.getEmail());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getEmail(), user1.getEmail());
@@ -49,15 +49,15 @@ class UserRepositoryTest {
 
   @Test
   void findByEmailCannotFindUserDueToNonexistentEmail() {
-    var user = repository.findByEmail(DummyUsers.user1.getEmail());
+    var user = userRepository.findByEmail(DummyUsers.user1.getEmail());
     assertTrue(user.isEmpty());
   }
 
   @Test
   void findByNicknameFindsUser() {
     var user1 = DummyUsers.user1;
-    this.repository.save(user1);
-    var user = repository.findByNickname(user1.getNickname());
+    this.userRepository.save(user1);
+    var user = userRepository.findByNickname(user1.getNickname());
 
     assertTrue(user.isPresent());
     assertEquals(user.get().getNickname(), user1.getNickname());
@@ -65,7 +65,7 @@ class UserRepositoryTest {
 
   @Test
   void findByNicknameCannotFindUserDueToNonexistentNickname() {
-    var user = repository.findByNickname(DummyUsers.user3.getNickname());
+    var user = userRepository.findByNickname(DummyUsers.user3.getNickname());
     assertTrue(user.isEmpty());
   }
 }

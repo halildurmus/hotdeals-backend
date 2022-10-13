@@ -18,13 +18,13 @@ import org.springframework.data.domain.Pageable;
 
 class DealRepositoryTest extends BaseIntegrationTest {
 
-  @MockBean private SecurityService securityService;
+  @Autowired private DealRepository dealRepository;
 
-  @Autowired private DealRepository repository;
+  @MockBean private SecurityService securityService;
 
   @AfterEach
   void cleanUp() {
-    this.repository.deleteAll();
+    this.dealRepository.deleteAll();
   }
 
   @Test
@@ -33,10 +33,12 @@ class DealRepositoryTest extends BaseIntegrationTest {
     var deal = DummyDeals.deal1;
     deal.setPostedBy(new ObjectId(user.getId()));
     when(securityService.getUser()).thenReturn(user);
-    this.repository.save(deal);
+    this.dealRepository.save(deal);
     var objectId = new ObjectId(user.getId());
     var deals =
-        repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
+        dealRepository
+            .findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged())
+            .getContent();
 
     assertFalse(deals.isEmpty());
     assertEquals(deals.get(0).getPostedBy(), objectId);
@@ -46,7 +48,9 @@ class DealRepositoryTest extends BaseIntegrationTest {
   void findAllByPostedByReturnsEmptyArray() {
     var objectId = new ObjectId("607345b0eeeee1452898128b");
     var deals =
-        repository.findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged()).getContent();
+        dealRepository
+            .findAllByPostedByOrderByCreatedAtDesc(objectId, Pageable.unpaged())
+            .getContent();
 
     assertTrue(deals.isEmpty());
   }

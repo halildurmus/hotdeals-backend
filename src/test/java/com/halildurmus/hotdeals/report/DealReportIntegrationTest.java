@@ -7,15 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.halildurmus.hotdeals.BaseIntegrationTest;
+import com.halildurmus.hotdeals.deal.DealRepository;
 import com.halildurmus.hotdeals.deal.dummy.DummyDeals;
+import com.halildurmus.hotdeals.report.deal.DealReportRepository;
 import com.halildurmus.hotdeals.report.dummy.DummyDealReports;
+import com.halildurmus.hotdeals.user.UserRepository;
 import com.halildurmus.hotdeals.user.dummy.DummyUsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,15 +25,19 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
 
   @Autowired private CacheManager cacheManager;
 
-  @Autowired private MongoTemplate mongoTemplate;
+  @Autowired private DealRepository dealRepository;
+
+  @Autowired private DealReportRepository dealReportRepository;
 
   @Autowired private MockMvc mvc;
 
+  @Autowired private UserRepository userRepository;
+
   @AfterEach
   void cleanUp() {
-    mongoTemplate.dropCollection("deals");
-    mongoTemplate.dropCollection("reports");
-    mongoTemplate.dropCollection("users");
+    dealRepository.deleteAll();
+    dealReportRepository.deleteAll();
+    userRepository.deleteAll();
     for (var name : cacheManager.getCacheNames()) {
       var cache = cacheManager.getCache(name);
       if (cache != null) {
@@ -43,12 +49,12 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns empty)")
   public void getDealReportsReturnsEmptyArray() throws Exception {
-    var requestBuilder =
+    var request =
         get("/deal-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.deal-reports", hasSize(0)));
@@ -57,18 +63,18 @@ public class DealReportIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /deal-reports (returns 1 deal report)")
   public void getDealReportsReturnsOneDealReport() throws Exception {
-    var user = mongoTemplate.insert(DummyUsers.user1);
-    var deal = mongoTemplate.insert(DummyDeals.deal1);
+    var user = userRepository.save(DummyUsers.user1);
+    var deal = dealRepository.save(DummyDeals.deal1);
     var dealReport = DummyDealReports.dealReport1;
     dealReport.setReportedDeal(deal);
     dealReport.setReportedBy(user);
-    mongoTemplate.insert(dealReport);
-    var requestBuilder =
+    dealReportRepository.save(dealReport);
+    var request =
         get("/deal-reports")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$._embedded.deal-reports", hasSize(1)))

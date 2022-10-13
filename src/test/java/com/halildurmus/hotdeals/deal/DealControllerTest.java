@@ -59,28 +59,28 @@ import org.springframework.web.util.NestedServletException;
 @Import({DealController.class, MapStructMapperImpl.class})
 public class DealControllerTest extends BaseControllerUnitTest {
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
-
-  private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
-
-  @Autowired private JacksonTester<DealPostDTO> json;
-
-  @Autowired private MockMvc mvc;
-
   @MockBean private CommentService commentService;
 
   @MockBean private CommentReportService commentReportService;
 
   @MockBean private DealReportService dealReportService;
 
-  @MockBean private DealService service;
+  @MockBean private DealService dealService;
 
   @MockBean private EsDealService esDealService;
+
+  @Autowired private JacksonTester<DealPostDTO> json;
+
+  @Autowired private MapStructMapperImpl mapStructMapper;
+
+  @Autowired private MockMvc mvc;
+
+  @Autowired private ObjectMapper objectMapper;
 
   @Test
   @DisplayName("GET /deals (returns empty array)")
   public void getDealsReturnsEmptyArray() throws Exception {
-    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
+    when(dealService.findAll(any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/deals");
 
     mvc.perform(request)
@@ -94,7 +94,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void getDealsReturnsOneDeal() throws Exception {
     var deal = DummyDeals.deal1;
     var pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.findAll(any(Pageable.class))).thenReturn(pagedDeals);
+    when(dealService.findAll(any(Pageable.class))).thenReturn(pagedDeals);
     var request = get("/deals");
 
     mvc.perform(request)
@@ -126,7 +126,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/count/byPostedBy")
   public void returnsNumberOfDealsThatGivenUserPosted() throws Exception {
     var id = DummyUsers.user1.getId();
-    when(service.countDealsByPostedBy(new ObjectId(id))).thenReturn(3);
+    when(dealService.countDealsByPostedBy(new ObjectId(id))).thenReturn(3);
     var request = get("/deals/count/byPostedBy?postedBy=" + id);
 
     mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(3));
@@ -153,7 +153,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/count/byStoreId")
   public void returnsNumberOfDealsThatGivenStoreHas() throws Exception {
     var id = DummyStores.store1.getId();
-    when(service.countDealsByStore(new ObjectId(id))).thenReturn(4);
+    when(dealService.countDealsByStore(new ObjectId(id))).thenReturn(4);
     var request = get("/deals/count/byStoreId?storeId=" + id);
 
     mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("$").value(4));
@@ -180,7 +180,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/search/byCategory?category={category} (returns empty array)")
   public void findDealsByCategoryReturnsEmptyArray() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(Page.empty());
+    when(dealService.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/deals/search/byCategory?category=" + deal.getCategory());
 
     mvc.perform(request)
@@ -194,7 +194,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void findsDealsByCategory() throws Exception {
     var deal = DummyDeals.deal1;
     var pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(pagedDeals);
+    when(dealService.getDealsByCategory(anyString(), any(Pageable.class))).thenReturn(pagedDeals);
     var request = get("/deals/search/byCategory?category=" + deal.getCategory());
 
     mvc.perform(request)
@@ -225,7 +225,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/search/byStoreId?storeId={id} (returns empty array)")
   public void findDealsByStoreIdReturnsEmptyArray() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
+    when(dealService.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(Page.empty());
     var request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
@@ -240,7 +240,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void findsDealsByStoreId() throws Exception {
     var deal = DummyDeals.deal1;
     var pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
+    when(dealService.getDealsByStoreId(any(ObjectId.class), any(Pageable.class)))
         .thenReturn(pagedDeals);
     var request = get("/deals/search/byStoreId?storeId=" + deal.getStore());
 
@@ -271,7 +271,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/latestActive (returns empty array)")
   public void getLatestActiveDealsReturnsEmptyArray() throws Exception {
-    when(service.getLatestActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
+    when(dealService.getLatestActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/deals/search/latestActive");
 
     mvc.perform(request)
@@ -285,7 +285,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void returnsLatestActiveDeals() throws Exception {
     var deal = DummyDeals.deal1;
     var pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.getLatestActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
+    when(dealService.getLatestActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
     var request = get("/deals/search/latestActive");
 
     mvc.perform(request)
@@ -315,7 +315,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @Test
   @DisplayName("GET /deals/search/mostLikedActive (returns empty array)")
   public void getMostLikedActiveDealsReturnsEmptyArray() throws Exception {
-    when(service.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
+    when(dealService.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/deals/search/mostLikedActive");
 
     mvc.perform(request)
@@ -329,7 +329,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void returnsMostLikedActiveDeals() throws Exception {
     var deal = DummyDeals.deal1;
     var pagedDeals = new PageImpl<>(List.of(deal));
-    when(service.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
+    when(dealService.getMostLikedActiveDeals(any(Pageable.class))).thenReturn(pagedDeals);
     var request = get("/deals/search/mostLikedActive");
 
     mvc.perform(request)
@@ -441,7 +441,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/{id}")
   public void returnsGivenDeal() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.findById(deal.getId())).thenReturn(Optional.of(deal));
+    when(dealService.findById(deal.getId())).thenReturn(Optional.of(deal));
     var request = get("/deals/" + deal.getId());
 
     mvc.perform(request)
@@ -471,7 +471,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /deals/{id} (deal not found)")
   public void getDealThrowsDealNotFoundException() {
     var deal = DummyDeals.deal1;
-    when(service.findById(deal.getId())).thenReturn(Optional.empty());
+    when(dealService.findById(deal.getId())).thenReturn(Optional.empty());
     var request = get("/deals/" + deal.getId());
 
     assertThrows(
@@ -490,7 +490,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void createsDeal() throws Exception {
     var deal = DummyDeals.deal1;
     var dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
-    when(service.create(any(Deal.class))).thenReturn(deal);
+    when(dealService.create(any(Deal.class))).thenReturn(deal);
     var request =
         post("/deals")
             .accept(MediaType.APPLICATION_JSON)
@@ -616,7 +616,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void patchesGivenDealsStatus() throws Exception {
     var deal = DummyDeals.deal1;
     deal.setStatus(DealStatus.EXPIRED);
-    when(service.patch(anyString(), any(JsonPatch.class))).thenReturn(deal);
+    when(dealService.patch(anyString(), any(JsonPatch.class))).thenReturn(deal);
     var jsonPatch = "[{\"op\": \"replace\", \"path\": \"/status\", \"value\": \"EXPIRED\"}]";
     var request =
         patch("/deals/" + deal.getId())
@@ -653,8 +653,8 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void updatesGivenDeal() throws Exception {
     var deal = DummyDeals.deal1;
     var dealPostDTO = mapStructMapper.dealToDealPostDTO(deal);
-    when(service.findById(anyString())).thenReturn(Optional.of(deal));
-    when(service.update(any(Deal.class))).thenReturn(deal);
+    when(dealService.findById(anyString())).thenReturn(Optional.of(deal));
+    when(dealService.update(any(Deal.class))).thenReturn(deal);
     var request =
         put("/deals/" + deal.getId())
             .accept(MediaType.APPLICATION_JSON)
@@ -847,7 +847,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     var id = DummyDeals.deal1.getId();
     var comment = DummyComments.comment1;
     var commentPostDTO = mapStructMapper.commentToCommentPostDTO(comment);
-    when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
+    when(dealService.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.save(any(Comment.class))).thenReturn(comment);
     var request =
         post("/deals/" + id + "/comments")
@@ -920,7 +920,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     var commentId = DummyComments.comment1.getId();
     var commentReport = DummyCommentReports.commentReport1;
     var commentReportPostDTO = mapStructMapper.commentReportToCommentReportPostDTO(commentReport);
-    when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
+    when(dealService.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     when(commentService.findById(anyString())).thenReturn(Optional.of(DummyComments.comment1));
     var request =
         post("/deals/" + dealId + "/comments/" + commentId + "/reports")
@@ -986,7 +986,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
     var id = DummyDeals.deal1.getId();
     var dealReport = DummyDealReports.dealReport1;
     var dealReportPostDTO = mapStructMapper.dealReportToDealReportPostDTO(dealReport);
-    when(service.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
+    when(dealService.findById(anyString())).thenReturn(Optional.of(DummyDeals.deal1));
     var request =
         post("/deals/" + id + "/reports")
             .accept(MediaType.APPLICATION_JSON)
@@ -1047,7 +1047,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   public void savesDealVote() throws Exception {
     var deal = DummyDeals.deal1;
     var dealVote = DealVote.builder().voteType(DealVoteType.UP).build();
-    when(service.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
+    when(dealService.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
     var request =
         put("/deals/" + deal.getId() + "/votes")
             .accept(MediaType.APPLICATION_JSON)
@@ -1143,7 +1143,7 @@ public class DealControllerTest extends BaseControllerUnitTest {
   @DisplayName("DELETE /deals/{id}/votes")
   public void deletesVoteFromDeal() throws Exception {
     var deal = DummyDeals.deal1;
-    when(service.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
+    when(dealService.vote(anyString(), any(DealVoteType.class))).thenReturn(deal);
     var request = delete("/deals/" + deal.getId() + "/votes");
     mvc.perform(request).andExpect(status().isOk());
   }

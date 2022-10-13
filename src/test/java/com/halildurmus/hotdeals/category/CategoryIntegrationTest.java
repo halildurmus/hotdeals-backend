@@ -15,22 +15,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 public class CategoryIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired private MongoTemplate mongoTemplate;
-
-  @Autowired private MockMvc mvc;
+  @Autowired private CategoryRepository categoryRepository;
 
   @Autowired private JacksonTester<Category> json;
 
+  @Autowired private MockMvc mvc;
+
   @AfterEach
   void cleanUp() {
-    mongoTemplate.dropCollection("categories");
+    categoryRepository.deleteAll();
   }
 
   @Test
@@ -40,13 +39,13 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
       roles = {"ADMIN", "SUPER"})
   public void createsCategory() throws Exception {
     var category = DummyCategories.category1;
-    var requestBuilder =
+    var request =
         post("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(category).getJson())
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(6)))
@@ -64,12 +63,12 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
       username = "admin",
       roles = {"ADMIN", "SUPER"})
   public void getCategoriesReturnsEmptyArray() throws Exception {
-    var requestBuilder =
+    var request =
         get("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(0)));
@@ -79,13 +78,13 @@ public class CategoryIntegrationTest extends BaseIntegrationTest {
   @DisplayName("GET /categories (returns 1 category)")
   public void getCategoriesReturnsOneCategory() throws Exception {
     var category = DummyCategories.category1;
-    mongoTemplate.insert(category);
-    var requestBuilder =
+    categoryRepository.save(category);
+    var request =
         get("/categories")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))

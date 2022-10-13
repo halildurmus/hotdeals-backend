@@ -28,12 +28,12 @@ public class NotificationControllerTest extends BaseControllerUnitTest {
 
   @Autowired private MockMvc mvc;
 
-  @MockBean private NotificationService service;
+  @MockBean private NotificationService notificationService;
 
   @Test
   @DisplayName("POST /notifications")
   public void sendsNotification() throws Exception {
-    when(service.send(any(Notification.class))).thenReturn(1);
+    when(notificationService.send(any(Notification.class))).thenReturn(1);
     var request =
         post("/notifications")
             .accept(MediaType.APPLICATION_JSON)

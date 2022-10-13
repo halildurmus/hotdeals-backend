@@ -41,7 +41,7 @@ import org.springframework.web.util.NestedServletException;
 @Import({CategoryController.class, MapStructMapperImpl.class})
 public class CategoryControllerTest extends BaseControllerUnitTest {
 
-  private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
+  @Autowired private MapStructMapperImpl mapStructMapper;
 
   @Autowired private JacksonTester<CategoryPostDTO> json;
 

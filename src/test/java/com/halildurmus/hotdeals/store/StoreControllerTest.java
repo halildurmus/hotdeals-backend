@@ -40,18 +40,18 @@ import org.springframework.web.util.NestedServletException;
 @Import({StoreController.class, MapStructMapperImpl.class})
 public class StoreControllerTest extends BaseControllerUnitTest {
 
-  private final MapStructMapperImpl mapStructMapper = new MapStructMapperImpl();
-
   @Autowired private JacksonTester<StorePostDTO> json;
+
+  @Autowired private MapStructMapperImpl mapStructMapper;
 
   @Autowired private MockMvc mvc;
 
-  @MockBean private StoreService service;
+  @MockBean private StoreService storeService;
 
   @Test
   @DisplayName("GET /stores (returns empty array)")
   public void getStoresReturnsEmptyArray() throws Exception {
-    when(service.findAll(any(Pageable.class))).thenReturn(Page.empty());
+    when(storeService.findAll(any(Pageable.class))).thenReturn(Page.empty());
     var request = get("/stores");
 
     mvc.perform(request)
@@ -64,7 +64,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /stores (returns 2 stores)")
   public void getStoresReturnsTwoStores() throws Exception {
     var pagedStores = new PageImpl<>(List.of(DummyStores.store1, DummyStores.store2));
-    when(service.findAll(any(Pageable.class))).thenReturn(pagedStores);
+    when(storeService.findAll(any(Pageable.class))).thenReturn(pagedStores);
     var request = get("/stores");
 
     mvc.perform(request)
@@ -85,7 +85,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /stores/{id}")
   public void returnsGivenStore() throws Exception {
     var store = DummyStores.store1;
-    when(service.findById(store.getId())).thenReturn(Optional.of(store));
+    when(storeService.findById(store.getId())).thenReturn(Optional.of(store));
     var request = get("/stores/" + store.getId());
 
     mvc.perform(request)
@@ -101,7 +101,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   @DisplayName("GET /stores/{id} (store not found)")
   public void getStoreThrowsStoreNotFoundException() {
     var store = DummyStores.store1;
-    when(service.findById(store.getId())).thenReturn(Optional.empty());
+    when(storeService.findById(store.getId())).thenReturn(Optional.empty());
     var request = get("/stores/" + store.getId());
 
     assertThrows(
@@ -120,7 +120,7 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   public void createsStore() throws Exception {
     var store = DummyStores.store1;
     var storePostDTO = mapStructMapper.storeToStorePostDTO(store);
-    when(service.create(any(Store.class))).thenReturn(store);
+    when(storeService.create(any(Store.class))).thenReturn(store);
     var request =
         post("/stores")
             .accept(MediaType.APPLICATION_JSON)
@@ -170,8 +170,8 @@ public class StoreControllerTest extends BaseControllerUnitTest {
   public void updatesGivenStore() throws Exception {
     var store = DummyStores.store2;
     var storePostDTO = mapStructMapper.storeToStorePostDTO(store);
-    when(service.findById(anyString())).thenReturn(Optional.of(store));
-    when(service.update(any(Store.class))).thenReturn(store);
+    when(storeService.findById(anyString())).thenReturn(Optional.of(store));
+    when(storeService.update(any(Store.class))).thenReturn(store);
     var request =
         put("/stores/" + store.getId())
             .accept(MediaType.APPLICATION_JSON)

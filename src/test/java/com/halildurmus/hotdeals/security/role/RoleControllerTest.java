@@ -21,7 +21,7 @@ public class RoleControllerTest extends BaseControllerUnitTest {
 
   @Autowired private MockMvc mvc;
 
-  @MockBean private RoleService service;
+  @MockBean private RoleService roleService;
 
   @Test
   @DisplayName("PUT /roles (success)")

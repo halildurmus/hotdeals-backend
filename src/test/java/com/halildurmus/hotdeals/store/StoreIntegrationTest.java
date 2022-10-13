@@ -14,22 +14,21 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 public class StoreIntegrationTest extends BaseIntegrationTest {
 
-  @Autowired private MongoTemplate mongoTemplate;
+  @Autowired private JacksonTester<Store> json;
 
   @Autowired private MockMvc mvc;
 
-  @Autowired private JacksonTester<Store> json;
+  @Autowired private StoreRepository storeRepository;
 
   @AfterEach
   void cleanUp() {
-    mongoTemplate.dropCollection("stores");
+    storeRepository.deleteAll();
   }
 
   @Test
@@ -39,13 +38,13 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
       roles = {"ADMIN", "SUPER"})
   public void createsStore() throws Exception {
     var store = DummyStores.store1;
-    var requestBuilder =
+    var request =
         post("/stores")
             .accept(MediaType.APPLICATION_JSON)
             .content(json.write(store).getJson())
             .contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isCreated())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$.*", hasSize(3)))
@@ -57,10 +56,10 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
   @Test
   @DisplayName("GET /stores (returns empty)")
   public void getStoresReturnsEmptyArray() throws Exception {
-    var requestBuilder =
+    var request =
         get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(0)));
@@ -73,11 +72,11 @@ public class StoreIntegrationTest extends BaseIntegrationTest {
       roles = {"ADMIN", "SUPER"})
   public void getStoresReturnsOneStore() throws Exception {
     var store = DummyStores.store1;
-    mongoTemplate.insert(store);
-    var requestBuilder =
+    storeRepository.save(store);
+    var request =
         get("/stores").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 
-    mvc.perform(requestBuilder)
+    mvc.perform(request)
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"))
         .andExpect(jsonPath("$", hasSize(1)))
