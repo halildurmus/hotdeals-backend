@@ -35,6 +35,8 @@ public class DealIntegrationTest extends BaseIntegrationTest {
 
   @MockBean private SecurityService securityService;
 
+  @Autowired private DealService dealService;
+
   @Autowired private MongoTemplate mongoTemplate;
 
   @Autowired private MockMvc mvc;
@@ -133,6 +135,40 @@ public class DealIntegrationTest extends BaseIntegrationTest {
         .andExpect(jsonPath("$[0].status").value(deal.getStatus().toString()))
         .andExpect(jsonPath("$[0].createdAt").isNotEmpty())
         .andExpect(jsonPath("$[0].updatedAt").isNotEmpty());
+  }
+
+  @Test
+  @DisplayName("GET /deals/suggestions (returns empty)")
+  public void getSuggestionsReturnsEmptyArray() throws Exception {
+    var requestBuilder =
+        get("/deals/suggestions?query=invalid")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+    mvc.perform(requestBuilder)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(0)));
+  }
+
+  @Test
+  @DisplayName("GET /deals/suggestions (returns 1 suggestion)")
+  public void getSuggestionsReturnsOneSuggestion() throws Exception {
+    var user = mongoTemplate.insert(DummyUsers.user3);
+    when(securityService.getUser()).thenReturn(user);
+    var deal = dealService.create(DummyDeals.deal1);
+    var requestBuilder =
+        get("/deals/suggestions?query=book")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+    mvc.perform(requestBuilder)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType("application/json"))
+        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$[0].*", hasSize(2)))
+        .andExpect(jsonPath("$[0].id").value(deal.getId()))
+        .andExpect(jsonPath("$[0].title").value(deal.getTitle()));
   }
 
   @Test
