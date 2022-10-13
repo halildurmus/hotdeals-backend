@@ -34,7 +34,6 @@ import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -97,11 +96,16 @@ public class DealServiceImpl implements DealService {
     return repository.findAllByStatusEqualsOrderByDealScoreDesc(DealStatus.ACTIVE, pageable);
   }
 
-  @Transactional
   @Override
   public Deal create(Deal deal) {
     var savedDeal = repository.save(deal);
-    esDealRepository.save(new EsDeal(deal));
+    try {
+      esDealRepository.save(new EsDeal(deal));
+    } catch (Exception e) {
+      repository.deleteById(savedDeal.getId());
+      throw e;
+    }
+
     return savedDeal;
   }
 
@@ -136,19 +140,24 @@ public class DealServiceImpl implements DealService {
     return deal;
   }
 
-  @Transactional
   @Override
   public Deal update(Deal deal) {
     var user = securityService.getUser();
     if (!user.getId().equals(deal.getPostedBy().toString())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own deal!");
     }
+
     var savedDeal = repository.save(deal);
-    esDealRepository.save(new EsDeal(deal));
+    try {
+      esDealRepository.save(new EsDeal(deal));
+    } catch (Exception e) {
+      repository.deleteById(savedDeal.getId());
+      throw e;
+    }
+
     return savedDeal;
   }
 
-  @Transactional
   @Override
   public void delete(String id) {
     var deal = repository.findById(id).orElseThrow(DealNotFoundException::new);
