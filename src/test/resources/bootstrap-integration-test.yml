@@ -13,6 +13,10 @@ embedded:
     dockerImage: mongo:latest
     enabled: true
     reuseContainer: true
+  redis:
+    dockerImage: redis:latest
+    enabled: true
+    reuseContainer: true
 security:
   firebase-properties:
     # Set your Firebase Authentication database url
@@ -24,3 +28,5 @@ spring:
   elasticsearch:
     rest:
       uris: http://${embedded.elasticsearch.host}:${embedded.elasticsearch.httpPort}
+  redis:
+    url: redis://:${embedded.redis.password}@${embedded.redis.host}:${embedded.redis.port}
