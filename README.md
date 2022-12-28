@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://github.com/halildurmus/hotdeals-backend/blob/master/LICENSE)
 ![Visits](https://visitor-badge.glitch.me/badge?page_id=halildurmus.hotdeals-backend)
 
-> This is the **Backend** for my **[hotdeals](https://github.com/halildurmus/hotdeals)**.
+> The **Backend** for my **[hotdeals](https://github.com/halildurmus/hotdeals)** app.
 
 ## Table of Contents
 
