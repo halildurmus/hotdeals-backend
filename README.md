@@ -2,7 +2,7 @@
 
 ![GitHub top language](https://img.shields.io/github/languages/top/halildurmus/hotdeals-backend?style=for-the-badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://github.com/halildurmus/hotdeals-backend/blob/master/LICENSE)
-![Visits](https://badges.pufler.dev/visits/halildurmus/hotdeals-backend?style=for-the-badge)
+![Visits](https://visitor-badge.glitch.me/badge?page_id=halildurmus.hotdeals-backend)
 
 > This is the **Backend** for my **[hotdeals](https://github.com/halildurmus/hotdeals)**.
 
